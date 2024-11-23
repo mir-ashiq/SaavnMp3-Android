@@ -5,8 +5,8 @@
     <color name="green">#FF1ED760</color>
     <color name="grey">#FF282828</color>
 
-    <color name="background">@color/white</color>
+    <color name="background">@color/black</color>
     <color name="foreground">#777777</color>
-    <color name="textMain">@color/black</color>
+    <color name="textMain">@color/white</color>
     <color name="textSec">@color/grey</color>
 </resources>
