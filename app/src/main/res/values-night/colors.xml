@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF121212</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="green">#FF1ED760</color>
-    <color name="grey">#FF282828</color>
 
-    <color name="background">@color/black</color>
-    <color name="foreground">#777777</color>
-    <color name="textMain">@color/white</color>
-    <color name="textSec">@color/grey</color>
+    <color name="background">@color/background_dark</color>
+    <color name="textMain">@color/text_light</color>
+    <color name="textSec">@color/text_secondary_light</color>
+    <color name="buttonBackground">@color/button_dark</color>
+    <color name="dividerBackground">@color/divider_light</color>
+    <color name="green">@color/spotify_dark_green</color>
 
 </resources>
