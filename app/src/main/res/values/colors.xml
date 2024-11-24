@@ -9,4 +9,5 @@
     <color name="foreground">#777777</color>
     <color name="textMain">@color/black</color>
     <color name="textSec">@color/grey</color>
+
 </resources>
