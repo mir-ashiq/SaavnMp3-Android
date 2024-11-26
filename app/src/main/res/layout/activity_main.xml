@@ -46,6 +46,14 @@
 
     </LinearLayout>
 
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/__divider"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+
     <androidx.core.widget.NestedScrollView
         android:id="@+id/nestedScrollView"
         android:layout_width="match_parent"
@@ -56,54 +64,132 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar">
+        app:layout_constraintTop_toBottomOf="@id/__divider">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="12dp">
 
-            <TextView
-                android:id="@+id/__popular_albums_title"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/__popular_albums_section"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/avenir_next_bold"
-                android:includeFontPadding="false"
-                android:text="Popular albums"
-                android:textColor="@color/textMain"
-                android:textSize="@dimen/_16ssp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:orientation="vertical">
 
-            <HorizontalScrollView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:overScrollMode="never"
-                android:scrollbars="none"
-                app:layout_constraintStart_toStartOf="@id/__popular_albums_title"
-                app:layout_constraintTop_toBottomOf="@id/__popular_albums_title">
-
-                <LinearLayout
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:fontFamily="@font/avenir_next_bold"
+                    android:includeFontPadding="false"
+                    android:text="Popular albums"
+                    android:textColor="@color/textMain"
+                    android:textSize="@dimen/_16ssp"/>
 
-                    <include layout="@layout/activity_main_album_item" />
+                <HorizontalScrollView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:overScrollMode="never"
+                    android:scrollbars="none">
 
-                    <include layout="@layout/activity_main_album_item" />
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
 
-                    <include layout="@layout/activity_main_album_item" />
+                        <include layout="@layout/activity_main_album_item" />
 
-                    <include layout="@layout/activity_main_album_item" />
+                        <include layout="@layout/activity_main_album_item" />
 
-                    <include layout="@layout/activity_main_album_item" />
+                        <include layout="@layout/activity_main_album_item" />
 
-                    <include layout="@layout/activity_main_album_item" />
+                        <include layout="@layout/activity_main_album_item" />
 
-                </LinearLayout>
+                        <include layout="@layout/activity_main_album_item" />
 
-            </HorizontalScrollView>
+                        <include layout="@layout/activity_main_album_item" />
+
+                    </LinearLayout>
+
+                </HorizontalScrollView>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/__popular_artists_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="@dimen/_8sdp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/__popular_albums_section">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/avenir_next_bold"
+                    android:includeFontPadding="false"
+                    android:text="Popular artists"
+                    android:textColor="@color/textMain"
+                    android:textSize="@dimen/_16ssp"/>
+
+                <HorizontalScrollView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:overScrollMode="never"
+                    android:scrollbars="none">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:layout_width="@dimen/_70sdp"
+                            android:layout_height="@dimen/_70sdp"
+                            android:background="@color/textSec"
+                            android:padding="@dimen/_8sdp"
+                            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize100Percent"/>
+
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:layout_width="@dimen/_70sdp"
+                            android:layout_height="@dimen/_70sdp"
+                            android:background="@color/textSec"
+                            android:padding="@dimen/_8sdp"
+                            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize100Percent"/>
+
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:layout_width="@dimen/_70sdp"
+                            android:layout_height="@dimen/_70sdp"
+                            android:background="@color/textSec"
+                            android:padding="@dimen/_8sdp"
+                            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize100Percent"/>
+
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:layout_width="@dimen/_70sdp"
+                            android:layout_height="@dimen/_70sdp"
+                            android:background="@color/textSec"
+                            android:padding="@dimen/_8sdp"
+                            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize100Percent"/>
+
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:layout_width="@dimen/_70sdp"
+                            android:layout_height="@dimen/_70sdp"
+                            android:background="@color/textSec"
+                            android:padding="@dimen/_8sdp"
+                            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize100Percent"/>
+
+                    </LinearLayout>
+
+                </HorizontalScrollView>
+
+            </LinearLayout>
+
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

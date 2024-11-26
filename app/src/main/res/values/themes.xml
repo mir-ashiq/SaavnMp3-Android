@@ -16,7 +16,7 @@
         <item name="android:colorBackground">@color/background_light</item>
         <item name="colorOnBackground">@color/text_dark</item>
 
-        <item name="colorSurface">@color/white</item>
+        <item name="colorSurface">#fff</item>
         <item name="colorOnSurface">@color/text_dark</item>
 
         <item name="colorAccent">@color/spotify_green</item>
@@ -32,4 +32,7 @@
 
     <style name="Theme.SaavnMp3" parent="Base.Theme.SaavnMp3" />
 
+    <style name="ShapeAppearanceOverlay.App.CornerSize100Percent" parent="">
+        <item name="cornerSize">50%</item>
+    </style>
 </resources>
