@@ -61,6 +61,7 @@
         android:fillViewport="true"
         android:overScrollMode="never"
         android:scrollbars="none"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -72,7 +73,7 @@
             android:padding="12dp">
 
             <LinearLayout
-                android:id="@+id/__popular_albums_section"
+                android:id="@+id/__popular_songs_section"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
@@ -84,7 +85,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/avenir_next_bold"
                     android:includeFontPadding="false"
-                    android:text="Popular albums"
+                    android:text="Popular Songs"
                     android:textColor="@color/textMain"
                     android:textSize="@dimen/_16ssp"/>
 
@@ -92,7 +93,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_5sdp"
-                    android:overScrollMode="never"
+                    android:overScrollMode="ifContentScrolls"
                     android:scrollbars="none">
 
                     <LinearLayout
@@ -100,17 +101,17 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
 
-                        <include layout="@layout/activity_main_album_item" />
+                        <include layout="@layout/activity_main_songs_item" />
 
-                        <include layout="@layout/activity_main_album_item" />
+                        <include layout="@layout/activity_main_songs_item" />
 
-                        <include layout="@layout/activity_main_album_item" />
+                        <include layout="@layout/activity_main_songs_item" />
 
-                        <include layout="@layout/activity_main_album_item" />
+                        <include layout="@layout/activity_main_songs_item" />
 
-                        <include layout="@layout/activity_main_album_item" />
+                        <include layout="@layout/activity_main_songs_item" />
 
-                        <include layout="@layout/activity_main_album_item" />
+                        <include layout="@layout/activity_main_songs_item" />
 
                     </LinearLayout>
 
@@ -125,7 +126,7 @@
                 android:orientation="vertical"
                 android:layout_marginTop="@dimen/_8sdp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/__popular_albums_section">
+                app:layout_constraintTop_toBottomOf="@id/__popular_songs_section">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -140,7 +141,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_5sdp"
-                    android:overScrollMode="never"
+                    android:overScrollMode="ifContentScrolls"
                     android:scrollbars="none">
 
                     <LinearLayout
@@ -148,40 +149,13 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
 
-                        <com.google.android.material.imageview.ShapeableImageView
-                            android:layout_width="@dimen/_70sdp"
-                            android:layout_height="@dimen/_70sdp"
-                            android:background="@color/textSec"
-                            android:padding="@dimen/_8sdp"
-                            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize100Percent"/>
-
-                        <com.google.android.material.imageview.ShapeableImageView
-                            android:layout_width="@dimen/_70sdp"
-                            android:layout_height="@dimen/_70sdp"
-                            android:background="@color/textSec"
-                            android:padding="@dimen/_8sdp"
-                            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize100Percent"/>
-
-                        <com.google.android.material.imageview.ShapeableImageView
-                            android:layout_width="@dimen/_70sdp"
-                            android:layout_height="@dimen/_70sdp"
-                            android:background="@color/textSec"
-                            android:padding="@dimen/_8sdp"
-                            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize100Percent"/>
-
-                        <com.google.android.material.imageview.ShapeableImageView
-                            android:layout_width="@dimen/_70sdp"
-                            android:layout_height="@dimen/_70sdp"
-                            android:background="@color/textSec"
-                            android:padding="@dimen/_8sdp"
-                            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize100Percent"/>
-
-                        <com.google.android.material.imageview.ShapeableImageView
-                            android:layout_width="@dimen/_70sdp"
-                            android:layout_height="@dimen/_70sdp"
-                            android:background="@color/textSec"
-                            android:padding="@dimen/_8sdp"
-                            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize100Percent"/>
+                        <include layout="@layout/activity_main_artists_item" />
+                        <include layout="@layout/activity_main_artists_item" />
+                        <include layout="@layout/activity_main_artists_item" />
+                        <include layout="@layout/activity_main_artists_item" />
+                        <include layout="@layout/activity_main_artists_item" />
+                        <include layout="@layout/activity_main_artists_item" />
+                        <include layout="@layout/activity_main_artists_item" />
 
                     </LinearLayout>
 
@@ -189,6 +163,80 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/__popular_albums_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="@dimen/_8sdp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/__popular_artists_section">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/avenir_next_bold"
+                    android:includeFontPadding="false"
+                    android:text="Popular albums"
+                    android:textColor="@color/textMain"
+                    android:textSize="@dimen/_16ssp"/>
+
+                <HorizontalScrollView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:overScrollMode="ifContentScrolls"
+                    android:scrollbars="none">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <include layout="@layout/activity_main_songs_item" />
+                        <include layout="@layout/activity_main_songs_item" />
+                        <include layout="@layout/activity_main_songs_item" />
+                        <include layout="@layout/activity_main_songs_item" />
+                        <include layout="@layout/activity_main_songs_item" />
+                        <include layout="@layout/activity_main_songs_item" />
+
+                    </LinearLayout>
+
+                </HorizontalScrollView>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/__popular_playlists_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="@dimen/_8sdp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/__popular_albums_section">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/avenir_next_bold"
+                    android:includeFontPadding="false"
+                    android:text="Popular playlists"
+                    android:textColor="@color/textMain"
+                    android:textSize="@dimen/_16ssp"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/playlist_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:scrollbars="none"
+                    android:overScrollMode="never"
+                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                    app:spanCount="2"
+                    tools:listitem="@layout/activity_main_playlist_item"
+                    tools:itemCount="10" />
+
+            </LinearLayout>
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
