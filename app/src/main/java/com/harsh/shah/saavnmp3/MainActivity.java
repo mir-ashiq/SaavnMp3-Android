@@ -15,79 +15,47 @@ import android.widget.ListAdapter;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.harsh.shah.saavnmp3.adapters.ActivityMainAlbumItemAdapter;
+import com.harsh.shah.saavnmp3.databinding.ActivityMainBinding;
+import com.harsh.shah.saavnmp3.modals.AlbumItem;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
+
+    ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-//        GridView gridView = findViewById(R.id.playlist_grid);
-//        gridView.setAdapter(new CustomAdapter(this));
-//        setGridViewHeightBasedOnChildren(gridView, 2);
-        RecyclerView recyclerView = findViewById(R.id.playlist_recycler_view);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
         int span = calculateNoOfColumns(this, 200);
-        recyclerView.setLayoutManager(new GridLayoutManager(this,span));
-        recyclerView.setAdapter(new PlaylistAdapter());
-    }
+        binding.playlistRecyclerView.setLayoutManager(new GridLayoutManager(this,span));
+        binding.playlistRecyclerView.setAdapter(new PlaylistAdapter());
 
-    public class CustomAdapter extends BaseAdapter {
-        Context context;
-        LayoutInflater inflater;
-        public CustomAdapter(Context applicationContext) {
-            this.context = applicationContext;
-            inflater = (LayoutInflater.from(applicationContext));
-        }
-        @Override
-        public int getCount() {
-            return 10;
-        }
-        @Override
-        public Object getItem(int i) {
-            return null;
-        }
-        @Override
-        public long getItemId(int i) {
-            return 0;
-        }
-        @Override
-        public View getView(int i, View view, ViewGroup viewGroup) {
-            view = inflater.inflate(R.layout.activity_main_playlist_item, null); // inflate the layout
-            return view;
-        }
-    }
-
-    public void setGridViewHeightBasedOnChildren(GridView gridView, int columns) {
-        ListAdapter listAdapter = gridView.getAdapter();
-        if (listAdapter == null) {
-            // pre-condition
-            return;
-        }
-
-        int totalHeight = 0;
-        int items = listAdapter.getCount();
-        int rows = 0;
-
-        View listItem = listAdapter.getView(0, null, gridView);
-        listItem.measure(0, 0);
-        totalHeight = listItem.getMeasuredHeight();
-
-        float x = 1;
-        if( items > columns ){
-            x = (float) items/columns;
-            rows = (int) (x + 1);
-            totalHeight *= rows;
-        }
-
-        ViewGroup.LayoutParams params = gridView.getLayoutParams();
-        params.height = totalHeight;
-        gridView.setLayoutParams(params);
-
+        binding.popularSongsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        List<AlbumItem> data = new ArrayList<>();
+        data.add(new AlbumItem("Album 1", "Sub Title 1", ""));
+        data.add(new AlbumItem("Album 2", "Sub Title 2", ""));
+        data.add(new AlbumItem("Album 3", "Sub Title 3", ""));
+        data.add(new AlbumItem("Album 4", "Sub Title 4", ""));
+        data.add(new AlbumItem("Album 5", "Sub Title 5", ""));
+        data.add(new AlbumItem("Album 6", "Sub Title 6", ""));
+        data.add(new AlbumItem("Album 7", "Sub Title 7", ""));
+        data.add(new AlbumItem("Album 8", "Sub Title 8", ""));
+        data.add(new AlbumItem("Album 9", "Sub Title 9", ""));
+        data.add(new AlbumItem("Album 10", "Sub Title 10", ""));
+        binding.popularSongsRecyclerView.setAdapter(new ActivityMainAlbumItemAdapter(data));
     }
 
 
-    class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.PlaylistAdapterViewHolder> {
+    static class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.PlaylistAdapterViewHolder> {
 
         @NonNull
         @Override
@@ -107,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-        class PlaylistAdapterViewHolder extends RecyclerView.ViewHolder {
+        static class PlaylistAdapterViewHolder extends RecyclerView.ViewHolder {
             public PlaylistAdapterViewHolder(@NonNull View itemView) {
                 super(itemView);
             }
@@ -117,8 +85,7 @@ public class MainActivity extends AppCompatActivity {
     public static int calculateNoOfColumns(Context context, float columnWidthDp) { // For example columnWidthdp=180
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         float screenWidthDp = displayMetrics.widthPixels / displayMetrics.density;
-        int noOfColumns = (int) (screenWidthDp / columnWidthDp + 0.5); // +0.5 for correct rounding to int.
-        return noOfColumns;
+        return  (int) (screenWidthDp / columnWidthDp + 0.5); // +0.5 for correct rounding to int.
     }
 
 }
