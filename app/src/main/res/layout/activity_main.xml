@@ -5,8 +5,8 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
-    android:background="@color/background">
+    android:background="@color/background"
+    tools:context=".MainActivity">
 
     <LinearLayout
         android:id="@+id/toolbar"
@@ -76,9 +76,9 @@
                 android:id="@+id/__popular_songs_section"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="vertical"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:orientation="vertical">
+                app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -87,17 +87,17 @@
                     android:includeFontPadding="false"
                     android:text="Popular Songs"
                     android:textColor="@color/textMain"
-                    android:textSize="@dimen/_16ssp"/>
+                    android:textSize="@dimen/_16ssp" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/popular_songs_recycler_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     android:orientation="horizontal"
                     android:scrollbars="none"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     tools:itemCount="10"
-                    tools:listitem="@layout/activity_main_songs_item"/>
+                    tools:listitem="@layout/activity_main_songs_item" />
 
             </LinearLayout>
 
@@ -105,8 +105,8 @@
                 android:id="@+id/__popular_artists_section"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:layout_marginTop="@dimen/_8sdp"
+                android:orientation="vertical"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/__popular_songs_section">
 
@@ -117,31 +117,19 @@
                     android:includeFontPadding="false"
                     android:text="Popular artists"
                     android:textColor="@color/textMain"
-                    android:textSize="@dimen/_16ssp"/>
+                    android:textSize="@dimen/_16ssp" />
 
-                <HorizontalScrollView
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/popular_artists_recycler_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:overScrollMode="ifContentScrolls"
-                    android:scrollbars="none">
+                    android:orientation="horizontal"
+                    android:scrollbars="none"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:itemCount="10"
+                    tools:listitem="@layout/activity_main_artists_item" />
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <include layout="@layout/activity_main_artists_item" />
-                        <include layout="@layout/activity_main_artists_item" />
-                        <include layout="@layout/activity_main_artists_item" />
-                        <include layout="@layout/activity_main_artists_item" />
-                        <include layout="@layout/activity_main_artists_item" />
-                        <include layout="@layout/activity_main_artists_item" />
-                        <include layout="@layout/activity_main_artists_item" />
-
-                    </LinearLayout>
-
-                </HorizontalScrollView>
 
             </LinearLayout>
 
@@ -149,8 +137,8 @@
                 android:id="@+id/__popular_albums_section"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:layout_marginTop="@dimen/_8sdp"
+                android:orientation="vertical"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/__popular_artists_section">
 
@@ -161,30 +149,18 @@
                     android:includeFontPadding="false"
                     android:text="Popular albums"
                     android:textColor="@color/textMain"
-                    android:textSize="@dimen/_16ssp"/>
+                    android:textSize="@dimen/_16ssp" />
 
-                <HorizontalScrollView
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/popular_albums_recycler_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:overScrollMode="ifContentScrolls"
-                    android:scrollbars="none">
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    android:orientation="horizontal"
+                    android:scrollbars="none"
+                    tools:itemCount="10"
+                    tools:listitem="@layout/activity_main_songs_item"/>
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <include layout="@layout/activity_main_songs_item" />
-                        <include layout="@layout/activity_main_songs_item" />
-                        <include layout="@layout/activity_main_songs_item" />
-                        <include layout="@layout/activity_main_songs_item" />
-                        <include layout="@layout/activity_main_songs_item" />
-                        <include layout="@layout/activity_main_songs_item" />
-
-                    </LinearLayout>
-
-                </HorizontalScrollView>
 
             </LinearLayout>
 
@@ -192,8 +168,8 @@
                 android:id="@+id/__popular_playlists_section"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:layout_marginTop="@dimen/_8sdp"
+                android:orientation="vertical"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/__popular_albums_section">
 
@@ -204,19 +180,19 @@
                     android:includeFontPadding="false"
                     android:text="Popular playlists"
                     android:textColor="@color/textMain"
-                    android:textSize="@dimen/_16ssp"/>
+                    android:textSize="@dimen/_16ssp" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/playlist_recycler_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_12sdp"
-                    android:scrollbars="none"
                     android:overScrollMode="never"
+                    android:scrollbars="none"
                     app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                     app:spanCount="2"
-                    tools:listitem="@layout/activity_main_playlist_item"
-                    tools:itemCount="10" />
+                    tools:itemCount="10"
+                    tools:listitem="@layout/activity_main_playlist_item" />
 
             </LinearLayout>
 

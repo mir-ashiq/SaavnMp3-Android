@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.harsh.shah.saavnmp3.adapters.ActivityMainAlbumItemAdapter;
+import com.harsh.shah.saavnmp3.adapters.ActivityMainArtistsItemAdapter;
 import com.harsh.shah.saavnmp3.databinding.ActivityMainBinding;
 import com.harsh.shah.saavnmp3.modals.AlbumItem;
 
@@ -40,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
         binding.playlistRecyclerView.setAdapter(new PlaylistAdapter());
 
         binding.popularSongsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        binding.popularArtistsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        binding.popularAlbumsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         List<AlbumItem> data = new ArrayList<>();
         data.add(new AlbumItem("Album 1", "Sub Title 1", ""));
         data.add(new AlbumItem("Album 2", "Sub Title 2", ""));
@@ -52,6 +55,21 @@ public class MainActivity extends AppCompatActivity {
         data.add(new AlbumItem("Album 9", "Sub Title 9", ""));
         data.add(new AlbumItem("Album 10", "Sub Title 10", ""));
         binding.popularSongsRecyclerView.setAdapter(new ActivityMainAlbumItemAdapter(data));
+        binding.popularAlbumsRecyclerView.setAdapter(new ActivityMainAlbumItemAdapter(data));
+
+        List<String> str_data = new ArrayList<>();
+        str_data.add("Artist 1");
+        str_data.add("Artist 2");
+        str_data.add("Artist 3");
+        str_data.add("Artist 4");
+        str_data.add("Artist 5");
+        str_data.add("Artist 6");
+        str_data.add("Artist 7");
+        str_data.add("Artist 8");
+        str_data.add("Artist 9");
+        str_data.add("Artist 10");
+        binding.popularArtistsRecyclerView.setAdapter(new ActivityMainArtistsItemAdapter(str_data));
+
     }
 
 
