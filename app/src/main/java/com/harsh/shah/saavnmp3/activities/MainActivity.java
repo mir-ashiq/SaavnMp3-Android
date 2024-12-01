@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.harsh.shah.saavnmp3.R;
 import com.harsh.shah.saavnmp3.adapters.ActivityMainAlbumItemAdapter;
 import com.harsh.shah.saavnmp3.adapters.ActivityMainArtistsItemAdapter;
+import com.harsh.shah.saavnmp3.adapters.ActivityMainPlaylistAdapter;
 import com.harsh.shah.saavnmp3.databinding.ActivityMainBinding;
 import com.harsh.shah.saavnmp3.modals.AlbumItem;
 
@@ -35,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
         int span = calculateNoOfColumns(this, 200);
         binding.playlistRecyclerView.setLayoutManager(new GridLayoutManager(this,span));
-        binding.playlistRecyclerView.setAdapter(new PlaylistAdapter());
+        binding.playlistRecyclerView.setAdapter(new ActivityMainPlaylistAdapter());
 
         binding.popularSongsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         binding.popularArtistsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
@@ -67,34 +68,6 @@ public class MainActivity extends AppCompatActivity {
         str_data.add("Artist 10");
         binding.popularArtistsRecyclerView.setAdapter(new ActivityMainArtistsItemAdapter(str_data));
 
-    }
-
-
-    static class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.PlaylistAdapterViewHolder> {
-
-        @NonNull
-        @Override
-        public PlaylistAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View _v = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_main_playlist_item, null, false);
-            _v.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            return new PlaylistAdapterViewHolder(_v);
-        }
-
-        @Override
-        public int getItemCount() {
-            return 10;
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull PlaylistAdapterViewHolder holder, int position) {
-
-        }
-
-        static class PlaylistAdapterViewHolder extends RecyclerView.ViewHolder {
-            public PlaylistAdapterViewHolder(@NonNull View itemView) {
-                super(itemView);
-            }
-        }
     }
 
     public static int calculateNoOfColumns(Context context, float columnWidthDp) { // For example columnWidthdp=180

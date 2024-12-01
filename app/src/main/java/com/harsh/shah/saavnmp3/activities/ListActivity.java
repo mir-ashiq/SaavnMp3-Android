@@ -1,6 +1,7 @@
 package com.harsh.shah.saavnmp3.activities;
 
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,5 +22,9 @@ public class ListActivity extends AppCompatActivity {
         binding = ActivityListBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+    }
+
+    public void backPress(View view) {
+        finish();
     }
 }
