@@ -8,28 +8,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.harsh.shah.saavnmp3.R;
-import com.harsh.shah.saavnmp3.adapters.ActivityListSongsItemAdapter;
-import com.harsh.shah.saavnmp3.databinding.ActivityListBinding;
+import com.harsh.shah.saavnmp3.databinding.ActivityMusicOverviewBinding;
 
-public class ListActivity extends AppCompatActivity {
+public class MusicOverviewActivity extends AppCompatActivity {
 
-    ActivityListBinding binding;
+    ActivityMusicOverviewBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityListBinding.inflate(getLayoutInflater());
+        binding = ActivityMusicOverviewBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
-        binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        binding.recyclerView.setAdapter(new ActivityListSongsItemAdapter());
     }
 
     public void backPress(View view) {
         finish();
     }
-
 }
