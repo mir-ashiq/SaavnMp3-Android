@@ -21,6 +21,9 @@ public class MusicOverviewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityMusicOverviewBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        binding.title.setSelected(true);
+        binding.description.setSelected(true);
     }
 
     public void backPress(View view) {
