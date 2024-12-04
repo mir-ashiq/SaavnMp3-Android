@@ -1,57 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+
+<com.google.android.material.card.MaterialCardView
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:layout_marginVertical="@dimen/_4sdp">
+    app:cardBackgroundColor="@android:color/transparent"
+    app:strokeWidth="0dp"
+    android:focusable="true"
+    android:clickable="true"
+    android:foreground="?attr/selectableItemBackground">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="@dimen/_40sdp"
-            android:layout_height="@dimen/_40sdp"
-            app:cardBackgroundColor="@android:color/transparent">
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/textSec"/>
-
-        </com.google.android.material.card.MaterialCardView>
+        android:orientation="vertical"
+        android:padding="@dimen/_8sdp">
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:paddingHorizontal="@dimen/_8sdp"
-            android:orientation="vertical">
+            android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Song Name"
-                android:textColor="@color/textMain"
-                android:textSize="@dimen/_16ssp"/>
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="@dimen/_40sdp"
+                android:layout_height="@dimen/_40sdp"
+                app:cardBackgroundColor="@android:color/transparent">
 
-            <TextView
-                android:layout_width="wrap_content"
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/textSec"/>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Artist Name"
-                android:textColor="@color/textSec"/>
+                android:layout_weight="1"
+                android:paddingHorizontal="@dimen/_8sdp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Song Name"
+                    android:textColor="@color/textMain"
+                    android:textSize="@dimen/_16ssp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Artist Name"
+                    android:textColor="@color/textSec"/>
+
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="@dimen/_40sdp"
+                android:layout_height="@dimen/_40sdp"
+                android:src="@drawable/more_vert_24px"
+                android:padding="@dimen/_10sdp"/>
 
         </LinearLayout>
 
-        <ImageView
-            android:layout_width="@dimen/_40sdp"
-            android:layout_height="@dimen/_40sdp"
-            android:src="@drawable/more_vert_24px"
-            android:padding="@dimen/_10sdp"/>
-
     </LinearLayout>
 
-</LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

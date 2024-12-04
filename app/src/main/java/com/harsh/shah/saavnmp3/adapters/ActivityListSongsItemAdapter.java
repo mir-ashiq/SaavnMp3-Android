@@ -18,9 +18,7 @@ public class ActivityListSongsItemAdapter extends RecyclerView.Adapter<ActivityL
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View _v = View.inflate(parent.getContext(), R.layout.activity_list_song_item, null);
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        LinearLayout.LayoutParams _v_layoutParams = new LinearLayout.LayoutParams(layoutParams);
-        _v_layoutParams.setMargins(0,12,0,12);
-        _v.setLayoutParams(_v_layoutParams);
+        _v.setLayoutParams(layoutParams);
         return new ViewHolder(_v);
     }
 

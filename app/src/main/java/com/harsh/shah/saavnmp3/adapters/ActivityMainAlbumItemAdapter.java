@@ -1,5 +1,6 @@
 package com.harsh.shah.saavnmp3.adapters;
 
+import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -8,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.harsh.shah.saavnmp3.R;
+import com.harsh.shah.saavnmp3.activities.MusicOverviewActivity;
 import com.harsh.shah.saavnmp3.modals.AlbumItem;
 
 import java.util.HashMap;
@@ -33,6 +35,10 @@ public class ActivityMainAlbumItemAdapter extends RecyclerView.Adapter<ActivityM
     public void onBindViewHolder(@NonNull ActivityMainAlbumItemAdapterViewHolder holder, int position) {
         ((TextView)holder.itemView.findViewById(R.id.albumTitle)).setText(data.get(position).getalbumTitle());
         ((TextView)holder.itemView.findViewById(R.id.albumSubTitle)).setText(data.get(position).getAlbumSubTitle());
+
+        holder.itemView.setOnClickListener(view -> {
+            holder.itemView.getContext().startActivity(new Intent(holder.itemView.getContext(), MusicOverviewActivity.class));
+        });
     }
 
     @Override

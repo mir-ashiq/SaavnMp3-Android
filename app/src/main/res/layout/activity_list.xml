@@ -23,7 +23,10 @@
             android:padding="@dimen/_12sdp"
             android:src="@drawable/round_arrow_back_24"
             android:contentDescription="back"
-            android:onClick="backPress"/>
+            android:onClick="backPress"
+            android:focusable="true"
+            android:clickable="true"
+            android:foreground="?attr/selectableItemBackground"/>
 
         <View
             android:layout_width="wrap_content"
@@ -35,14 +38,20 @@
             android:layout_height="@dimen/_45sdp"
             android:padding="@dimen/_12sdp"
             android:src="@drawable/share_24px"
-            android:contentDescription="share"/>
+            android:contentDescription="share"
+            android:focusable="true"
+            android:clickable="true"
+            android:foreground="?attr/selectableItemBackground"/>
 
         <ImageView
             android:layout_width="@dimen/_45sdp"
             android:layout_height="@dimen/_45sdp"
             android:padding="@dimen/_12sdp"
             android:src="@drawable/more_vert_24px"
-            android:contentDescription="more"/>
+            android:contentDescription="more"
+            android:focusable="true"
+            android:clickable="true"
+            android:foreground="?attr/selectableItemBackground"/>
 
     </LinearLayout>
 
@@ -71,7 +80,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:padding="@dimen/_12sdp">
+            android:paddingVertical="@dimen/_12sdp"
+            android:paddingHorizontal="@dimen/_8sdp">
 
             <LinearLayout
                 android:layout_width="match_parent"

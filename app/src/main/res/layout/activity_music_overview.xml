@@ -22,7 +22,10 @@
             android:layout_height="@dimen/_40sdp"
             android:src="@drawable/round_keyboard_arrow_down_24"
             android:padding="@dimen/_4sdp"
-            android:onClick="backPress"/>
+            android:onClick="backPress"
+            android:focusable="true"
+            android:clickable="true"
+            android:foreground="?attr/selectableItemBackground"/>
 
         <View
             android:layout_width="0dp"
