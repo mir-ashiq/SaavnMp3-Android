@@ -13,6 +13,7 @@ import com.harsh.shah.saavnmp3.adapters.ActivityMainArtistsItemAdapter;
 import com.harsh.shah.saavnmp3.adapters.ActivityMainPlaylistAdapter;
 import com.harsh.shah.saavnmp3.databinding.ActivityMainBinding;
 import com.harsh.shah.saavnmp3.modals.AlbumItem;
+import com.harsh.shah.saavnmp3.utils.testFetchSongs;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,9 +62,11 @@ public class MainActivity extends AppCompatActivity {
         str_data.add("Artist 10");
         binding.popularArtistsRecyclerView.setAdapter(new ActivityMainArtistsItemAdapter(str_data));
 
+        new testFetchSongs(this).searchSongs("Hindi Songs");
+
     }
 
-    public static int calculateNoOfColumns(Context context, float columnWidthDp) { // For example columnWidthdp=180
+    public static int calculateNoOfColumns(Context context, float columnWidthDp) { // For example columnWidthDp=180
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         float screenWidthDp = displayMetrics.widthPixels / displayMetrics.density;
         return  (int) (screenWidthDp / columnWidthDp + 0.5); // +0.5 for correct rounding to int.
