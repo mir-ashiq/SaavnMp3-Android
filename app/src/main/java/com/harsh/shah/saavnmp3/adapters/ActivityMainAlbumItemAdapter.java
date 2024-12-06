@@ -10,9 +10,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.harsh.shah.saavnmp3.R;
 import com.harsh.shah.saavnmp3.activities.MusicOverviewActivity;
-import com.harsh.shah.saavnmp3.modals.AlbumItem;
+import com.harsh.shah.saavnmp3.model.AlbumItem;
 
-import java.util.HashMap;
 import java.util.List;
 
 public class ActivityMainAlbumItemAdapter extends RecyclerView.Adapter<ActivityMainAlbumItemAdapter.ActivityMainAlbumItemAdapterViewHolder> {

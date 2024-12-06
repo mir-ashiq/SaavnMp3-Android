@@ -4,13 +4,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
-import com.harsh.shah.saavnmp3.modals.apimodel.GlobalSearchModel;
-import com.harsh.shah.saavnmp3.network.RequestNetwork;
-import com.harsh.shah.saavnmp3.network.RequestNetworkController;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.harsh.shah.saavnmp3.model.api.SongResponse;
+import com.harsh.shah.saavnmp3.network.utility.RequestNetwork;
+import com.harsh.shah.saavnmp3.network.utility.RequestNetworkController;
+import com.harsh.shah.saavnmp3.records.GlobalSearch;
 
 import java.util.HashMap;
 
@@ -26,21 +26,24 @@ public class testFetchSongs {
     public void searchSongs(String text){
         RequestNetwork requestNetwork = new RequestNetwork((Activity) mContext);
         HashMap<String, Object> data = new HashMap<>();
-        data.put("query",text);
+        data.put("query", text);
         requestNetwork.setParams(data, RequestNetworkController.REQUEST_PARAM);
         requestNetwork.startRequestNetwork(RequestNetworkController.GET, "https://saavn.dev/api/search", "", new RequestNetwork.RequestListener() {
             @Override
             public void onResponse(String tag, String response, HashMap<String, Object> responseHeaders) {
-                GlobalSearchModel globalSearchModel = new Gson().fromJson(response, GlobalSearchModel.class);
-                Log.i(TAG, "onResponse: " + response);
+
+                //GlobalSearch globalSearch = new Gson().fromJson(response, GlobalSearch.class);
                 try {
-                    JSONObject data = new JSONObject(response);
-                    Log.i(TAG, "onResponse: " + data.getJSONObject("data").getJSONObject("songs").getJSONArray("results").getJSONObject(0).get("id"));
-                } catch (JSONException e) {
+                    GlobalSearch globalSearch = new ObjectMapper().readValue(response, GlobalSearch.class);
+                    if(globalSearch.success())
+                        Log.i(TAG, "onResponse: " + globalSearch.data().get(0).topQuery().results().get(0).title());
+
+                    Log.i(TAG, "onResponse: " + globalSearch.data().get(0).topQuery());
+
+                } catch (JsonProcessingException e) {
                     Log.e(TAG, "onResponse: ", e);
                 }
-                if(globalSearchModel.isSuccess())
-                    Log.i(TAG, "onResponse: " + globalSearchModel.getData().getSongs().getResults().get(0).getSongIds());
+
             }
 
             @Override
@@ -49,4 +52,5 @@ public class testFetchSongs {
             }
         });
     }
+
 }

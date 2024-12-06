@@ -1,19 +1,15 @@
 package com.harsh.shah.saavnmp3.adapters;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.harsh.shah.saavnmp3.R;
 import com.harsh.shah.saavnmp3.activities.ListActivity;
-import com.harsh.shah.saavnmp3.modals.AlbumItem;
 
-import java.util.HashMap;
 import java.util.List;
 
 public class ActivityMainArtistsItemAdapter extends RecyclerView.Adapter<ActivityMainArtistsItemAdapter.ActivityMainArtistsItemAdapterViewHolder> {

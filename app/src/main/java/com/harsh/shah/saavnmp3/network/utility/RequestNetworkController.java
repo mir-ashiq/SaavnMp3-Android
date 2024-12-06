@@ -1,4 +1,4 @@
-package com.harsh.shah.saavnmp3.network;
+package com.harsh.shah.saavnmp3.network.utility;
 
 import com.google.gson.Gson;
 

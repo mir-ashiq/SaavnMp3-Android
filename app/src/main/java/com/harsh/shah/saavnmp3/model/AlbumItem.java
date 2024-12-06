@@ -1,4 +1,4 @@
-package com.harsh.shah.saavnmp3.modals;
+package com.harsh.shah.saavnmp3.model;
 
 public class AlbumItem {
 
