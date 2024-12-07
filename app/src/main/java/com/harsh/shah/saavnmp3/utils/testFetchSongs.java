@@ -7,7 +7,6 @@ import android.util.Log;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
-import com.harsh.shah.saavnmp3.model.api.SongResponse;
 import com.harsh.shah.saavnmp3.network.utility.RequestNetwork;
 import com.harsh.shah.saavnmp3.network.utility.RequestNetworkController;
 import com.harsh.shah.saavnmp3.records.GlobalSearch;
@@ -32,15 +31,15 @@ public class testFetchSongs {
             @Override
             public void onResponse(String tag, String response, HashMap<String, Object> responseHeaders) {
 
-                //GlobalSearch globalSearch = new Gson().fromJson(response, GlobalSearch.class);
+                GlobalSearch globalSearch = new Gson().fromJson(response, GlobalSearch.class);
                 try {
-                    GlobalSearch globalSearch = new ObjectMapper().readValue(response, GlobalSearch.class);
+                    //GlobalSearch globalSearch = new ObjectMapper().readValue(response, GlobalSearch.class);
                     if(globalSearch.success())
-                        Log.i(TAG, "onResponse: " + globalSearch.data().get(0).topQuery().results().get(0).title());
+                        Log.i(TAG, "onResponse: " + globalSearch.data().topQuery().results().get(0).title());
 
-                    Log.i(TAG, "onResponse: " + globalSearch.data().get(0).topQuery());
+                    Log.i(TAG, "onResponse: " + globalSearch.data().topQuery());
 
-                } catch (JsonProcessingException e) {
+                } catch (Exception  e) {
                     Log.e(TAG, "onResponse: ", e);
                 }
 
