@@ -1,10 +1,8 @@
 package com.harsh.shah.saavnmp3.network;
 
 import android.app.Activity;
-import android.content.Context;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.harsh.shah.saavnmp3.network.utility.RequestNetwork;
 import com.harsh.shah.saavnmp3.network.utility.RequestNetworkController;

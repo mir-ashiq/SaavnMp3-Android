@@ -13,6 +13,7 @@ import com.harsh.shah.saavnmp3.adapters.ActivityMainArtistsItemAdapter;
 import com.harsh.shah.saavnmp3.adapters.ActivityMainPlaylistAdapter;
 import com.harsh.shah.saavnmp3.databinding.ActivityMainBinding;
 import com.harsh.shah.saavnmp3.model.AlbumItem;
+import com.harsh.shah.saavnmp3.records.ArtistSearch;
 import com.harsh.shah.saavnmp3.utils.testFetchSongs;
 
 import java.util.ArrayList;
