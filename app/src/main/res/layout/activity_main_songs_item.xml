@@ -30,6 +30,7 @@
             app:strokeWidth="0dp">
 
             <ImageView
+                android:id="@+id/coverImage"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/textSec"
@@ -41,6 +42,7 @@
             android:id="@+id/albumTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:maxWidth="@dimen/_80sdp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="1dp"
             android:fontFamily="@font/avenir_next_regular"
@@ -51,17 +53,24 @@
             app:layout_constraintBottom_toTopOf="@+id/albumSubTitle"
             app:layout_constraintEnd_toEndOf="@+id/cardView"
             app:layout_constraintStart_toStartOf="@+id/cardView"
-            app:layout_constraintTop_toBottomOf="@+id/cardView" />
+            app:layout_constraintTop_toBottomOf="@+id/cardView"
+            android:scrollHorizontally="true"
+            android:ellipsize="marquee"
+            android:singleLine="true"/>
 
         <TextView
             android:id="@+id/albumSubTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:maxWidth="@dimen/_90sdp"
             android:gravity="center"
             android:text="Album Description"
             android:fontFamily="@font/avenir_next_light"
             android:textColor="@color/textSec"
             android:textSize="@dimen/_11ssp"
+            android:scrollHorizontally="true"
+            android:ellipsize="marquee"
+            android:singleLine="true"
             app:layout_constraintEnd_toEndOf="@+id/albumTitle"
             app:layout_constraintStart_toStartOf="@+id/albumTitle"
             app:layout_constraintTop_toBottomOf="@+id/albumTitle" />

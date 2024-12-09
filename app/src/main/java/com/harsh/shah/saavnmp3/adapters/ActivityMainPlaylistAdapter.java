@@ -1,19 +1,28 @@
 package com.harsh.shah.saavnmp3.adapters;
 
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.harsh.shah.saavnmp3.R;
+import com.harsh.shah.saavnmp3.model.AlbumItem;
+import com.squareup.picasso.Picasso;
+
+import java.util.List;
 
 public class ActivityMainPlaylistAdapter extends RecyclerView.Adapter<ActivityMainPlaylistAdapter.PlaylistAdapterViewHolder> {
 
-    public ActivityMainPlaylistAdapter() {
+    private final List<AlbumItem> data;
 
+    public ActivityMainPlaylistAdapter(List<AlbumItem> data) {
+        this.data = data;
     }
 
     @NonNull
@@ -26,12 +35,14 @@ public class ActivityMainPlaylistAdapter extends RecyclerView.Adapter<ActivityMa
 
     @Override
     public int getItemCount() {
-        return 10;
+        return data.size();
     }
 
     @Override
     public void onBindViewHolder(@NonNull PlaylistAdapterViewHolder holder, int position) {
-
+        ((TextView) holder.itemView.findViewById(R.id.title)).setText(data.get(position).getalbumTitle());
+        ImageView imageView = holder.itemView.findViewById(R.id.imageView);
+        Picasso.get().load(Uri.parse(data.get(position).getAlbumCover())).into(imageView);
     }
 
     static class PlaylistAdapterViewHolder extends RecyclerView.ViewHolder {

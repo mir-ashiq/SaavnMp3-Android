@@ -3,25 +3,41 @@ package com.harsh.shah.saavnmp3.activities;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.google.gson.Gson;
 import com.harsh.shah.saavnmp3.adapters.ActivityMainAlbumItemAdapter;
 import com.harsh.shah.saavnmp3.adapters.ActivityMainArtistsItemAdapter;
 import com.harsh.shah.saavnmp3.adapters.ActivityMainPlaylistAdapter;
 import com.harsh.shah.saavnmp3.databinding.ActivityMainBinding;
 import com.harsh.shah.saavnmp3.model.AlbumItem;
-import com.harsh.shah.saavnmp3.records.ArtistSearch;
-import com.harsh.shah.saavnmp3.utils.testFetchSongs;
+import com.harsh.shah.saavnmp3.model.ArtistItem;
+import com.harsh.shah.saavnmp3.network.ApiManager;
+import com.harsh.shah.saavnmp3.network.utility.RequestNetwork;
+import com.harsh.shah.saavnmp3.records.AlbumsSearch;
+import com.harsh.shah.saavnmp3.records.ArtistsSearch;
+import com.harsh.shah.saavnmp3.records.PlaylistsSearch;
+import com.harsh.shah.saavnmp3.records.SongSearch;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    private final String TAG = "MainActivity";
     ActivityMainBinding binding;
+
+    public static int calculateNoOfColumns(Context context, float columnWidthDp) { // For example columnWidthDp=180
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        float screenWidthDp = displayMetrics.widthPixels / displayMetrics.density;
+        return (int) (screenWidthDp / columnWidthDp + 0.5); // +0.5 for correct rounding to int.
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,47 +46,95 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         int span = calculateNoOfColumns(this, 200);
-        binding.playlistRecyclerView.setLayoutManager(new GridLayoutManager(this,span));
-        binding.playlistRecyclerView.setAdapter(new ActivityMainPlaylistAdapter());
+        binding.playlistRecyclerView.setLayoutManager(new GridLayoutManager(this, span));
 
         binding.popularSongsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         binding.popularArtistsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         binding.popularAlbumsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        List<AlbumItem> data = new ArrayList<>();
-        data.add(new AlbumItem("Album 1", "Sub Title 1", ""));
-        data.add(new AlbumItem("Album 2", "Sub Title 2", ""));
-        data.add(new AlbumItem("Album 3", "Sub Title 3", ""));
-        data.add(new AlbumItem("Album 4", "Sub Title 4", ""));
-        data.add(new AlbumItem("Album 5", "Sub Title 5", ""));
-        data.add(new AlbumItem("Album 6", "Sub Title 6", ""));
-        data.add(new AlbumItem("Album 7", "Sub Title 7", ""));
-        data.add(new AlbumItem("Album 8", "Sub Title 8", ""));
-        data.add(new AlbumItem("Album 9", "Sub Title 9", ""));
-        data.add(new AlbumItem("Album 10", "Sub Title 10", ""));
-        binding.popularSongsRecyclerView.setAdapter(new ActivityMainAlbumItemAdapter(data));
-        binding.popularAlbumsRecyclerView.setAdapter(new ActivityMainAlbumItemAdapter(data));
 
-        List<String> str_data = new ArrayList<>();
-        str_data.add("Artist 1");
-        str_data.add("Artist 2");
-        str_data.add("Artist 3");
-        str_data.add("Artist 4");
-        str_data.add("Artist 5");
-        str_data.add("Artist 6");
-        str_data.add("Artist 7");
-        str_data.add("Artist 8");
-        str_data.add("Artist 9");
-        str_data.add("Artist 10");
-        binding.popularArtistsRecyclerView.setAdapter(new ActivityMainArtistsItemAdapter(str_data));
+        final List<AlbumItem> songs = new ArrayList<>();
+        final List<ArtistItem> artists = new ArrayList<>();
+        final List<AlbumItem> albums = new ArrayList<>();
+        final List<AlbumItem> playlists = new ArrayList<>();
 
-        new testFetchSongs(this).searchSongs("Hindi Songs");
+        final ApiManager apiManager = new ApiManager(this);
 
-    }
+        apiManager.searchSongs(" ", 0, 10, new RequestNetwork.RequestListener() {
+            @Override
+            public void onResponse(String tag, String response, HashMap<String, Object> responseHeaders) {
+                SongSearch songSearch = new Gson().fromJson(response, SongSearch.class);
+                Log.i(TAG, "onResponse: " + response);
+                if (songSearch.success()) {
+                    songSearch.data().results().forEach(results -> {
+                        songs.add(new AlbumItem(results.name(), results.language() + " " + results.year(), results.image().get(results.image().size() - 1).url()));
+                        binding.popularSongsRecyclerView.setAdapter(new ActivityMainAlbumItemAdapter(songs));
+                    });
+                }
+            }
 
-    public static int calculateNoOfColumns(Context context, float columnWidthDp) { // For example columnWidthDp=180
-        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-        float screenWidthDp = displayMetrics.widthPixels / displayMetrics.density;
-        return  (int) (screenWidthDp / columnWidthDp + 0.5); // +0.5 for correct rounding to int.
+            @Override
+            public void onErrorResponse(String tag, String message) {
+
+            }
+        });
+
+        apiManager.searchArtists(" ", 0, 15, new RequestNetwork.RequestListener() {
+            @Override
+            public void onResponse(String tag, String response, HashMap<String, Object> responseHeaders) {
+                ArtistsSearch artistSearch = new Gson().fromJson(response, ArtistsSearch.class);
+                Log.i(TAG, "onResponse: " + response);
+                if (artistSearch.success()) {
+                    artistSearch.data().results().forEach(results -> {
+                        artists.add(new ArtistItem(results.name(), results.image().get(results.image().size() - 1).url()));
+                        binding.popularArtistsRecyclerView.setAdapter(new ActivityMainArtistsItemAdapter(artists));
+                    });
+                }
+            }
+
+            @Override
+            public void onErrorResponse(String tag, String message) {
+
+            }
+        });
+
+        apiManager.searchAlbums(" ", 0, 15, new RequestNetwork.RequestListener() {
+            @Override
+            public void onResponse(String tag, String response, HashMap<String, Object> responseHeaders) {
+                AlbumsSearch albumsSearch = new Gson().fromJson(response, AlbumsSearch.class);
+                Log.i(TAG, "onResponse: " + response);
+                if (albumsSearch.success()) {
+                    albumsSearch.data().results().forEach(results -> {
+                        albums.add(new AlbumItem(results.name(), results.language() + " " + results.year(), results.image().get(results.image().size() - 1).url()));
+                        binding.popularAlbumsRecyclerView.setAdapter(new ActivityMainAlbumItemAdapter(albums));
+                    });
+                }
+            }
+
+            @Override
+            public void onErrorResponse(String tag, String message) {
+
+            }
+        });
+
+        apiManager.searchPlaylists(String.valueOf(Calendar.getInstance().get(Calendar.YEAR)), 0, 15, new RequestNetwork.RequestListener() {
+            @Override
+            public void onResponse(String tag, String response, HashMap<String, Object> responseHeaders) {
+                PlaylistsSearch playlistsSearch = new Gson().fromJson(response, PlaylistsSearch.class);
+                Log.i(TAG, "onResponse: " + response);
+                if (playlistsSearch.success()) {
+                    playlistsSearch.data().results().forEach(results -> {
+                        playlists.add(new AlbumItem(results.name(), "", results.image().get(results.image().size() - 1).url()));
+                        binding.playlistRecyclerView.setAdapter(new ActivityMainPlaylistAdapter(playlists));
+                    });
+                }
+            }
+
+            @Override
+            public void onErrorResponse(String tag, String message) {
+
+            }
+        });
+
     }
 
 }

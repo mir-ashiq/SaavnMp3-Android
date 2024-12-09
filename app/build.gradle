@@ -52,4 +52,5 @@ dependencies {
     implementation libs.gson
     implementation libs.okhttp
     //implementation libs.jackson.databind
+    implementation libs.picasso
 }

@@ -20,6 +20,7 @@ public record ArtistsSearch(
                 @SerializedName("type") String type,
                 @SerializedName("url") String url,
                 @SerializedName("image") List<GlobalSearch.Image> image
-        ){}
+        ) {
+        }
     }
 }

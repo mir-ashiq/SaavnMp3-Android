@@ -99,12 +99,12 @@
             android:id="@+id/description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ellipsize="marquee"
-            android:singleLine="true"
             android:text="A long song artists name here and also the song adapted from details."
             android:textColor="@color/textSec"
             android:gravity="center"
-            android:scrollHorizontally="true"/>
+            android:scrollHorizontally="true"
+            android:ellipsize="marquee"
+            android:singleLine="true"/>
 
         <View
             android:layout_width="1dp"
