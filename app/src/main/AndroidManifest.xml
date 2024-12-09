@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -14,6 +14,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SaavnMp3"
         tools:targetApi="31">
+        <activity
+            android:name=".activities.ArtistProfileActivity"
+            android:exported="false"
+            android:theme="@style/CustomTheme" />
         <activity
             android:name=".activities.MusicOverviewActivity"
             android:exported="false" />
@@ -28,7 +32,7 @@
         </activity>
         <activity
             android:name=".activities.ListActivity"
-            android:exported="true"></activity>
+            android:exported="true" />
     </application>
 
 </manifest>

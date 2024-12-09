@@ -1,6 +1,7 @@
 package com.harsh.shah.saavnmp3.activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -51,6 +52,11 @@ public class MainActivity extends AppCompatActivity {
         binding.popularSongsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         binding.popularArtistsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         binding.popularAlbumsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+
+
+        startActivity(new Intent(this, ArtistProfileActivity.class));
+        finish();
+
 
         final List<AlbumItem> songs = new ArrayList<>();
         final List<ArtistItem> artists = new ArrayList<>();
