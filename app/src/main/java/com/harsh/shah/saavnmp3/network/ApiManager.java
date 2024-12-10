@@ -16,10 +16,10 @@ public class ApiManager {
     private static final String ALBUMS = "/albums";
     private static final String ARTISTS = "/artists";
     private static final String PLAYLISTS = "/playlists";
-    private static final String SONGS_URL = BASE_URL + SONGS;
-    private static final String ALBUMS_URL = BASE_URL + ALBUMS;
-    private static final String ARTISTS_URL = BASE_URL + ARTISTS;
-    private static final String PLAYLISTS_URL = BASE_URL + PLAYLISTS;
+    private static final String SONGS_URL = BASE_URL + "songs";
+    private static final String ALBUMS_URL = BASE_URL + "albums";
+    private static final String ARTISTS_URL = BASE_URL + "artists";
+    private static final String PLAYLISTS_URL = BASE_URL + "playlists";
 
     private final RequestNetwork requestNetwork;
 

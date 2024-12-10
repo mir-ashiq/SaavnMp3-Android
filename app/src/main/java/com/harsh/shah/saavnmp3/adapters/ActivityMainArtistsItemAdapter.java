@@ -1,5 +1,6 @@
 package com.harsh.shah.saavnmp3.adapters;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.harsh.shah.saavnmp3.R;
+import com.harsh.shah.saavnmp3.activities.ArtistProfileActivity;
 import com.harsh.shah.saavnmp3.model.ArtistItem;
 import com.squareup.picasso.Picasso;
 
@@ -37,6 +39,10 @@ public class ActivityMainArtistsItemAdapter extends RecyclerView.Adapter<Activit
         ((TextView) holder.itemView.findViewById(R.id.artist_name)).setText(data.get(position).name());
         ImageView imageView = holder.itemView.findViewById(R.id.artist_img);
         Picasso.get().load(Uri.parse(data.get(position).image())).into(imageView);
+
+        holder.itemView.setOnClickListener(v -> {
+            v.getContext().startActivity(new Intent(v.getContext(), ArtistProfileActivity.class).putExtra("artist_id", data.get(position).id()));
+        });
     }
 
     @Override
