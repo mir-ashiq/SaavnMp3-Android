@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.i(TAG, "onResponse: " + response);
                 if (songSearch.success()) {
                     songSearch.data().results().forEach(results -> {
-                        songs.add(new AlbumItem(results.name(), results.language() + " " + results.year(), results.image().get(results.image().size() - 1).url()));
+                        songs.add(new AlbumItem(results.name(), results.language() + " " + results.year(), results.image().get(results.image().size() - 1).url(), results.id()));
                         binding.popularSongsRecyclerView.setAdapter(new ActivityMainAlbumItemAdapter(songs));
                     });
                 }
@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.i(TAG, "onResponse: " + response);
                 if (albumsSearch.success()) {
                     albumsSearch.data().results().forEach(results -> {
-                        albums.add(new AlbumItem(results.name(), results.language() + " " + results.year(), results.image().get(results.image().size() - 1).url()));
+                        albums.add(new AlbumItem(results.name(), results.language() + " " + results.year(), results.image().get(results.image().size() - 1).url(), results.id()));
                         binding.popularAlbumsRecyclerView.setAdapter(new ActivityMainAlbumItemAdapter(albums));
                     });
                 }
@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.i(TAG, "onResponse: " + response);
                 if (playlistsSearch.success()) {
                     playlistsSearch.data().results().forEach(results -> {
-                        playlists.add(new AlbumItem(results.name(), "", results.image().get(results.image().size() - 1).url()));
+                        playlists.add(new AlbumItem(results.name(), "", results.image().get(results.image().size() - 1).url(), results.id()));
                         binding.playlistRecyclerView.setAdapter(new ActivityMainPlaylistAdapter(playlists));
                     });
                 }

@@ -42,9 +42,9 @@ public class ActivityMainPlaylistAdapter extends RecyclerView.Adapter<ActivityMa
 
     @Override
     public void onBindViewHolder(@NonNull PlaylistAdapterViewHolder holder, int position) {
-        ((TextView) holder.itemView.findViewById(R.id.title)).setText(data.get(position).getalbumTitle());
+        ((TextView) holder.itemView.findViewById(R.id.title)).setText(data.get(position).albumTitle());
         ImageView imageView = holder.itemView.findViewById(R.id.imageView);
-        Picasso.get().load(Uri.parse(data.get(position).getAlbumCover())).into(imageView);
+        Picasso.get().load(Uri.parse(data.get(position).albumCover())).into(imageView);
 
         holder.itemView.setOnClickListener(v -> {
             v.getContext().startActivity(new Intent(v.getContext(), ListActivity.class));

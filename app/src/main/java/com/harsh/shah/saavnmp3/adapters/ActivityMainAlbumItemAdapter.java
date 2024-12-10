@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.harsh.shah.saavnmp3.R;
-import com.harsh.shah.saavnmp3.activities.ListActivity;
 import com.harsh.shah.saavnmp3.activities.MusicOverviewActivity;
 import com.harsh.shah.saavnmp3.model.AlbumItem;
 import com.squareup.picasso.Picasso;
@@ -36,21 +35,17 @@ public class ActivityMainAlbumItemAdapter extends RecyclerView.Adapter<ActivityM
 
     @Override
     public void onBindViewHolder(@NonNull ActivityMainAlbumItemAdapterViewHolder holder, int position) {
-        ((TextView) holder.itemView.findViewById(R.id.albumTitle)).setText(data.get(position).getalbumTitle());
-        ((TextView) holder.itemView.findViewById(R.id.albumSubTitle)).setText(data.get(position).getAlbumSubTitle());
+        ((TextView) holder.itemView.findViewById(R.id.albumTitle)).setText(data.get(position).albumTitle());
+        ((TextView) holder.itemView.findViewById(R.id.albumSubTitle)).setText(data.get(position).albumSubTitle());
 
         holder.itemView.findViewById(R.id.albumTitle).setSelected(true);
         holder.itemView.findViewById(R.id.albumSubTitle).setSelected(true);
-
-        holder.itemView.setOnClickListener(view -> {
-            holder.itemView.getContext().startActivity(new Intent(holder.itemView.getContext(), MusicOverviewActivity.class));
-        });
-
+        
         ImageView coverImage = holder.itemView.findViewById(R.id.coverImage);
-        Picasso.get().load(Uri.parse(data.get(position).albumCover)).into(coverImage);
+        Picasso.get().load(Uri.parse(data.get(position).albumCover())).into(coverImage);
 
         holder.itemView.setOnClickListener(v -> {
-            v.getContext().startActivity(new Intent(v.getContext(), ListActivity.class));
+            v.getContext().startActivity(new Intent(v.getContext(), MusicOverviewActivity.class).putExtra("id", data.get(position).id()));
         });
     }
 

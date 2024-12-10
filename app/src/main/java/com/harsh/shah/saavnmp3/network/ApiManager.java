@@ -84,7 +84,7 @@ public class ApiManager {
         requestNetwork.startRequestNetwork(RequestNetworkController.GET, SONGS_URL, "", listener);
     }
 
-    public void retrieveSongByIdi(@NonNull String id, Boolean lyrics, RequestNetwork.RequestListener listener) {
+    public void retrieveSongById(@NonNull String id, Boolean lyrics, RequestNetwork.RequestListener listener) {
         HashMap<String, Object> queryMap = new HashMap<>();
         queryMap.put("lyrics", lyrics);
         requestNetwork.setParams(queryMap, RequestNetworkController.REQUEST_PARAM);
