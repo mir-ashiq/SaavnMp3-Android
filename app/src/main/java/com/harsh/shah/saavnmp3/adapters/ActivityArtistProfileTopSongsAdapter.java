@@ -1,5 +1,6 @@
 package com.harsh.shah.saavnmp3.adapters;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.harsh.shah.saavnmp3.R;
+import com.harsh.shah.saavnmp3.activities.MusicOverviewActivity;
 import com.harsh.shah.saavnmp3.records.SongResponse;
 import com.squareup.picasso.Picasso;
 
@@ -51,6 +53,10 @@ public class ActivityArtistProfileTopSongsAdapter extends RecyclerView.Adapter<A
                 String.format("%s | %s", data.get(position).year(), data.get(position).label())
         );
         Picasso.get().load(Uri.parse(data.get(position).image().get(data.get(position).image().size() - 1).url())).into(coverImage);
+
+        holder.itemView.setOnClickListener(view -> {
+            view.getContext().startActivity(new Intent(view.getContext(), MusicOverviewActivity.class).putExtra("id", data.get(position).id()));
+        });
     }
 
     @Override

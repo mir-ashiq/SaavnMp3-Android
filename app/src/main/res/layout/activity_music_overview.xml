@@ -93,7 +93,7 @@
             android:gravity="center"
             android:scrollHorizontally="true"
             android:singleLine="true"
-            android:text="A long song name here"
+            android:text="loading..."
             android:textSize="@dimen/_30ssp" />
 
         <TextView
@@ -104,7 +104,7 @@
             android:gravity="center"
             android:scrollHorizontally="true"
             android:singleLine="true"
-            android:text="A long song artists name here and also the song adapted from details."
+            android:text="loading......."
             android:textColor="@color/textSec" />
 
         <View

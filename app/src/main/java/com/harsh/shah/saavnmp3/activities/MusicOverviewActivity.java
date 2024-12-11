@@ -1,34 +1,57 @@
 package com.harsh.shah.saavnmp3.activities;
 
+import static com.harsh.shah.saavnmp3.ApplicationClass.mediaPlayerUtil;
+
 import android.annotation.SuppressLint;
-import android.media.MediaPlayer;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
+import android.support.v4.media.session.MediaSessionCompat;
 import android.util.Log;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.media.app.NotificationCompat;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.gson.Gson;
+import com.harsh.shah.saavnmp3.ApplicationClass;
 import com.harsh.shah.saavnmp3.R;
 import com.harsh.shah.saavnmp3.databinding.ActivityMusicOverviewBinding;
 import com.harsh.shah.saavnmp3.network.ApiManager;
 import com.harsh.shah.saavnmp3.network.utility.RequestNetwork;
 import com.harsh.shah.saavnmp3.records.SongResponse;
+import com.harsh.shah.saavnmp3.services.ActionPlaying;
+import com.harsh.shah.saavnmp3.services.MusicService;
+import com.harsh.shah.saavnmp3.services.NotificationReceiver;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
-public class MusicOverviewActivity extends AppCompatActivity {
+public class MusicOverviewActivity extends AppCompatActivity implements ActionPlaying, ServiceConnection {
 
     private final String TAG = "MusicOverviewActivity";
-    private final MediaPlayer mediaPlayer = new MediaPlayer();
+    //private final MediaPlayer mediaPlayer = new MediaPlayer();
     private final Handler handler = new Handler();
     ActivityMusicOverviewBinding binding;
     private String SONG_URL = "";
+    private String IMAGE_URL = "";
+    MusicService musicService;
+    MediaSessionCompat mediaSession;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -37,33 +60,27 @@ public class MusicOverviewActivity extends AppCompatActivity {
         binding = ActivityMusicOverviewBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        mediaSession = new MediaSessionCompat(this, "MainActivity");
+
         binding.title.setSelected(true);
         binding.description.setSelected(true);
 
         binding.playPauseImage.setOnClickListener(view -> {
-            if (mediaPlayer.isPlaying()) {
-                handler.removeCallbacks(runnable);
-                mediaPlayer.pause();
-                binding.playPauseImage.setImageResource(com.harsh.shah.saavnmp3.R.drawable.play_arrow_24px);
-            } else {
-                mediaPlayer.start();
-                binding.playPauseImage.setImageResource(R.drawable.baseline_pause_24);
-                updateSeekbar();
-            }
+            playClicked();
         });
 
         binding.seekbar.setMax(100);
 
-        mediaPlayer.setOnBufferingUpdateListener((mediaPlayer, i) -> binding.seekbar.setSecondaryProgress(i));
+        mediaPlayerUtil.setOnBufferingUpdateListener((mediaPlayer, i) -> binding.seekbar.setSecondaryProgress(i));
 
         binding.seekbar.setOnTouchListener((v, event) -> {
-            int playPosition = (mediaPlayer.getDuration() / 100) * binding.seekbar.getProgress();
-            mediaPlayer.seekTo(playPosition);
-            binding.elapsedDuration.setText(convertDuration(mediaPlayer.getCurrentPosition()));
+            int playPosition = (mediaPlayerUtil.getDuration() / 100) * binding.seekbar.getProgress();
+            mediaPlayerUtil.seekTo(playPosition);
+            binding.elapsedDuration.setText(convertDuration(mediaPlayerUtil.getCurrentPosition()));
             return false;
         });
 
-        mediaPlayer.setOnCompletionListener(mediaPlayer -> {
+        mediaPlayerUtil.setOnCompletionListener(mediaPlayer -> {
             binding.seekbar.setProgress(0);
             binding.elapsedDuration.setText("00:00");
             binding.playPauseImage.setImageResource(R.drawable.play_arrow_24px);
@@ -73,6 +90,34 @@ public class MusicOverviewActivity extends AppCompatActivity {
 
         showData();
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Intent intent = new Intent(this, MusicService.class);
+        bindService(intent, this, BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unbindService(this);
+    }
+
+    @Override
+    public void onServiceConnected(ComponentName name, IBinder service) {
+        MusicService.MyBinder binder = (MusicService.MyBinder) service;
+        musicService = binder.getService();
+        musicService.setCallback(MusicOverviewActivity.this);
+        Log.e(TAG, "onServiceConnected: ");
+    }
+
+    @Override
+    public void onServiceDisconnected(ComponentName name) {
+        Log.e(TAG, "onServiceDisconnected: ");
+        musicService = null;
+    }
+
 
     void showData() {
         if (getIntent().getExtras() == null) return;
@@ -90,12 +135,14 @@ public class MusicOverviewActivity extends AppCompatActivity {
                                     songResponse.data().get(0).copyright())
                     );
                     List<SongResponse.Image> image = songResponse.data().get(0).image();
+                    IMAGE_URL = image.get(image.size() - 1).url();
                     Picasso.get().load(Uri.parse(image.get(image.size() - 1).url())).into(binding.coverImage);
                     List<SongResponse.DownloadUrl> downloadUrls = songResponse.data().get(0).downloadUrl();
 
                     Log.i(TAG, "onResponse: " + downloadUrls.get(downloadUrls.size() - 1).url());
                     SONG_URL = downloadUrls.get(downloadUrls.size() - 1).url();
                     prepareMediaPLayer();
+                    //mediaPlayerUtil.playSong(binding.title.getText().toString(), binding.description.getText().toString(), SONG_URL, image.get(image.size() - 1).url());
 
                 } else
                     finish();
@@ -139,9 +186,14 @@ public class MusicOverviewActivity extends AppCompatActivity {
 
     void prepareMediaPLayer() {
         try {
-            mediaPlayer.setDataSource(SONG_URL);
-            mediaPlayer.prepare();
-            binding.totalDuration.setText(convertDuration(mediaPlayer.getDuration()));
+            try {
+                mediaPlayerUtil.reset();
+            } catch (Exception ignored) {
+            }
+            mediaPlayerUtil.setDataSource(SONG_URL);
+            mediaPlayerUtil.prepare();
+            binding.totalDuration.setText(convertDuration(mediaPlayerUtil.getDuration()));
+            playClicked();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -151,13 +203,97 @@ public class MusicOverviewActivity extends AppCompatActivity {
     private final Runnable runnable = this::updateSeekbar;
 
     void updateSeekbar() {
-        if (mediaPlayer.isPlaying()) {
-            binding.seekbar.setProgress((int) (((float) mediaPlayer.getCurrentPosition() / mediaPlayer.getDuration()) * 100));
-            long currentDuration = mediaPlayer.getCurrentPosition();
+        if (mediaPlayerUtil.isPlaying()) {
+            binding.seekbar.setProgress((int) (((float) mediaPlayerUtil.getCurrentPosition() / mediaPlayerUtil.getDuration()) * 100));
+            long currentDuration = mediaPlayerUtil.getCurrentPosition();
             binding.elapsedDuration.setText(convertDuration(currentDuration));
             handler.postDelayed(runnable, 1000);
         }
     }
 
+
+    @Override
+    public void nextClicked() {
+        if (mediaPlayerUtil.isPlaying())
+            showNotification(R.drawable.baseline_pause_24);
+        else
+            showNotification(R.drawable.play_arrow_24px);
+    }
+
+    @Override
+    public void prevClicked() {
+        if (mediaPlayerUtil.isPlaying())
+            showNotification(R.drawable.baseline_pause_24);
+        else
+            showNotification(R.drawable.play_arrow_24px);
+    }
+
+    @Override
+    public void playClicked() {
+        if (mediaPlayerUtil.isPlaying()) {
+            handler.removeCallbacks(runnable);
+            mediaPlayerUtil.pause();
+            binding.playPauseImage.setImageResource(com.harsh.shah.saavnmp3.R.drawable.play_arrow_24px);
+        } else {
+            mediaPlayerUtil.start();
+            binding.playPauseImage.setImageResource(R.drawable.baseline_pause_24);
+            updateSeekbar();
+        }
+
+        if (mediaPlayerUtil.isPlaying()) {
+            showNotification(R.drawable.baseline_pause_24);
+        } else {
+            showNotification(R.drawable.play_arrow_24px);
+        }
+
+    }
+
+    public void showNotification(int playPauseButton) {
+
+        Intent intent = new Intent(this, MainActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+        Intent prevIntent = new Intent(this, NotificationReceiver.class).setAction(ApplicationClass.ACTION_PREV);
+        PendingIntent prevPendingIntent = PendingIntent.getBroadcast(this, 0, prevIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Intent playIntent = new Intent(this, NotificationReceiver.class).setAction(ApplicationClass.ACTION_PLAY);
+        PendingIntent playPendingIntent = PendingIntent.getBroadcast(this, 0, playIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Intent nextIntent = new Intent(this, NotificationReceiver.class).setAction(ApplicationClass.ACTION_NEXT);
+        PendingIntent nextPendingIntent = PendingIntent.getBroadcast(this, 0, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+
+        Glide.with(this)
+                .asBitmap()
+                .load(IMAGE_URL) // Replace with your URL string
+                .into(new CustomTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(@NonNull Bitmap resource, Transition<? super Bitmap> transition) {
+                        Notification notification = new androidx.core.app.NotificationCompat.Builder(MusicOverviewActivity.this, ApplicationClass.CHANNEL_ID_2)
+                                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                                .setLargeIcon(resource)
+                                .setContentTitle(binding.title.getText())
+                                .setContentText(binding.description.getText())
+                                .addAction(R.drawable.skip_previous_24px, "prev", prevPendingIntent)
+                                .addAction(playPauseButton, "play", playPendingIntent)
+                                .addAction(R.drawable.skip_next_24px, "next", nextPendingIntent)
+                                .setStyle(new NotificationCompat.MediaStyle().setMediaSession(mediaSession.getSessionToken()))
+                                .setPriority(Notification.PRIORITY_LOW)
+                                .setContentIntent(contentIntent)
+                                .setOnlyAlertOnce(true)
+                                .build();
+
+                        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                        notificationManager.notify(0, notification);
+
+
+                    }
+
+                    @Override
+                    public void onLoadCleared(Drawable placeholder) {
+                        // Handle placeholder if needed
+                    }
+                });
+    }
 
 }

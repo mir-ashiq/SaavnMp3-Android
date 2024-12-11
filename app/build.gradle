@@ -55,4 +55,10 @@ dependencies {
     implementation libs.picasso
     implementation libs.shimmer
     implementation libs.swiperefreshlayout
+    // MediaSessionCompat and related media classes
+    implementation 'androidx.media:media:1.7.0'
+
+    // For Glide (image loading library for album art, if you're using it)
+    implementation 'com.github.bumptech.glide:glide:4.16.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
 }
