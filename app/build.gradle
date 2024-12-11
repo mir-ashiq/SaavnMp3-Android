@@ -54,4 +54,5 @@ dependencies {
     //implementation libs.jackson.databind
     implementation libs.picasso
     implementation libs.shimmer
+    implementation libs.swiperefreshlayout
 }

@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.gson.Gson;
 import com.harsh.shah.saavnmp3.R;
 import com.harsh.shah.saavnmp3.activities.ArtistProfileActivity;
@@ -29,13 +30,18 @@ public class ActivityMainArtistsItemAdapter extends RecyclerView.Adapter<Activit
     @NonNull
     @Override
     public ActivityMainArtistsItemAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View _v = View.inflate(parent.getContext(), R.layout.activity_main_artists_item, null);
+        View _v = View.inflate(parent.getContext(), viewType == 0 ? R.layout.activity_main_artists_item : R.layout.artists_item_shimmer, null);
         _v.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         return new ActivityMainArtistsItemAdapterViewHolder(_v);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ActivityMainArtistsItemAdapterViewHolder holder, int position) {
+        if (getItemViewType(position) == 1) {
+            ((ShimmerFrameLayout) holder.itemView.findViewById(R.id.shimmer)).startShimmer();
+            return;
+        }
+
         holder.itemView.findViewById(R.id.artist_name).setSelected(true);
         ((TextView) holder.itemView.findViewById(R.id.artist_name)).setText(data.get(position).name());
         ImageView imageView = holder.itemView.findViewById(R.id.artist_img);
@@ -49,6 +55,14 @@ public class ActivityMainArtistsItemAdapter extends RecyclerView.Adapter<Activit
     @Override
     public int getItemCount() {
         return data.size();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (data.get(position).id().equals("<shimmer>"))
+            return 1;
+        else
+            return 0;
     }
 
     public static class ActivityMainArtistsItemAdapterViewHolder extends RecyclerView.ViewHolder {

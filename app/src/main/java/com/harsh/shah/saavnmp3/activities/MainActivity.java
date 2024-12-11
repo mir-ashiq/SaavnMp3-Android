@@ -35,6 +35,25 @@ public class MainActivity extends AppCompatActivity {
     private final String TAG = "MainActivity";
     ActivityMainBinding binding;
 
+
+    final List<AlbumItem> songs = new ArrayList<>();
+    final List<ArtistsSearch.Data.Results> artists = new ArrayList<>();
+    final List<AlbumItem> albums = new ArrayList<>();
+    final List<AlbumItem> playlists = new ArrayList<>();
+
+    NetworkChangeReceiver networkChangeReceiver = new NetworkChangeReceiver(new NetworkChangeReceiver.NetworkStatusListener() {
+        @Override
+        public void onNetworkConnected() {
+            if (songs.isEmpty() || artists.isEmpty() || albums.isEmpty() || playlists.isEmpty())
+                showData();
+        }
+
+        @Override
+        public void onNetworkDisconnected() {
+            Snackbar.make(binding.getRoot(), "No Internet Connection", Snackbar.LENGTH_LONG).show();
+        }
+    });
+
     public static int calculateNoOfColumns(Context context, float columnWidthDp) { // For example columnWidthDp=180
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         float screenWidthDp = displayMetrics.widthPixels / displayMetrics.density;
@@ -58,30 +77,37 @@ public class MainActivity extends AppCompatActivity {
 //        startActivity(new Intent(this, ArtistProfileActivity.class));
 //        finish();
 
-        NetworkChangeReceiver networkChangeReceiver = new NetworkChangeReceiver(new NetworkChangeReceiver.NetworkStatusListener() {
-            @Override
-            public void onNetworkConnected() {
-                showData();
-            }
-
-            @Override
-            public void onNetworkDisconnected() {
-                Snackbar.make(binding.getRoot(), "No Internet Connection", Snackbar.LENGTH_LONG).show();
-            }
+        binding.refreshLayout.setOnRefreshListener(() -> {
+            showShimmerData();
+            showData();
+            binding.refreshLayout.setRefreshing(false);
         });
 
         showShimmerData();
 
-        showData();
+        //showData();
 
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        NetworkChangeReceiver.registerReceiver(this, networkChangeReceiver);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        NetworkChangeReceiver.unregisterReceiver(this, networkChangeReceiver);
     }
 
     private void showData() {
 
-        final List<AlbumItem> songs = new ArrayList<>();
-        final List<ArtistsSearch.Data.Results> artists = new ArrayList<>();
-        final List<AlbumItem> albums = new ArrayList<>();
-        final List<AlbumItem> playlists = new ArrayList<>();
+        songs.clear();
+        artists.clear();
+        albums.clear();
+        playlists.clear();
 
         final ApiManager apiManager = new ApiManager(this);
 
@@ -93,7 +119,9 @@ public class MainActivity extends AppCompatActivity {
                 if (songSearch.success()) {
                     songSearch.data().results().forEach(results -> {
                         songs.add(new AlbumItem(results.name(), results.language() + " " + results.year(), results.image().get(results.image().size() - 1).url(), results.id()));
-                        binding.popularSongsRecyclerView.setAdapter(new ActivityMainAlbumItemAdapter(songs));
+                        ActivityMainAlbumItemAdapter adapter = new ActivityMainAlbumItemAdapter(songs);
+                        binding.popularSongsRecyclerView.setAdapter(adapter);
+                        adapter.notifyDataSetChanged();
                     });
                 }
             }
@@ -111,7 +139,9 @@ public class MainActivity extends AppCompatActivity {
                 if (artistSearch.success()) {
                     artistSearch.data().results().forEach(results -> {
                         artists.add(results);
-                        binding.popularArtistsRecyclerView.setAdapter(new ActivityMainArtistsItemAdapter(artists));
+                        ActivityMainArtistsItemAdapter adapter = new ActivityMainArtistsItemAdapter(artists);
+                        binding.popularArtistsRecyclerView.setAdapter(adapter);
+                        adapter.notifyDataSetChanged();
                     });
                 }
             }
@@ -129,7 +159,9 @@ public class MainActivity extends AppCompatActivity {
                 if (albumsSearch.success()) {
                     albumsSearch.data().results().forEach(results -> {
                         albums.add(new AlbumItem(results.name(), results.language() + " " + results.year(), results.image().get(results.image().size() - 1).url(), results.id()));
-                        binding.popularAlbumsRecyclerView.setAdapter(new ActivityMainAlbumItemAdapter(albums));
+                        ActivityMainAlbumItemAdapter adapter = new ActivityMainAlbumItemAdapter(albums);
+                        binding.popularAlbumsRecyclerView.setAdapter(adapter);
+                        adapter.notifyDataSetChanged();
                     });
                 }
             }
@@ -147,7 +179,11 @@ public class MainActivity extends AppCompatActivity {
                 if (playlistsSearch.success()) {
                     playlistsSearch.data().results().forEach(results -> {
                         playlists.add(new AlbumItem(results.name(), "", results.image().get(results.image().size() - 1).url(), results.id()));
-                        binding.playlistRecyclerView.setAdapter(new ActivityMainPlaylistAdapter(playlists));
+                        //binding.playlistRecyclerView.setAdapter(new ActivityMainPlaylistAdapter(playlists));
+
+                        ActivityMainPlaylistAdapter adapter = new ActivityMainPlaylistAdapter(playlists);
+                        binding.playlistRecyclerView.setAdapter(adapter);
+                        adapter.notifyDataSetChanged();
                     });
                 }
             }
@@ -159,12 +195,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showShimmerData() {
-        final List<AlbumItem> data = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            data.add(new AlbumItem("<shimmer>", "<shimmer>", "<shimmer>", "<shimmer>"));
+        final List<AlbumItem> data_shimmer = new ArrayList<>();
+        final List<ArtistsSearch.Data.Results> artists_shimmer = new ArrayList<>();
+        for (int i = 0; i < 11; i++) {
+            data_shimmer.add(new AlbumItem("<shimmer>", "<shimmer>", "<shimmer>", "<shimmer>"));
+            artists_shimmer.add(new ArtistsSearch.Data.Results(
+                    "<shimmer>",
+                    "<shimmer>",
+                    "<shimmer>",
+                    "<shimmer>",
+                    "<shimmer>",
+                    null
+            ));
         }
-        binding.popularSongsRecyclerView.setAdapter(new ActivityMainAlbumItemAdapter(data));
-        binding.popularAlbumsRecyclerView.setAdapter(new ActivityMainAlbumItemAdapter(data));
+        binding.popularSongsRecyclerView.setAdapter(new ActivityMainAlbumItemAdapter(data_shimmer));
+        binding.popularAlbumsRecyclerView.setAdapter(new ActivityMainAlbumItemAdapter(data_shimmer));
+        binding.popularArtistsRecyclerView.setAdapter(new ActivityMainArtistsItemAdapter(artists_shimmer));
+        binding.playlistRecyclerView.setAdapter(new ActivityMainPlaylistAdapter(data_shimmer));
+
     }
 
     void tryConnect() {

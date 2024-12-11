@@ -54,151 +54,159 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/nestedScrollView"
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/refreshLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:fillViewport="true"
-        android:overScrollMode="never"
-        android:scrollbars="none"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/__divider">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/nestedScrollView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="12dp">
+            android:layout_height="0dp"
+            android:fillViewport="true"
+            android:overScrollMode="never"
+            android:scrollbars="none">
 
-            <LinearLayout
-                android:id="@+id/__popular_songs_section"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                android:layout_height="match_parent"
+                android:padding="12dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/avenir_next_bold"
-                    android:includeFontPadding="false"
-                    android:text="Popular Songs"
-                    android:textColor="@color/textMain"
-                    android:textSize="@dimen/_16ssp" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/popular_songs_recycler_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:scrollbars="none"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:itemCount="10"
-                    tools:listitem="@layout/activity_main_songs_item" />
-
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/__popular_artists_section"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_8sdp"
-                android:orientation="vertical"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/__popular_songs_section">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/avenir_next_bold"
-                    android:includeFontPadding="false"
-                    android:text="Popular artists"
-                    android:textColor="@color/textMain"
-                    android:textSize="@dimen/_16ssp" />
-
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/popular_artists_recycler_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:scrollbars="none"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:itemCount="10"
-                    tools:listitem="@layout/activity_main_artists_item" />
-
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/__popular_albums_section"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_8sdp"
-                android:orientation="vertical"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/__popular_artists_section">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/avenir_next_bold"
-                    android:includeFontPadding="false"
-                    android:text="Popular albums"
-                    android:textColor="@color/textMain"
-                    android:textSize="@dimen/_16ssp" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/popular_albums_recycler_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:scrollbars="none"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:itemCount="10"
-                    tools:listitem="@layout/activity_main_songs_item" />
-
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/__popular_playlists_section"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_8sdp"
-                android:orientation="vertical"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/__popular_albums_section">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/avenir_next_bold"
-                    android:includeFontPadding="false"
-                    android:text="Popular playlists"
-                    android:textColor="@color/textMain"
-                    android:textSize="@dimen/_16ssp" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/playlist_recycler_view"
+                <LinearLayout
+                    android:id="@+id/__popular_songs_section"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_12sdp"
-                    android:scrollbars="none"
-                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                    app:spanCount="2"
-                    tools:itemCount="10"
-                    tools:listitem="@layout/activity_main_playlist_item" />
+                    android:orientation="vertical"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
-            </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/avenir_next_bold"
+                        android:includeFontPadding="false"
+                        android:text="Popular Songs"
+                        android:textColor="@color/textMain"
+                        android:textSize="@dimen/_16ssp" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/popular_songs_recycler_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:scrollbars="none"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        tools:itemCount="10"
+                        tools:listitem="@layout/activity_main_songs_item" />
 
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                </LinearLayout>
 
-    </androidx.core.widget.NestedScrollView>
+                <LinearLayout
+                    android:id="@+id/__popular_artists_section"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:orientation="vertical"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/__popular_songs_section">
 
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/avenir_next_bold"
+                        android:includeFontPadding="false"
+                        android:text="Popular artists"
+                        android:textColor="@color/textMain"
+                        android:textSize="@dimen/_16ssp" />
+
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/popular_artists_recycler_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:scrollbars="none"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        tools:itemCount="10"
+                        tools:listitem="@layout/activity_main_artists_item" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/__popular_albums_section"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:orientation="vertical"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/__popular_artists_section">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/avenir_next_bold"
+                        android:includeFontPadding="false"
+                        android:text="Popular albums"
+                        android:textColor="@color/textMain"
+                        android:textSize="@dimen/_16ssp" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/popular_albums_recycler_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:scrollbars="none"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        tools:itemCount="10"
+                        tools:listitem="@layout/activity_main_songs_item" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/__popular_playlists_section"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:orientation="vertical"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/__popular_albums_section">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/avenir_next_bold"
+                        android:includeFontPadding="false"
+                        android:text="Popular playlists"
+                        android:textColor="@color/textMain"
+                        android:textSize="@dimen/_16ssp" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/playlist_recycler_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_12sdp"
+                        android:scrollbars="none"
+                        android:overScrollMode="never"
+                        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                        app:spanCount="2"
+                        tools:itemCount="10"
+                        tools:listitem="@layout/activity_main_playlist_item" />
+
+                </LinearLayout>
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

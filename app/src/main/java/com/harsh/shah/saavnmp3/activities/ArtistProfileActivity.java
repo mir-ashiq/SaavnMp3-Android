@@ -11,17 +11,18 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.harsh.shah.saavnmp3.adapters.ActivityArtistProfileTopAlbumsAdapter;
 import com.harsh.shah.saavnmp3.adapters.ActivityArtistProfileTopSongsAdapter;
 import com.harsh.shah.saavnmp3.databinding.ActivityArtistProfileBinding;
 import com.harsh.shah.saavnmp3.network.ApiManager;
+import com.harsh.shah.saavnmp3.network.NetworkChangeReceiver;
 import com.harsh.shah.saavnmp3.network.utility.RequestNetwork;
 import com.harsh.shah.saavnmp3.records.AlbumsSearch;
 import com.harsh.shah.saavnmp3.records.ArtistSearch;
 import com.harsh.shah.saavnmp3.records.ArtistsSearch;
 import com.harsh.shah.saavnmp3.records.SongResponse;
-import com.harsh.shah.saavnmp3.utils.NetworkUtil;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -32,6 +33,18 @@ public class ArtistProfileActivity extends AppCompatActivity {
 
     private final String TAG = "ArtistProfileActivity";
     ActivityArtistProfileBinding binding;
+
+    NetworkChangeReceiver networkChangeReceiver = new NetworkChangeReceiver(new NetworkChangeReceiver.NetworkStatusListener() {
+        @Override
+        public void onNetworkConnected() {
+            showData();
+        }
+
+        @Override
+        public void onNetworkDisconnected() {
+            Snackbar.make(binding.getRoot(), "No Internet Connection", Snackbar.LENGTH_LONG).show();
+        }
+    });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +75,20 @@ public class ArtistProfileActivity extends AppCompatActivity {
         binding.topAlbumsRecyclerview.setLayoutManager(new LinearLayoutManager(this));
         binding.topSinglesRecyclerview.setLayoutManager(new LinearLayoutManager(this));
 
-        showData();
+        showShimmerData();
+        //showData();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        NetworkChangeReceiver.registerReceiver(this, networkChangeReceiver);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        NetworkChangeReceiver.unregisterReceiver(this, networkChangeReceiver);
     }
 
     void showData() {
@@ -75,29 +101,6 @@ public class ArtistProfileActivity extends AppCompatActivity {
         Picasso.get().load(Uri.parse(artistItem.image().get(artistItem.image().size() - 1).url())).into(binding.artistImg);
         binding.artistName.setText(artistItem.name());
         binding.collapsingToolbarLayout.setTitle(artistItem.name());
-
-        final List<SongResponse.Song> shimmerData = getShimmerData();
-        final List<AlbumsSearch.Data.Results> shimmerDataAlbum = new ArrayList<>();
-        for (int i = 0; i < 11; i++) {
-            shimmerDataAlbum.add(new AlbumsSearch.Data.Results(
-                    "<shimmer>",
-                    null,
-                    null,
-                    null,
-                    0,
-                    null,
-                    0,
-                    null,
-                    false,
-                    null,
-                    null
-            ));
-        }
-
-
-        binding.topSongsRecyclerview.setAdapter(new ActivityArtistProfileTopSongsAdapter(shimmerData));
-        binding.topAlbumsRecyclerview.setAdapter(new ActivityArtistProfileTopAlbumsAdapter(shimmerDataAlbum));
-        binding.topSinglesRecyclerview.setAdapter(new ActivityArtistProfileTopAlbumsAdapter(shimmerDataAlbum));
 
         final ApiManager apiManager = new ApiManager(this);
         apiManager.retrieveArtistById(artistId, new RequestNetwork.RequestListener() {
@@ -118,14 +121,14 @@ public class ArtistProfileActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(String tag, String message) {
                 Log.i(TAG, "onErrorResponse: " + message);
-                if (!NetworkUtil.isNetworkAvailable(ArtistProfileActivity.this)) {
-                    try {
-                        Thread.sleep(2000);
-                        showData();
-                    } catch (InterruptedException e) {
-                        Log.e(TAG, "onErrorResponse: ", e);
-                    }
-                }
+//                if (!NetworkUtil.isNetworkAvailable(ArtistProfileActivity.this)) {
+//                    try {
+//                        Thread.sleep(2000);
+//                        showData();
+//                    } catch (InterruptedException e) {
+//                        Log.e(TAG, "onErrorResponse: ", e);
+//                    }
+//                }
             }
         });
     }
@@ -159,6 +162,31 @@ public class ArtistProfileActivity extends AppCompatActivity {
         return shimmerData;
     }
 
+
+    void showShimmerData() {
+        final List<SongResponse.Song> shimmerData = getShimmerData();
+        final List<AlbumsSearch.Data.Results> shimmerDataAlbum = new ArrayList<>();
+        for (int i = 0; i < 11; i++) {
+            shimmerDataAlbum.add(new AlbumsSearch.Data.Results(
+                    "<shimmer>",
+                    null,
+                    null,
+                    null,
+                    0,
+                    null,
+                    0,
+                    null,
+                    false,
+                    null,
+                    null
+            ));
+        }
+
+
+        binding.topSongsRecyclerview.setAdapter(new ActivityArtistProfileTopSongsAdapter(shimmerData));
+        binding.topAlbumsRecyclerview.setAdapter(new ActivityArtistProfileTopAlbumsAdapter(shimmerDataAlbum));
+        binding.topSinglesRecyclerview.setAdapter(new ActivityArtistProfileTopAlbumsAdapter(shimmerDataAlbum));
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

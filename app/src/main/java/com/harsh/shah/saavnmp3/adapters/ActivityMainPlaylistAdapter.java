@@ -12,6 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.harsh.shah.saavnmp3.R;
 import com.harsh.shah.saavnmp3.activities.ListActivity;
 import com.harsh.shah.saavnmp3.model.AlbumItem;
@@ -30,7 +31,7 @@ public class ActivityMainPlaylistAdapter extends RecyclerView.Adapter<ActivityMa
     @NonNull
     @Override
     public PlaylistAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View _v = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_main_playlist_item, null, false);
+        View _v = LayoutInflater.from(parent.getContext()).inflate(viewType == 0 ? R.layout.activity_main_playlist_item : R.layout.main_playlist_item_shimmer, null, false);
         _v.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         return new PlaylistAdapterViewHolder(_v);
     }
@@ -42,6 +43,11 @@ public class ActivityMainPlaylistAdapter extends RecyclerView.Adapter<ActivityMa
 
     @Override
     public void onBindViewHolder(@NonNull PlaylistAdapterViewHolder holder, int position) {
+        if (getItemViewType(position) == 1) {
+            ((ShimmerFrameLayout) holder.itemView.findViewById(R.id.shimmer)).startShimmer();
+            return;
+        }
+
         ((TextView) holder.itemView.findViewById(R.id.title)).setText(data.get(position).albumTitle());
         ImageView imageView = holder.itemView.findViewById(R.id.imageView);
         Picasso.get().load(Uri.parse(data.get(position).albumCover())).into(imageView);
@@ -49,6 +55,13 @@ public class ActivityMainPlaylistAdapter extends RecyclerView.Adapter<ActivityMa
         holder.itemView.setOnClickListener(v -> {
             v.getContext().startActivity(new Intent(v.getContext(), ListActivity.class));
         });
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (data.get(position).id().equals("<shimmer>"))
+            return 1;
+        return 0;
     }
 
     static class PlaylistAdapterViewHolder extends RecyclerView.ViewHolder {
