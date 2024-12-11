@@ -12,6 +12,7 @@ constraintlayout = "2.2.0"
 okhttp = "3.10.0"
 picasso = "2.8"
 sdpAndroid = "1.1.1"
+shimmer = "0.5.0"
 sspAndroid = "1.1.1"
 
 [libraries]
@@ -27,6 +28,7 @@ constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayo
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
 sdp-android = { module = "com.intuit.sdp:sdp-android", version.ref = "sdpAndroid" }
+shimmer = { module = "com.facebook.shimmer:shimmer", version.ref = "shimmer" }
 ssp-android = { module = "com.intuit.ssp:ssp-android", version.ref = "sspAndroid" }
 
 [plugins]

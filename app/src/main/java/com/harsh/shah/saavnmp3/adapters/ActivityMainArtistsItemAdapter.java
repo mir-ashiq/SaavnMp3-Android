@@ -10,18 +10,19 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.Gson;
 import com.harsh.shah.saavnmp3.R;
 import com.harsh.shah.saavnmp3.activities.ArtistProfileActivity;
-import com.harsh.shah.saavnmp3.model.ArtistItem;
+import com.harsh.shah.saavnmp3.records.ArtistsSearch;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 public class ActivityMainArtistsItemAdapter extends RecyclerView.Adapter<ActivityMainArtistsItemAdapter.ActivityMainArtistsItemAdapterViewHolder> {
 
-    private final List<ArtistItem> data;
+    private final List<ArtistsSearch.Data.Results> data;
 
-    public ActivityMainArtistsItemAdapter(List<ArtistItem> data) {
+    public ActivityMainArtistsItemAdapter(List<ArtistsSearch.Data.Results> data) {
         this.data = data;
     }
 
@@ -38,10 +39,10 @@ public class ActivityMainArtistsItemAdapter extends RecyclerView.Adapter<Activit
         holder.itemView.findViewById(R.id.artist_name).setSelected(true);
         ((TextView) holder.itemView.findViewById(R.id.artist_name)).setText(data.get(position).name());
         ImageView imageView = holder.itemView.findViewById(R.id.artist_img);
-        Picasso.get().load(Uri.parse(data.get(position).image())).into(imageView);
+        Picasso.get().load(Uri.parse(data.get(position).image().get(data.get(position).image().size() - 1).url())).into(imageView);
 
         holder.itemView.setOnClickListener(v -> {
-            v.getContext().startActivity(new Intent(v.getContext(), ArtistProfileActivity.class).putExtra("artist_id", data.get(position).id()));
+            v.getContext().startActivity(new Intent(v.getContext(), ArtistProfileActivity.class).putExtra("artist", new Gson().toJson(data.get(position))));
         });
     }
 

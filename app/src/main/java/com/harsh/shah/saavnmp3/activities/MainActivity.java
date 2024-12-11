@@ -9,19 +9,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.harsh.shah.saavnmp3.adapters.ActivityMainAlbumItemAdapter;
 import com.harsh.shah.saavnmp3.adapters.ActivityMainArtistsItemAdapter;
 import com.harsh.shah.saavnmp3.adapters.ActivityMainPlaylistAdapter;
 import com.harsh.shah.saavnmp3.databinding.ActivityMainBinding;
 import com.harsh.shah.saavnmp3.model.AlbumItem;
-import com.harsh.shah.saavnmp3.model.ArtistItem;
 import com.harsh.shah.saavnmp3.network.ApiManager;
+import com.harsh.shah.saavnmp3.network.NetworkChangeReceiver;
 import com.harsh.shah.saavnmp3.network.utility.RequestNetwork;
 import com.harsh.shah.saavnmp3.records.AlbumsSearch;
 import com.harsh.shah.saavnmp3.records.ArtistsSearch;
 import com.harsh.shah.saavnmp3.records.PlaylistsSearch;
 import com.harsh.shah.saavnmp3.records.SongSearch;
+import com.harsh.shah.saavnmp3.utils.NetworkUtil;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -56,9 +58,28 @@ public class MainActivity extends AppCompatActivity {
 //        startActivity(new Intent(this, ArtistProfileActivity.class));
 //        finish();
 
+        NetworkChangeReceiver networkChangeReceiver = new NetworkChangeReceiver(new NetworkChangeReceiver.NetworkStatusListener() {
+            @Override
+            public void onNetworkConnected() {
+                showData();
+            }
+
+            @Override
+            public void onNetworkDisconnected() {
+                Snackbar.make(binding.getRoot(), "No Internet Connection", Snackbar.LENGTH_LONG).show();
+            }
+        });
+
+        showShimmerData();
+
+        showData();
+
+    }
+
+    private void showData() {
 
         final List<AlbumItem> songs = new ArrayList<>();
-        final List<ArtistItem> artists = new ArrayList<>();
+        final List<ArtistsSearch.Data.Results> artists = new ArrayList<>();
         final List<AlbumItem> albums = new ArrayList<>();
         final List<AlbumItem> playlists = new ArrayList<>();
 
@@ -79,7 +100,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onErrorResponse(String tag, String message) {
-
             }
         });
 
@@ -90,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.i(TAG, "onResponse: " + response);
                 if (artistSearch.success()) {
                     artistSearch.data().results().forEach(results -> {
-                        artists.add(new ArtistItem(results.name(), results.image().get(results.image().size() - 1).url(), results.id()));
+                        artists.add(results);
                         binding.popularArtistsRecyclerView.setAdapter(new ActivityMainArtistsItemAdapter(artists));
                     });
                 }
@@ -98,7 +118,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onErrorResponse(String tag, String message) {
-
             }
         });
 
@@ -117,7 +136,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onErrorResponse(String tag, String message) {
-
             }
         });
 
@@ -136,10 +154,28 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onErrorResponse(String tag, String message) {
-
             }
         });
+    }
 
+    private void showShimmerData() {
+        final List<AlbumItem> data = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            data.add(new AlbumItem("<shimmer>", "<shimmer>", "<shimmer>", "<shimmer>"));
+        }
+        binding.popularSongsRecyclerView.setAdapter(new ActivityMainAlbumItemAdapter(data));
+        binding.popularAlbumsRecyclerView.setAdapter(new ActivityMainAlbumItemAdapter(data));
+    }
+
+    void tryConnect() {
+        if (!NetworkUtil.isNetworkAvailable(MainActivity.this)) {
+            try {
+                Thread.sleep(2000);
+                //showData();
+            } catch (Exception e) {
+                Log.e(TAG, "onErrorResponse: ", e);
+            }
+        }
     }
 
 }

@@ -54,9 +54,7 @@ public class MusicOverviewActivity extends AppCompatActivity {
 
         binding.seekbar.setMax(100);
 
-        mediaPlayer.setOnBufferingUpdateListener((mediaPlayer, i) -> {
-            binding.seekbar.setSecondaryProgress(i);
-        });
+        mediaPlayer.setOnBufferingUpdateListener((mediaPlayer, i) -> binding.seekbar.setSecondaryProgress(i));
 
         binding.seekbar.setOnTouchListener((v, event) -> {
             int playPosition = (mediaPlayer.getDuration() / 100) * binding.seekbar.getProgress();

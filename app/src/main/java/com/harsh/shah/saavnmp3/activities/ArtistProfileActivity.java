@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -16,10 +17,16 @@ import com.harsh.shah.saavnmp3.adapters.ActivityArtistProfileTopSongsAdapter;
 import com.harsh.shah.saavnmp3.databinding.ActivityArtistProfileBinding;
 import com.harsh.shah.saavnmp3.network.ApiManager;
 import com.harsh.shah.saavnmp3.network.utility.RequestNetwork;
+import com.harsh.shah.saavnmp3.records.AlbumsSearch;
 import com.harsh.shah.saavnmp3.records.ArtistSearch;
+import com.harsh.shah.saavnmp3.records.ArtistsSearch;
+import com.harsh.shah.saavnmp3.records.SongResponse;
+import com.harsh.shah.saavnmp3.utils.NetworkUtil;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class ArtistProfileActivity extends AppCompatActivity {
 
@@ -60,9 +67,40 @@ public class ArtistProfileActivity extends AppCompatActivity {
 
     void showData() {
         if (getIntent().getExtras() == null) return;
-        final String artistId = getIntent().getExtras().getString("artist_id", "null");
+        final String artist = getIntent().getExtras().getString("artist", "null");
+        final ArtistsSearch.Data.Results artistItem = new Gson().fromJson(artist, ArtistsSearch.Data.Results.class);
+        if (artistItem == null) return;
+        final String artistId = artistItem.id();
+
+        Picasso.get().load(Uri.parse(artistItem.image().get(artistItem.image().size() - 1).url())).into(binding.artistImg);
+        binding.artistName.setText(artistItem.name());
+        binding.collapsingToolbarLayout.setTitle(artistItem.name());
+
+        final List<SongResponse.Song> shimmerData = getShimmerData();
+        final List<AlbumsSearch.Data.Results> shimmerDataAlbum = new ArrayList<>();
+        for (int i = 0; i < 11; i++) {
+            shimmerDataAlbum.add(new AlbumsSearch.Data.Results(
+                    "<shimmer>",
+                    null,
+                    null,
+                    null,
+                    0,
+                    null,
+                    0,
+                    null,
+                    false,
+                    null,
+                    null
+            ));
+        }
+
+
+        binding.topSongsRecyclerview.setAdapter(new ActivityArtistProfileTopSongsAdapter(shimmerData));
+        binding.topAlbumsRecyclerview.setAdapter(new ActivityArtistProfileTopAlbumsAdapter(shimmerDataAlbum));
+        binding.topSinglesRecyclerview.setAdapter(new ActivityArtistProfileTopAlbumsAdapter(shimmerDataAlbum));
+
         final ApiManager apiManager = new ApiManager(this);
-        apiManager.retrieveArtistById(artistId, null, null, null, null, null, new RequestNetwork.RequestListener() {
+        apiManager.retrieveArtistById(artistId, new RequestNetwork.RequestListener() {
             @Override
             public void onResponse(String tag, String response, HashMap<String, Object> responseHeaders) {
                 ArtistSearch artistSearch = new Gson().fromJson(response, ArtistSearch.class);
@@ -80,8 +118,45 @@ public class ArtistProfileActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(String tag, String message) {
                 Log.i(TAG, "onErrorResponse: " + message);
+                if (!NetworkUtil.isNetworkAvailable(ArtistProfileActivity.this)) {
+                    try {
+                        Thread.sleep(2000);
+                        showData();
+                    } catch (InterruptedException e) {
+                        Log.e(TAG, "onErrorResponse: ", e);
+                    }
+                }
             }
         });
+    }
+
+    @NonNull
+    private static List<SongResponse.Song> getShimmerData() {
+        final List<SongResponse.Song> shimmerData = new ArrayList<>();
+        for (int i = 0; i < 11; i++) {
+            shimmerData.add(new SongResponse.Song(
+                    "<shimmer>",
+                    "",
+                    "",
+                    "",
+                    "",
+                    0.0,
+                    "",
+                    false,
+                    0,
+                    "",
+                    false,
+                    "",
+                    new SongResponse.Lyrics("", "", ""),
+                    "",
+                    "",
+                    new SongResponse.Album("", "", ""),
+                    new SongResponse.Artists(new ArrayList<>(), new ArrayList<>(), new ArrayList<>()),
+                    new ArrayList<>(),
+                    new ArrayList<>()
+            ));
+        }
+        return shimmerData;
     }
 
 

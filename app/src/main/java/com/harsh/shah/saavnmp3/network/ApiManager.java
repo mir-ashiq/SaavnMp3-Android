@@ -207,6 +207,10 @@ public class ApiManager {
         requestNetwork.startRequestNetwork(RequestNetworkController.GET, PLAYLISTS_URL, "", listener);
     }
 
+    public void retrieveArtistById(String artistId, RequestNetwork.RequestListener requestListener) {
+        retrieveArtistById(artistId, null, null, null, null, null, requestListener);
+    }
+
 
     public enum SortBy {
         popularity,
