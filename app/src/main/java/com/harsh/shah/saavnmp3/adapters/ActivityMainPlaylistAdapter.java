@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.facebook.shimmer.ShimmerFrameLayout;
+import com.google.gson.Gson;
 import com.harsh.shah.saavnmp3.R;
 import com.harsh.shah.saavnmp3.activities.ListActivity;
 import com.harsh.shah.saavnmp3.model.AlbumItem;
@@ -53,7 +54,7 @@ public class ActivityMainPlaylistAdapter extends RecyclerView.Adapter<ActivityMa
         Picasso.get().load(Uri.parse(data.get(position).albumCover())).into(imageView);
 
         holder.itemView.setOnClickListener(v -> {
-            v.getContext().startActivity(new Intent(v.getContext(), ListActivity.class).putExtra("data", ""));
+            v.getContext().startActivity(new Intent(v.getContext(), ListActivity.class).putExtra("data", new Gson().toJson(data.get(position))));
         });
     }
 

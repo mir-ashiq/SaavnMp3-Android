@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<com.google.android.material.card.MaterialCardView
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<com.google.android.material.card.MaterialCardView xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -28,9 +27,10 @@
                 app:cardBackgroundColor="@android:color/transparent">
 
                 <ImageView
+                    android:id="@+id/coverImage"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@color/textSec"/>
+                    android:background="@color/textSec" />
 
             </com.google.android.material.card.MaterialCardView>
 
@@ -42,17 +42,25 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Song Name"
+                    android:singleLine="true"
+                    android:ellipsize="marquee"
+                    android:scrollHorizontally="true"
                     android:textColor="@color/textMain"
-                    android:textSize="@dimen/_16ssp"/>
+                    android:textSize="@dimen/_16ssp" />
 
                 <TextView
+                    android:id="@+id/artist"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Artist Name"
-                    android:textColor="@color/textSec"/>
+                    android:singleLine="true"
+                    android:ellipsize="marquee"
+                    android:scrollHorizontally="true"
+                    android:textColor="@color/textSec" />
 
             </LinearLayout>
 
@@ -60,7 +68,7 @@
                 android:layout_width="@dimen/_40sdp"
                 android:layout_height="@dimen/_40sdp"
                 android:src="@drawable/more_vert_24px"
-                android:padding="@dimen/_10sdp"/>
+                android:padding="@dimen/_10sdp" />
 
         </LinearLayout>
 

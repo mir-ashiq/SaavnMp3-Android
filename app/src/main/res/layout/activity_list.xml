@@ -26,12 +26,12 @@
             android:onClick="backPress"
             android:focusable="true"
             android:clickable="true"
-            android:foreground="?attr/selectableItemBackground"/>
+            android:foreground="?attr/selectableItemBackground" />
 
         <View
             android:layout_width="wrap_content"
             android:layout_height="1dp"
-            android:layout_weight="1"/>
+            android:layout_weight="1" />
 
         <ImageView
             android:layout_width="@dimen/_45sdp"
@@ -41,7 +41,7 @@
             android:contentDescription="share"
             android:focusable="true"
             android:clickable="true"
-            android:foreground="?attr/selectableItemBackground"/>
+            android:foreground="?attr/selectableItemBackground" />
 
         <ImageView
             android:layout_width="@dimen/_45sdp"
@@ -51,7 +51,7 @@
             android:contentDescription="more"
             android:focusable="true"
             android:clickable="true"
-            android:foreground="?attr/selectableItemBackground"/>
+            android:foreground="?attr/selectableItemBackground" />
 
     </LinearLayout>
 
@@ -96,9 +96,10 @@
                     android:elevation="@dimen/_5sdp">
 
                     <ImageView
+                        android:id="@+id/album_cover"
                         android:layout_width="@dimen/_100sdp"
                         android:layout_height="@dimen/_100sdp"
-                        android:background="@color/textSec"/>
+                        android:background="@color/textSec" />
 
                 </com.google.android.material.card.MaterialCardView>
 
@@ -110,17 +111,19 @@
                     android:padding="@dimen/_8sdp">
 
                     <TextView
+                        android:id="@+id/albumTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Playlist Title"
                         android:textSize="@dimen/_18ssp"
-                        android:textColor="@color/textMain"/>
+                        android:textColor="@color/textMain" />
 
                     <TextView
+                        android:id="@+id/albumSubTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Playlist - {year}"
-                        android:textColor="@color/textSec"/>
+                        android:textColor="@color/textSec" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -134,7 +137,7 @@
                             android:text="Play"
                             android:drawableStart="@android:drawable/ic_media_play"
                             app:startIconTint="@color/textMain"
-                            android:layout_weight="1"/>
+                            android:layout_weight="1" />
 
                         <com.google.android.material.card.MaterialCardView
                             android:layout_width="@dimen/_35sdp"
@@ -145,7 +148,7 @@
                             <ImageView
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:background="@color/textSec"/>
+                                android:background="@color/textSec" />
 
                         </com.google.android.material.card.MaterialCardView>
 
@@ -161,55 +164,55 @@
                 android:text="Songs"
                 android:textSize="@dimen/_18ssp"
                 android:textColor="@color/green"
-                android:layout_marginTop="@dimen/_12sdp"/>
+                android:layout_marginTop="@dimen/_12sdp" />
 
-<!--            <LinearLayout-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginTop="@dimen/_8sdp"-->
-<!--                android:orientation="horizontal">-->
+            <!--            <LinearLayout-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_marginTop="@dimen/_8sdp"-->
+            <!--                android:orientation="horizontal">-->
 
-<!--                <com.google.android.material.card.MaterialCardView-->
-<!--                    android:layout_width="@dimen/_40sdp"-->
-<!--                    android:layout_height="@dimen/_40sdp"-->
-<!--                    app:cardBackgroundColor="@android:color/transparent">-->
+            <!--                <com.google.android.material.card.MaterialCardView-->
+            <!--                    android:layout_width="@dimen/_40sdp"-->
+            <!--                    android:layout_height="@dimen/_40sdp"-->
+            <!--                    app:cardBackgroundColor="@android:color/transparent">-->
 
-<!--                    <ImageView-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="match_parent"-->
-<!--                        android:background="@color/textSec"/>-->
+            <!--                    <ImageView-->
+            <!--                        android:layout_width="match_parent"-->
+            <!--                        android:layout_height="match_parent"-->
+            <!--                        android:background="@color/textSec"/>-->
 
-<!--                </com.google.android.material.card.MaterialCardView>-->
+            <!--                </com.google.android.material.card.MaterialCardView>-->
 
-<!--                <LinearLayout-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_weight="1"-->
-<!--                    android:paddingHorizontal="@dimen/_8sdp"-->
-<!--                    android:orientation="vertical">-->
+            <!--                <LinearLayout-->
+            <!--                    android:layout_width="0dp"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:layout_weight="1"-->
+            <!--                    android:paddingHorizontal="@dimen/_8sdp"-->
+            <!--                    android:orientation="vertical">-->
 
-<!--                    <TextView-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:text="Song Name"-->
-<!--                        android:textColor="@color/textMain"-->
-<!--                        android:textSize="@dimen/_16ssp"/>-->
+            <!--                    <TextView-->
+            <!--                        android:layout_width="wrap_content"-->
+            <!--                        android:layout_height="wrap_content"-->
+            <!--                        android:text="Song Name"-->
+            <!--                        android:textColor="@color/textMain"-->
+            <!--                        android:textSize="@dimen/_16ssp"/>-->
 
-<!--                    <TextView-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:text="Artist Name"-->
-<!--                        android:textColor="@color/textSec"/>-->
+            <!--                    <TextView-->
+            <!--                        android:layout_width="wrap_content"-->
+            <!--                        android:layout_height="wrap_content"-->
+            <!--                        android:text="Artist Name"-->
+            <!--                        android:textColor="@color/textSec"/>-->
 
-<!--                </LinearLayout>-->
+            <!--                </LinearLayout>-->
 
-<!--                <ImageView-->
-<!--                    android:layout_width="@dimen/_40sdp"-->
-<!--                    android:layout_height="@dimen/_40sdp"-->
-<!--                    android:src="@drawable/more_vert_24px"-->
-<!--                    android:padding="@dimen/_10sdp"/>-->
+            <!--                <ImageView-->
+            <!--                    android:layout_width="@dimen/_40sdp"-->
+            <!--                    android:layout_height="@dimen/_40sdp"-->
+            <!--                    android:src="@drawable/more_vert_24px"-->
+            <!--                    android:padding="@dimen/_10sdp"/>-->
 
-<!--            </LinearLayout>-->
+            <!--            </LinearLayout>-->
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_view"

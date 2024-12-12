@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -24,6 +25,9 @@ import com.harsh.shah.saavnmp3.records.ArtistsSearch;
 import com.harsh.shah.saavnmp3.records.PlaylistsSearch;
 import com.harsh.shah.saavnmp3.records.SongSearch;
 import com.harsh.shah.saavnmp3.utils.NetworkUtil;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -123,6 +127,12 @@ public class MainActivity extends AppCompatActivity {
                         binding.popularSongsRecyclerView.setAdapter(adapter);
                         adapter.notifyDataSetChanged();
                     });
+                } else {
+                    try {
+                        Toast.makeText(MainActivity.this, new JSONObject(response).getString("message"), Toast.LENGTH_SHORT).show();
+                    } catch (JSONException e) {
+                        Log.e(TAG, "onResponse: ", e);
+                    }
                 }
             }
 
@@ -143,6 +153,12 @@ public class MainActivity extends AppCompatActivity {
                         binding.popularArtistsRecyclerView.setAdapter(adapter);
                         adapter.notifyDataSetChanged();
                     });
+                } else {
+                    try {
+                        Toast.makeText(MainActivity.this, new JSONObject(response).getString("message"), Toast.LENGTH_SHORT).show();
+                    } catch (JSONException e) {
+                        Log.e(TAG, "onResponse: ", e);
+                    }
                 }
             }
 
@@ -163,6 +179,12 @@ public class MainActivity extends AppCompatActivity {
                         binding.popularAlbumsRecyclerView.setAdapter(adapter);
                         adapter.notifyDataSetChanged();
                     });
+                } else {
+                    try {
+                        Toast.makeText(MainActivity.this, new JSONObject(response).getString("message"), Toast.LENGTH_SHORT).show();
+                    } catch (JSONException e) {
+                        Log.e(TAG, "onResponse: ", e);
+                    }
                 }
             }
 
@@ -185,6 +207,12 @@ public class MainActivity extends AppCompatActivity {
                         binding.playlistRecyclerView.setAdapter(adapter);
                         adapter.notifyDataSetChanged();
                     });
+                } else {
+                    try {
+                        Toast.makeText(MainActivity.this, new JSONObject(response).getString("message"), Toast.LENGTH_SHORT).show();
+                    } catch (JSONException e) {
+                        Log.e(TAG, "onResponse: ", e);
+                    }
                 }
             }
 
