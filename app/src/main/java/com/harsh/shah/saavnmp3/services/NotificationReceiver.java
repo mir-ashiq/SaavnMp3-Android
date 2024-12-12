@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.harsh.shah.saavnmp3.ApplicationClass;
+import com.harsh.shah.saavnmp3.R;
 
 public class NotificationReceiver extends BroadcastReceiver {
     @Override
@@ -29,12 +30,19 @@ public class NotificationReceiver extends BroadcastReceiver {
             case ApplicationClass.ACTION_PLAY:
                 // Handle play/pause action
                 //Toast.makeText(context, "play", Toast.LENGTH_SHORT).show();
+
+                if (ApplicationClass.mediaPlayerUtil.isPlaying()) {
+                    //ApplicationClass.mediaPlayerUtil.pause();
+                } else {
+                    //ApplicationClass.mediaPlayerUtil.start();
+                }
+
+                ApplicationClass applicationClass = (ApplicationClass) context.getApplicationContext();
+                applicationClass.showNotification(ApplicationClass.mediaPlayerUtil.isPlaying() ? R.drawable.baseline_pause_24 : R.drawable.play_arrow_24px);
+
                 intent1.putExtra("action", intent.getAction());
-                //context.startService(intent1);
-                if (ApplicationClass.mediaPlayerUtil.isPlaying())
-                    ApplicationClass.mediaPlayerUtil.pause();
-                else
-                    ApplicationClass.mediaPlayerUtil.start();
+                intent1.putExtra("fromNotification", true);
+                context.startService(intent1);
                 break;
         }
     }

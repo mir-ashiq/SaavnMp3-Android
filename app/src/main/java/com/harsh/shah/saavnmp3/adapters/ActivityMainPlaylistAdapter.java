@@ -53,7 +53,7 @@ public class ActivityMainPlaylistAdapter extends RecyclerView.Adapter<ActivityMa
         Picasso.get().load(Uri.parse(data.get(position).albumCover())).into(imageView);
 
         holder.itemView.setOnClickListener(v -> {
-            v.getContext().startActivity(new Intent(v.getContext(), ListActivity.class));
+            v.getContext().startActivity(new Intent(v.getContext(), ListActivity.class).putExtra("data", ""));
         });
     }
 

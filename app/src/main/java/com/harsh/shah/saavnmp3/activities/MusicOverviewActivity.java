@@ -3,14 +3,9 @@ package com.harsh.shah.saavnmp3.activities;
 import static com.harsh.shah.saavnmp3.ApplicationClass.mediaPlayerUtil;
 
 import android.annotation.SuppressLint;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,13 +14,8 @@ import android.support.v4.media.session.MediaSessionCompat;
 import android.util.Log;
 import android.view.View;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.media.app.NotificationCompat;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.CustomTarget;
-import com.bumptech.glide.request.transition.Transition;
 import com.google.gson.Gson;
 import com.harsh.shah.saavnmp3.ApplicationClass;
 import com.harsh.shah.saavnmp3.R;
@@ -35,7 +25,6 @@ import com.harsh.shah.saavnmp3.network.utility.RequestNetwork;
 import com.harsh.shah.saavnmp3.records.SongResponse;
 import com.harsh.shah.saavnmp3.services.ActionPlaying;
 import com.harsh.shah.saavnmp3.services.MusicService;
-import com.harsh.shah.saavnmp3.services.NotificationReceiver;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
@@ -60,13 +49,20 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
         binding = ActivityMusicOverviewBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        mediaSession = new MediaSessionCompat(this, "MainActivity");
-
         binding.title.setSelected(true);
         binding.description.setSelected(true);
 
         binding.playPauseImage.setOnClickListener(view -> {
-            playClicked();
+            if (mediaPlayerUtil.isPlaying()) {
+                handler.removeCallbacks(runnable);
+                mediaPlayerUtil.pause();
+                binding.playPauseImage.setImageResource(com.harsh.shah.saavnmp3.R.drawable.play_arrow_24px);
+            } else {
+                mediaPlayerUtil.start();
+                binding.playPauseImage.setImageResource(R.drawable.baseline_pause_24);
+                updateSeekbar();
+            }
+            showNotification(mediaPlayerUtil.isPlaying() ? R.drawable.baseline_pause_24 : R.drawable.play_arrow_24px);
         });
 
         binding.seekbar.setMax(100);
@@ -141,7 +137,14 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
 
                     Log.i(TAG, "onResponse: " + downloadUrls.get(downloadUrls.size() - 1).url());
                     SONG_URL = downloadUrls.get(downloadUrls.size() - 1).url();
-                    prepareMediaPLayer();
+                    if (((ApplicationClass) getApplicationContext()).IMAGE_URL.equals(IMAGE_URL)) {
+                        updateSeekbar();
+                        if (mediaPlayerUtil.isPlaying())
+                            binding.playPauseImage.setImageResource(R.drawable.baseline_pause_24);
+                        else
+                            binding.playPauseImage.setImageResource(R.drawable.play_arrow_24px);
+                    } else
+                        prepareMediaPLayer();
                     //mediaPlayerUtil.playSong(binding.title.getText().toString(), binding.description.getText().toString(), SONG_URL, image.get(image.size() - 1).url());
 
                 } else
@@ -230,70 +233,61 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
 
     @Override
     public void playClicked() {
-        if (mediaPlayerUtil.isPlaying()) {
-            handler.removeCallbacks(runnable);
-            mediaPlayerUtil.pause();
-            binding.playPauseImage.setImageResource(com.harsh.shah.saavnmp3.R.drawable.play_arrow_24px);
-        } else {
-            mediaPlayerUtil.start();
-            binding.playPauseImage.setImageResource(R.drawable.baseline_pause_24);
-            updateSeekbar();
-        }
-
-        if (mediaPlayerUtil.isPlaying()) {
-            showNotification(R.drawable.baseline_pause_24);
-        } else {
-            showNotification(R.drawable.play_arrow_24px);
-        }
-
+        binding.playPauseImage.performClick();
     }
 
     public void showNotification(int playPauseButton) {
-
-        Intent intent = new Intent(this, MainActivity.class);
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, 0);
-
-        Intent prevIntent = new Intent(this, NotificationReceiver.class).setAction(ApplicationClass.ACTION_PREV);
-        PendingIntent prevPendingIntent = PendingIntent.getBroadcast(this, 0, prevIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        Intent playIntent = new Intent(this, NotificationReceiver.class).setAction(ApplicationClass.ACTION_PLAY);
-        PendingIntent playPendingIntent = PendingIntent.getBroadcast(this, 0, playIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        Intent nextIntent = new Intent(this, NotificationReceiver.class).setAction(ApplicationClass.ACTION_NEXT);
-        PendingIntent nextPendingIntent = PendingIntent.getBroadcast(this, 0, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-
-        Glide.with(this)
-                .asBitmap()
-                .load(IMAGE_URL) // Replace with your URL string
-                .into(new CustomTarget<Bitmap>() {
-                    @Override
-                    public void onResourceReady(@NonNull Bitmap resource, Transition<? super Bitmap> transition) {
-                        Notification notification = new androidx.core.app.NotificationCompat.Builder(MusicOverviewActivity.this, ApplicationClass.CHANNEL_ID_2)
-                                .setSmallIcon(R.drawable.ic_launcher_foreground)
-                                .setLargeIcon(resource)
-                                .setContentTitle(binding.title.getText())
-                                .setContentText(binding.description.getText())
-                                .addAction(R.drawable.skip_previous_24px, "prev", prevPendingIntent)
-                                .addAction(playPauseButton, "play", playPendingIntent)
-                                .addAction(R.drawable.skip_next_24px, "next", nextPendingIntent)
-                                .setStyle(new NotificationCompat.MediaStyle().setMediaSession(mediaSession.getSessionToken()))
-                                .setPriority(Notification.PRIORITY_LOW)
-                                .setContentIntent(contentIntent)
-                                .setOnlyAlertOnce(true)
-                                .build();
-
-                        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                        notificationManager.notify(0, notification);
-
-
-                    }
-
-                    @Override
-                    public void onLoadCleared(Drawable placeholder) {
-                        // Handle placeholder if needed
-                    }
-                });
+        ApplicationClass applicationClass = (ApplicationClass) getApplicationContext();
+        applicationClass.setMusicDetails(IMAGE_URL, binding.title.getText().toString(), binding.description.getText().toString());
+        applicationClass.showNotification(playPauseButton);
     }
+
+//    public void showNotification(int playPauseButton) {
+//
+//        Intent intent = new Intent(this, MainActivity.class);
+//        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, 0);
+//
+//        Intent prevIntent = new Intent(this, NotificationReceiver.class).setAction(ApplicationClass.ACTION_PREV);
+//        PendingIntent prevPendingIntent = PendingIntent.getBroadcast(this, 0, prevIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+//
+//        Intent playIntent = new Intent(this, NotificationReceiver.class).setAction(ApplicationClass.ACTION_PLAY);
+//        PendingIntent playPendingIntent = PendingIntent.getBroadcast(this, 0, playIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+//
+//        Intent nextIntent = new Intent(this, NotificationReceiver.class).setAction(ApplicationClass.ACTION_NEXT);
+//        PendingIntent nextPendingIntent = PendingIntent.getBroadcast(this, 0, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+//
+//
+//        Glide.with(this)
+//                .asBitmap()
+//                .load(IMAGE_URL) // Replace with your URL string
+//                .into(new CustomTarget<Bitmap>() {
+//                    @Override
+//                    public void onResourceReady(@NonNull Bitmap resource, Transition<? super Bitmap> transition) {
+//                        Notification notification = new androidx.core.app.NotificationCompat.Builder(MusicOverviewActivity.this, ApplicationClass.CHANNEL_ID_2)
+//                                .setSmallIcon(R.drawable.ic_launcher_foreground)
+//                                .setLargeIcon(resource)
+//                                .setContentTitle(binding.title.getText())
+//                                .setContentText(binding.description.getText())
+//                                .addAction(R.drawable.skip_previous_24px, "prev", prevPendingIntent)
+//                                .addAction(playPauseButton, "play", playPendingIntent)
+//                                .addAction(R.drawable.skip_next_24px, "next", nextPendingIntent)
+//                                .setStyle(new NotificationCompat.MediaStyle().setMediaSession(mediaSession.getSessionToken()))
+//                                .setPriority(Notification.PRIORITY_LOW)
+//                                .setContentIntent(contentIntent)
+//                                .setOnlyAlertOnce(true)
+//                                .build();
+//
+//                        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+//                        notificationManager.notify(0, notification);
+//
+//
+//                    }
+//
+//                    @Override
+//                    public void onLoadCleared(Drawable placeholder) {
+//                        // Handle placeholder if needed
+//                    }
+//                });
+//    }
 
 }
