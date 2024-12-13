@@ -197,6 +197,7 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
             mediaPlayerUtil.prepare();
             binding.totalDuration.setText(convertDuration(mediaPlayerUtil.getDuration()));
             playClicked();
+            binding.playPauseImage.performClick();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -233,7 +234,12 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
 
     @Override
     public void playClicked() {
-        binding.playPauseImage.performClick();
+        //binding.playPauseImage.performClick();
+        if (!mediaPlayerUtil.isPlaying()) {
+            binding.playPauseImage.setImageResource(R.drawable.play_arrow_24px);
+        } else {
+            binding.playPauseImage.setImageResource(R.drawable.baseline_pause_24);
+        }
     }
 
     public void showNotification(int playPauseButton) {

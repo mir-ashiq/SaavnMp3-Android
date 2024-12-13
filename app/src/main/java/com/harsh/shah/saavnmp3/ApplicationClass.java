@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.v4.media.session.MediaSessionCompat;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.media.app.NotificationCompat;
@@ -65,50 +66,55 @@ public class ApplicationClass extends Application {
     }
 
     public void showNotification(int playPauseButton) {
+        try {
 
-        Intent intent = new Intent(this, MainActivity.class);
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, 0);
+            Intent intent = new Intent(this, MainActivity.class);
+            PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_MUTABLE);
 
-        Intent prevIntent = new Intent(this, NotificationReceiver.class).setAction(ApplicationClass.ACTION_PREV);
-        PendingIntent prevPendingIntent = PendingIntent.getBroadcast(this, 0, prevIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            Intent prevIntent = new Intent(this, NotificationReceiver.class).setAction(ApplicationClass.ACTION_PREV);
+            PendingIntent prevPendingIntent = PendingIntent.getBroadcast(this, 0, prevIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Intent playIntent = new Intent(this, NotificationReceiver.class).setAction(ApplicationClass.ACTION_PLAY);
-        PendingIntent playPendingIntent = PendingIntent.getBroadcast(this, 0, playIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            Intent playIntent = new Intent(this, NotificationReceiver.class).setAction(ApplicationClass.ACTION_PLAY);
+            PendingIntent playPendingIntent = PendingIntent.getBroadcast(this, 0, playIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Intent nextIntent = new Intent(this, NotificationReceiver.class).setAction(ApplicationClass.ACTION_NEXT);
-        PendingIntent nextPendingIntent = PendingIntent.getBroadcast(this, 0, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-
-        Glide.with(this)
-                .asBitmap()
-                .load(IMAGE_URL) // Replace with your URL string
-                .into(new CustomTarget<Bitmap>() {
-                    @Override
-                    public void onResourceReady(@NonNull Bitmap resource, Transition<? super Bitmap> transition) {
-                        Notification notification = new androidx.core.app.NotificationCompat.Builder(ApplicationClass.this, ApplicationClass.CHANNEL_ID_2)
-                                .setSmallIcon(R.drawable.ic_launcher_foreground)
-                                .setLargeIcon(resource)
-                                .setContentTitle(MUSIC_TITLE)
-                                .setContentText(MUSIC_DESCRIPTION)
-                                .addAction(R.drawable.skip_previous_24px, "prev", prevPendingIntent)
-                                .addAction(playPauseButton, "play", playPendingIntent)
-                                .addAction(R.drawable.skip_next_24px, "next", nextPendingIntent)
-                                .setStyle(new NotificationCompat.MediaStyle().setMediaSession(mediaSession.getSessionToken()))
-                                .setPriority(Notification.PRIORITY_LOW)
-                                .setContentIntent(contentIntent)
-                                .setOnlyAlertOnce(true)
-                                .build();
-
-                        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                        notificationManager.notify(0, notification);
+            Intent nextIntent = new Intent(this, NotificationReceiver.class).setAction(ApplicationClass.ACTION_NEXT);
+            PendingIntent nextPendingIntent = PendingIntent.getBroadcast(this, 0, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 
-                    }
+            Glide.with(this)
+                    .asBitmap()
+                    .load(IMAGE_URL) // Replace with your URL string
+                    .into(new CustomTarget<Bitmap>() {
+                        @Override
+                        public void onResourceReady(@NonNull Bitmap resource, Transition<? super Bitmap> transition) {
+                            Notification notification = new androidx.core.app.NotificationCompat.Builder(ApplicationClass.this, ApplicationClass.CHANNEL_ID_2)
+                                    .setSmallIcon(R.drawable.ic_launcher_foreground)
+                                    .setLargeIcon(resource)
+                                    .setContentTitle(MUSIC_TITLE)
+                                    .setContentText(MUSIC_DESCRIPTION)
+                                    .addAction(R.drawable.skip_previous_24px, "prev", prevPendingIntent)
+                                    .addAction(playPauseButton, "play", playPendingIntent)
+                                    .addAction(R.drawable.skip_next_24px, "next", nextPendingIntent)
+                                    .setStyle(new NotificationCompat.MediaStyle().setMediaSession(mediaSession.getSessionToken()))
+                                    .setPriority(Notification.PRIORITY_LOW)
+                                    .setContentIntent(contentIntent)
+                                    .setOnlyAlertOnce(true)
+                                    .build();
 
-                    @Override
-                    public void onLoadCleared(Drawable placeholder) {
-                        // Handle placeholder if needed
-                    }
-                });
+                            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                            notificationManager.notify(0, notification);
+
+
+                        }
+
+                        @Override
+                        public void onLoadCleared(Drawable placeholder) {
+                            // Handle placeholder if needed
+                        }
+                    });
+
+        } catch (Exception e) {
+            Log.e("ApplicationClass", "showNotification: ", e);
+        }
     }
 }

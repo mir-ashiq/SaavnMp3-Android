@@ -6,7 +6,7 @@ import java.util.List;
 
 public record PlaylistSearch(
         @SerializedName("success") boolean success,
-        @SerializedName("data") AlbumSearch.Data data
+        @SerializedName("data") Data data
 
 ) {
     public record Data(
@@ -20,9 +20,21 @@ public record PlaylistSearch(
             @SerializedName("songCount") int songCount,
             @SerializedName("language") String language,
             @SerializedName("explicitContent") boolean explicitContent,
-            @SerializedName("artists") SongResponse.Artist artist,
+            @SerializedName("artists") List<Artist> artists,
             @SerializedName("image") List<GlobalSearch.Image> image,
             @SerializedName("songs") List<SongResponse.Song> songs
     ) {
+
+        public record Artist(
+                @SerializedName("id") String id,
+                @SerializedName("name") String name,
+                @SerializedName("url") String url,
+                @SerializedName("role") String role,
+                @SerializedName("type") String type,
+                @SerializedName("image") List<GlobalSearch.Image> image
+
+        ) {
+        }
+
     }
 }

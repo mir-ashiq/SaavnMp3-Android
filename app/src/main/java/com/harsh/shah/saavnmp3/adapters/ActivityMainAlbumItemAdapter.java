@@ -11,8 +11,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.facebook.shimmer.ShimmerFrameLayout;
+import com.google.gson.Gson;
 import com.harsh.shah.saavnmp3.R;
-import com.harsh.shah.saavnmp3.activities.MusicOverviewActivity;
+import com.harsh.shah.saavnmp3.activities.ListActivity;
 import com.harsh.shah.saavnmp3.model.AlbumItem;
 import com.squareup.picasso.Picasso;
 
@@ -51,7 +52,7 @@ public class ActivityMainAlbumItemAdapter extends RecyclerView.Adapter<ActivityM
         Picasso.get().load(Uri.parse(data.get(position).albumCover())).into(coverImage);
 
         holder.itemView.setOnClickListener(v -> {
-            v.getContext().startActivity(new Intent(v.getContext(), MusicOverviewActivity.class).putExtra("id", data.get(position).id()));
+            v.getContext().startActivity(new Intent(v.getContext(), ListActivity.class).putExtra("data", new Gson().toJson(data.get(position))).putExtra("type", "album").putExtra("id", data.get(position).id()));
         });
     }
 
