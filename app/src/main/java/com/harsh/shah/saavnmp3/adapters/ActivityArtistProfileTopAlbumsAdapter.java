@@ -1,5 +1,6 @@
 package com.harsh.shah.saavnmp3.adapters;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +11,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.facebook.shimmer.ShimmerFrameLayout;
+import com.google.gson.Gson;
 import com.harsh.shah.saavnmp3.R;
+import com.harsh.shah.saavnmp3.activities.ListActivity;
+import com.harsh.shah.saavnmp3.model.AlbumItem;
 import com.harsh.shah.saavnmp3.records.AlbumsSearch;
 import com.squareup.picasso.Picasso;
 
@@ -51,6 +55,19 @@ public class ActivityArtistProfileTopAlbumsAdapter extends RecyclerView.Adapter<
                 String.format("%s | %s", data.get(position).year(), data.get(position).language())
         );
         Picasso.get().load(Uri.parse(data.get(position).image().get(data.get(position).image().size() - 1).url())).into(coverImage);
+
+        holder.itemView.setOnClickListener(view -> {
+            AlbumItem albumItem = new AlbumItem(
+                    data.get(position).id(),
+                    data.get(position).name(),
+                    data.get(position).image().get(data.get(position).image().size() - 1).url(),
+                    data.get(position).id()
+            );
+            holder.itemView.getContext().startActivity(new Intent(holder.itemView.getContext(), ListActivity.class)
+                    .putExtra("data", new Gson().toJson(albumItem))
+                    .putExtra("type", "album")
+                    .putExtra("id", data.get(position).id()));
+        });
     }
 
     @Override

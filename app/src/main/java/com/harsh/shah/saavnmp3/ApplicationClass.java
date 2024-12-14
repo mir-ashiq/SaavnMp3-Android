@@ -41,20 +41,22 @@ public class ApplicationClass extends Application {
     public void onCreate() {
         super.onCreate();
         mediaSession = new MediaSessionCompat(this, "ApplicationClass");
+        mediaSession.setActive(true);
         createNotificationChannel();
 
     }
 
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
-            NotificationChannel notificationChannel1 = new NotificationChannel(CHANNEL_ID_1, "ch1", NotificationManager.IMPORTANCE_HIGH);
-            notificationChannel1.setDescription("channel 1 description");
-            NotificationChannel notificationChannel2 = new NotificationChannel(CHANNEL_ID_2, "ch1", NotificationManager.IMPORTANCE_HIGH);
-            notificationChannel2.setDescription("channel 2 description");
+            NotificationChannel notificationChannel1 = new NotificationChannel(CHANNEL_ID_1, "Media Controls", NotificationManager.IMPORTANCE_LOW);
+            notificationChannel1.setDescription("Notifications for media playback");
+
+//            NotificationChannel notificationChannel2 = new NotificationChannel(CHANNEL_ID_2, "Fallback Media Control", NotificationManager.IMPORTANCE_LOW);
+//            notificationChannel2.setDescription("Notifications For media playback");
 
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(notificationChannel1);
-            notificationManager.createNotificationChannel(notificationChannel2);
+//            notificationManager.createNotificationChannel(notificationChannel2);
 
         }
     }
@@ -83,19 +85,25 @@ public class ApplicationClass extends Application {
 
             Glide.with(this)
                     .asBitmap()
-                    .load(IMAGE_URL) // Replace with your URL string
+                    .load(IMAGE_URL)
                     .into(new CustomTarget<Bitmap>() {
                         @Override
                         public void onResourceReady(@NonNull Bitmap resource, Transition<? super Bitmap> transition) {
-                            Notification notification = new androidx.core.app.NotificationCompat.Builder(ApplicationClass.this, ApplicationClass.CHANNEL_ID_2)
+                            Notification notification = new androidx.core.app.NotificationCompat.Builder(ApplicationClass.this, CHANNEL_ID_1)
                                     .setSmallIcon(R.drawable.ic_launcher_foreground)
                                     .setLargeIcon(resource)
                                     .setContentTitle(MUSIC_TITLE)
+                                    .setOngoing(true)
                                     .setContentText(MUSIC_DESCRIPTION)
-                                    .addAction(R.drawable.skip_previous_24px, "prev", prevPendingIntent)
-                                    .addAction(playPauseButton, "play", playPendingIntent)
-                                    .addAction(R.drawable.skip_next_24px, "next", nextPendingIntent)
-                                    .setStyle(new NotificationCompat.MediaStyle().setMediaSession(mediaSession.getSessionToken()))
+                                    .setStyle(new NotificationCompat.MediaStyle()
+                                            .setMediaSession(mediaSession.getSessionToken())
+                                            .setShowActionsInCompactView(0, 1, 2))
+//                                    .addAction(R.drawable.skip_previous_24px, "prev", prevPendingIntent)
+//                                    .addAction(playPauseButton, "play", playPendingIntent)
+//                                    .addAction(R.drawable.skip_next_24px, "next", nextPendingIntent)
+                                    .addAction(new androidx.core.app.NotificationCompat.Action(R.drawable.skip_previous_24px, "prev", prevPendingIntent))
+                                    .addAction(new androidx.core.app.NotificationCompat.Action(playPauseButton, "play", playPendingIntent))
+                                    .addAction(new androidx.core.app.NotificationCompat.Action(R.drawable.skip_next_24px, "next", nextPendingIntent))
                                     .setPriority(Notification.PRIORITY_LOW)
                                     .setContentIntent(contentIntent)
                                     .setOnlyAlertOnce(true)
@@ -117,4 +125,6 @@ public class ApplicationClass extends Application {
             Log.e("ApplicationClass", "showNotification: ", e);
         }
     }
+
+
 }

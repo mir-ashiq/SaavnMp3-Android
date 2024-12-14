@@ -69,4 +69,6 @@ dependencies {
 
     //IOS STYLE OVERSCROLL EFFECT
     implementation libs.overscroll.decor.android
+
+    implementation 'androidx.core:core:1.15.0'
 }
