@@ -16,11 +16,12 @@ import com.harsh.shah.saavnmp3.network.ApiManager;
 import com.harsh.shah.saavnmp3.network.utility.RequestNetwork;
 import com.harsh.shah.saavnmp3.records.AlbumSearch;
 import com.harsh.shah.saavnmp3.records.PlaylistSearch;
+import com.harsh.shah.saavnmp3.records.SongResponse;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-
-import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
+import java.util.List;
 
 public class ListActivity extends AppCompatActivity {
 
@@ -33,9 +34,31 @@ public class ListActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        OverScrollDecoratorHelper.setUpOverScroll(binding.recyclerView, OverScrollDecoratorHelper.ORIENTATION_VERTICAL);
+        // OverScrollDecoratorHelper.setUpOverScroll(binding.recyclerView, OverScrollDecoratorHelper.ORIENTATION_VERTICAL);
 
-        //binding.recyclerView.setAdapter(new ActivityListSongsItemAdapter());
+        List<SongResponse.Song> data = new ArrayList<>();
+        for (int i = 0; i < 11; i++) {
+            data.add(new SongResponse.Song(
+                    "<shimmer>",
+                    "",
+                    "",
+                    "",
+                    "",
+                    0.0,
+                    "",
+                    false,
+                    0,
+                    "",
+                    false,
+                    "",
+                    null,
+                    "",
+                    "",
+                    null,
+                    null, null, null
+            ));
+        }
+        binding.recyclerView.setAdapter(new ActivityListSongsItemAdapter(data));
 
         showData();
     }

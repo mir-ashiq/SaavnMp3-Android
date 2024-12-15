@@ -14,6 +14,7 @@ import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.gson.Gson;
 import com.harsh.shah.saavnmp3.R;
 import com.harsh.shah.saavnmp3.activities.ArtistProfileActivity;
+import com.harsh.shah.saavnmp3.model.BasicDataRecord;
 import com.harsh.shah.saavnmp3.records.ArtistsSearch;
 import com.squareup.picasso.Picasso;
 
@@ -48,7 +49,9 @@ public class ActivityMainArtistsItemAdapter extends RecyclerView.Adapter<Activit
         Picasso.get().load(Uri.parse(data.get(position).image().get(data.get(position).image().size() - 1).url())).into(imageView);
 
         holder.itemView.setOnClickListener(v -> {
-            v.getContext().startActivity(new Intent(v.getContext(), ArtistProfileActivity.class).putExtra("artist", new Gson().toJson(data.get(position))));
+            v.getContext().startActivity(new Intent(v.getContext(), ArtistProfileActivity.class)
+                    .putExtra("data", new Gson().toJson(new BasicDataRecord(data.get(position).id(), data.get(position).name(), "", data.get(position).image().get(data.get(position).image().size() - 1).url())))
+            );
         });
     }
 

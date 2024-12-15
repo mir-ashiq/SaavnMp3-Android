@@ -3,7 +3,6 @@ package com.harsh.shah.saavnmp3.services;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.widget.Toast;
 
 import com.harsh.shah.saavnmp3.ApplicationClass;
 import com.harsh.shah.saavnmp3.R;
@@ -41,8 +40,6 @@ public class NotificationReceiver extends BroadcastReceiver {
                 intent1.putExtra("action", intent.getAction());
                 intent1.putExtra("fromNotification", true);
                 context.startService(intent1);
-
-                Toast.makeText(context, ApplicationClass.mediaPlayerUtil.isPlaying() + "", Toast.LENGTH_SHORT).show();
 
                 ApplicationClass applicationClass = (ApplicationClass) context.getApplicationContext();
                 applicationClass.showNotification(ApplicationClass.mediaPlayerUtil.isPlaying() ? R.drawable.baseline_pause_24 : R.drawable.play_arrow_24px);

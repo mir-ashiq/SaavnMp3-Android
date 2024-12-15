@@ -52,7 +52,11 @@ public class ActivityMainAlbumItemAdapter extends RecyclerView.Adapter<ActivityM
         Picasso.get().load(Uri.parse(data.get(position).albumCover())).into(coverImage);
 
         holder.itemView.setOnClickListener(v -> {
-            v.getContext().startActivity(new Intent(v.getContext(), ListActivity.class).putExtra("data", new Gson().toJson(data.get(position))).putExtra("type", "album").putExtra("id", data.get(position).id()));
+            v.getContext().startActivity(new Intent(v.getContext(), ListActivity.class)
+                    .putExtra("data", new Gson().toJson(data.get(position)))
+                    .putExtra("type", "album")
+                    .putExtra("id", data.get(position).id())
+            );
         });
     }
 

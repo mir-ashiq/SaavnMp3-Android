@@ -16,12 +16,12 @@ import com.google.gson.Gson;
 import com.harsh.shah.saavnmp3.adapters.ActivityArtistProfileTopAlbumsAdapter;
 import com.harsh.shah.saavnmp3.adapters.ActivityArtistProfileTopSongsAdapter;
 import com.harsh.shah.saavnmp3.databinding.ActivityArtistProfileBinding;
+import com.harsh.shah.saavnmp3.model.BasicDataRecord;
 import com.harsh.shah.saavnmp3.network.ApiManager;
 import com.harsh.shah.saavnmp3.network.NetworkChangeReceiver;
 import com.harsh.shah.saavnmp3.network.utility.RequestNetwork;
 import com.harsh.shah.saavnmp3.records.AlbumsSearch;
 import com.harsh.shah.saavnmp3.records.ArtistSearch;
-import com.harsh.shah.saavnmp3.records.ArtistsSearch;
 import com.harsh.shah.saavnmp3.records.SongResponse;
 import com.squareup.picasso.Picasso;
 
@@ -93,14 +93,14 @@ public class ArtistProfileActivity extends AppCompatActivity {
 
     void showData() {
         if (getIntent().getExtras() == null) return;
-        final String artist = getIntent().getExtras().getString("artist", "null");
-        final ArtistsSearch.Data.Results artistItem = new Gson().fromJson(artist, ArtistsSearch.Data.Results.class);
+        final String artist = getIntent().getExtras().getString("data", "null");
+        final BasicDataRecord artistItem = new Gson().fromJson(artist, BasicDataRecord.class);
         if (artistItem == null) return;
         final String artistId = artistItem.id();
 
-        Picasso.get().load(Uri.parse(artistItem.image().get(artistItem.image().size() - 1).url())).into(binding.artistImg);
-        binding.artistName.setText(artistItem.name());
-        binding.collapsingToolbarLayout.setTitle(artistItem.name());
+        Picasso.get().load(Uri.parse(artistItem.image())).into(binding.artistImg);
+        binding.artistName.setText(artistItem.title());
+        binding.collapsingToolbarLayout.setTitle(artistItem.title());
 
         final ApiManager apiManager = new ApiManager(this);
         apiManager.retrieveArtistById(artistId, new RequestNetwork.RequestListener() {
