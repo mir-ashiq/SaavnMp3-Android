@@ -55,7 +55,7 @@ public class SearchActivity extends AppCompatActivity {
             showData(textView.getText().toString());
             Log.i(TAG, "onCreate: " + textView.getText().toString());
             binding.edittext.clearFocus();
-
+            hideKeyboard(binding.edittext);
             return true;
         });
 
