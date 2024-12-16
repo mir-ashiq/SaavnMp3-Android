@@ -1,6 +1,7 @@
 [versions]
 agp = "8.7.3"
 compiler = "4.16.0"
+core = "1.15.0"
 gson = "2.10.1"
 jacksonDatabind = "2.18.2"
 junit = "4.13.2"
@@ -21,6 +22,7 @@ swiperefreshlayout = "1.2.0-alpha01"
 
 [libraries]
 compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "compiler" }
+core = { module = "androidx.core:core", version.ref = "core" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "compiler" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jacksonDatabind" }

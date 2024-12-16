@@ -114,7 +114,6 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
         musicService = null;
     }
 
-
     void showData() {
         if (getIntent().getExtras() == null) return;
         final ApiManager apiManager = new ApiManager(this);
@@ -135,7 +134,7 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
                     Picasso.get().load(Uri.parse(image.get(image.size() - 1).url())).into(binding.coverImage);
                     List<SongResponse.DownloadUrl> downloadUrls = songResponse.data().get(0).downloadUrl();
 
-                    Log.i(TAG, "onResponse: " + downloadUrls.get(downloadUrls.size() - 1).url());
+                    //Log.i(TAG, "onResponse: " + downloadUrls.get(downloadUrls.size() - 1).url());
                     SONG_URL = downloadUrls.get(downloadUrls.size() - 1).url();
                     if (((ApplicationClass) getApplicationContext()).IMAGE_URL.equals(IMAGE_URL)) {
                         updateSeekbar();
@@ -244,56 +243,9 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
 
     public void showNotification(int playPauseButton) {
         ApplicationClass applicationClass = (ApplicationClass) getApplicationContext();
-        applicationClass.setMusicDetails(IMAGE_URL, binding.title.getText().toString(), binding.description.getText().toString());
+        applicationClass.setMusicDetails(IMAGE_URL, binding.title.getText().toString(), binding.description.getText().toString(), getIntent().getExtras().getString("id", "3IoDK8qI"));
         applicationClass.showNotification(playPauseButton);
     }
 
-//    public void showNotification(int playPauseButton) {
-//
-//        Intent intent = new Intent(this, MainActivity.class);
-//        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, 0);
-//
-//        Intent prevIntent = new Intent(this, NotificationReceiver.class).setAction(ApplicationClass.ACTION_PREV);
-//        PendingIntent prevPendingIntent = PendingIntent.getBroadcast(this, 0, prevIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-//
-//        Intent playIntent = new Intent(this, NotificationReceiver.class).setAction(ApplicationClass.ACTION_PLAY);
-//        PendingIntent playPendingIntent = PendingIntent.getBroadcast(this, 0, playIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-//
-//        Intent nextIntent = new Intent(this, NotificationReceiver.class).setAction(ApplicationClass.ACTION_NEXT);
-//        PendingIntent nextPendingIntent = PendingIntent.getBroadcast(this, 0, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-//
-//
-//        Glide.with(this)
-//                .asBitmap()
-//                .load(IMAGE_URL) // Replace with your URL string
-//                .into(new CustomTarget<Bitmap>() {
-//                    @Override
-//                    public void onResourceReady(@NonNull Bitmap resource, Transition<? super Bitmap> transition) {
-//                        Notification notification = new androidx.core.app.NotificationCompat.Builder(MusicOverviewActivity.this, ApplicationClass.CHANNEL_ID_2)
-//                                .setSmallIcon(R.drawable.ic_launcher_foreground)
-//                                .setLargeIcon(resource)
-//                                .setContentTitle(binding.title.getText())
-//                                .setContentText(binding.description.getText())
-//                                .addAction(R.drawable.skip_previous_24px, "prev", prevPendingIntent)
-//                                .addAction(playPauseButton, "play", playPendingIntent)
-//                                .addAction(R.drawable.skip_next_24px, "next", nextPendingIntent)
-//                                .setStyle(new NotificationCompat.MediaStyle().setMediaSession(mediaSession.getSessionToken()))
-//                                .setPriority(Notification.PRIORITY_LOW)
-//                                .setContentIntent(contentIntent)
-//                                .setOnlyAlertOnce(true)
-//                                .build();
-//
-//                        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-//                        notificationManager.notify(0, notification);
-//
-//
-//                    }
-//
-//                    @Override
-//                    public void onLoadCleared(Drawable placeholder) {
-//                        // Handle placeholder if needed
-//                    }
-//                });
-//    }
 
 }

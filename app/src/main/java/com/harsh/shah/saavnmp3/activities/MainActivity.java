@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
+import com.harsh.shah.saavnmp3.ApplicationClass;
 import com.harsh.shah.saavnmp3.adapters.ActivityMainAlbumItemAdapter;
 import com.harsh.shah.saavnmp3.adapters.ActivityMainArtistsItemAdapter;
 import com.harsh.shah.saavnmp3.adapters.ActivityMainPlaylistAdapter;
@@ -43,8 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
     private final String TAG = "MainActivity";
     ActivityMainBinding binding;
-
-
+    ApplicationClass applicationClass;
     final List<AlbumItem> songs = new ArrayList<>();
     final List<ArtistsSearch.Data.Results> artists = new ArrayList<>();
     final List<AlbumItem> albums = new ArrayList<>();
@@ -59,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onNetworkDisconnected() {
+            if (songs.isEmpty() || artists.isEmpty() || albums.isEmpty() || playlists.isEmpty())
+                showOfflineData();
             Snackbar.make(binding.getRoot(), "No Internet Connection", Snackbar.LENGTH_LONG).show();
         }
     });
@@ -74,6 +76,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        applicationClass = (ApplicationClass) getApplicationContext();
 
         int span = calculateNoOfColumns(this, 200);
         binding.playlistRecyclerView.setLayoutManager(new GridLayoutManager(this, span));
@@ -97,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         showShimmerData();
+        showOfflineData();
 
         //showData();
 
@@ -136,8 +141,10 @@ public class MainActivity extends AppCompatActivity {
                         binding.popularSongsRecyclerView.setAdapter(adapter);
                         adapter.notifyDataSetChanged();
                     });
+                    applicationClass.sharedPreferenceManager.setHomeSongsRecommended(songSearch);
                 } else {
                     try {
+                        showOfflineData();
                         Toast.makeText(MainActivity.this, new JSONObject(response).getString("message"), Toast.LENGTH_SHORT).show();
                     } catch (JSONException e) {
                         Log.e(TAG, "onResponse: ", e);
@@ -147,6 +154,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onErrorResponse(String tag, String message) {
+                showOfflineData();
             }
         });
 
@@ -162,8 +170,10 @@ public class MainActivity extends AppCompatActivity {
                         binding.popularArtistsRecyclerView.setAdapter(adapter);
                         adapter.notifyDataSetChanged();
                     });
+                    applicationClass.sharedPreferenceManager.setHomeArtistsRecommended(artistSearch);
                 } else {
                     try {
+                        showOfflineData();
                         Toast.makeText(MainActivity.this, new JSONObject(response).getString("message"), Toast.LENGTH_SHORT).show();
                     } catch (JSONException e) {
                         Log.e(TAG, "onResponse: ", e);
@@ -173,6 +183,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onErrorResponse(String tag, String message) {
+                showOfflineData();
             }
         });
 
@@ -188,9 +199,11 @@ public class MainActivity extends AppCompatActivity {
                         binding.popularAlbumsRecyclerView.setAdapter(adapter);
                         adapter.notifyDataSetChanged();
                     });
+                    applicationClass.sharedPreferenceManager.setHomeAlbumsRecommended(albumsSearch);
                 } else {
                     try {
                         Toast.makeText(MainActivity.this, new JSONObject(response).getString("message"), Toast.LENGTH_SHORT).show();
+                        showOfflineData();
                     } catch (JSONException e) {
                         Log.e(TAG, "onResponse: ", e);
                     }
@@ -199,6 +212,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onErrorResponse(String tag, String message) {
+                showOfflineData();
             }
         });
 
@@ -216,9 +230,11 @@ public class MainActivity extends AppCompatActivity {
                         binding.playlistRecyclerView.setAdapter(adapter);
                         adapter.notifyDataSetChanged();
                     });
+                    applicationClass.sharedPreferenceManager.setHomePlaylistRecommended(playlistsSearch);
                 } else {
                     try {
                         Toast.makeText(MainActivity.this, new JSONObject(response).getString("message"), Toast.LENGTH_SHORT).show();
+                        showOfflineData();
                     } catch (JSONException e) {
                         Log.e(TAG, "onResponse: ", e);
                     }
@@ -227,6 +243,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onErrorResponse(String tag, String message) {
+                showOfflineData();
             }
         });
     }
@@ -261,6 +278,51 @@ public class MainActivity extends AppCompatActivity {
                 Log.e(TAG, "onErrorResponse: ", e);
             }
         }
+    }
+
+    private void showOfflineData(){
+        if(applicationClass.sharedPreferenceManager.getHomeSongsRecommended()!=null){
+            SongSearch songSearch = applicationClass.sharedPreferenceManager.getHomeSongsRecommended();
+            songSearch.data().results().forEach(results -> {
+                songs.add(new AlbumItem(results.name(), results.language() + " " + results.year(), results.image().get(results.image().size() - 1).url(), results.id()));
+                ActivityMainPopularSongs adapter = new ActivityMainPopularSongs(songs);
+                binding.popularSongsRecyclerView.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
+            });
+        }
+
+        if(applicationClass.sharedPreferenceManager.getHomeArtistsRecommended()!=null){
+            ArtistsSearch artistsSearch = applicationClass.sharedPreferenceManager.getHomeArtistsRecommended();
+            artistsSearch.data().results().forEach(results -> {
+                artists.add(results);
+                ActivityMainArtistsItemAdapter adapter = new ActivityMainArtistsItemAdapter(artists);
+                binding.popularArtistsRecyclerView.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
+            });
+        }
+
+        if(applicationClass.sharedPreferenceManager.getHomeAlbumsRecommended()!=null){
+            AlbumsSearch albumsSearch = applicationClass.sharedPreferenceManager.getHomeAlbumsRecommended();
+            albumsSearch.data().results().forEach(results -> {
+                albums.add(new AlbumItem(results.name(), results.language() + " " + results.year(), results.image().get(results.image().size() - 1).url(), results.id()));
+                ActivityMainAlbumItemAdapter adapter = new ActivityMainAlbumItemAdapter(albums);
+                binding.popularAlbumsRecyclerView.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
+            });
+        }
+
+        if(applicationClass.sharedPreferenceManager.getHomePlaylistRecommended()!=null){
+            PlaylistsSearch playlistsSearch = applicationClass.sharedPreferenceManager.getHomePlaylistRecommended();
+            playlistsSearch.data().results().forEach(results -> {
+                playlists.add(new AlbumItem(results.name(), "", results.image().get(results.image().size() - 1).url(), results.id()));
+                //binding.playlistRecyclerView.setAdapter(new ActivityMainPlaylistAdapter(playlists));
+
+                ActivityMainPlaylistAdapter adapter = new ActivityMainPlaylistAdapter(playlists);
+                binding.playlistRecyclerView.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
+            });
+        }
+
     }
 
     public void openSearch(View view) {

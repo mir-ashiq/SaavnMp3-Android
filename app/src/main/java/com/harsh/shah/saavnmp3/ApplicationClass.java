@@ -18,9 +18,10 @@ import androidx.media.app.NotificationCompat;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
-import com.harsh.shah.saavnmp3.activities.MainActivity;
+import com.harsh.shah.saavnmp3.activities.MusicOverviewActivity;
 import com.harsh.shah.saavnmp3.services.NotificationReceiver;
 import com.harsh.shah.saavnmp3.utils.MediaPlayerUtil;
+import com.harsh.shah.saavnmp3.utils.SharedPreferenceManager;
 
 public class ApplicationClass extends Application {
 
@@ -36,6 +37,9 @@ public class ApplicationClass extends Application {
     private String MUSIC_TITLE = "";
     private String MUSIC_DESCRIPTION = "";
     public String IMAGE_URL = "";
+    public String MUSIC_ID = "";
+
+    public SharedPreferenceManager sharedPreferenceManager;
 
     @Override
     public void onCreate() {
@@ -43,12 +47,12 @@ public class ApplicationClass extends Application {
         mediaSession = new MediaSessionCompat(this, "ApplicationClass");
         mediaSession.setActive(true);
         createNotificationChannel();
-
+        sharedPreferenceManager = SharedPreferenceManager.getInstance(this);
     }
 
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
-            NotificationChannel notificationChannel1 = new NotificationChannel(CHANNEL_ID_1, "Media Controls", NotificationManager.IMPORTANCE_LOW);
+            NotificationChannel notificationChannel1 = new NotificationChannel(CHANNEL_ID_1, "Media Controls", NotificationManager.IMPORTANCE_DEFAULT);
             notificationChannel1.setDescription("Notifications for media playback");
 
 //            NotificationChannel notificationChannel2 = new NotificationChannel(CHANNEL_ID_2, "Fallback Media Control", NotificationManager.IMPORTANCE_LOW);
@@ -61,26 +65,28 @@ public class ApplicationClass extends Application {
         }
     }
 
-    public void setMusicDetails(String image, String title, String description) {
+    public void setMusicDetails(String image, String title, String description, String id) {
         IMAGE_URL = image;
         MUSIC_TITLE = title;
         MUSIC_DESCRIPTION = description;
+        MUSIC_ID = id;
     }
 
     public void showNotification(int playPauseButton) {
         try {
 
-            Intent intent = new Intent(this, MainActivity.class);
-            PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_MUTABLE);
+            Intent intent = new Intent(this, MusicOverviewActivity.class);
+            intent.putExtra("id", MUSIC_ID);
+            PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
-            Intent prevIntent = new Intent(this, NotificationReceiver.class).setAction(ApplicationClass.ACTION_PREV);
-            PendingIntent prevPendingIntent = PendingIntent.getBroadcast(this, 0, prevIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            Intent prevIntent = new Intent(this, NotificationReceiver.class).setAction(ACTION_PREV);
+            PendingIntent prevPendingIntent = PendingIntent.getBroadcast(this, 0, prevIntent, PendingIntent.FLAG_IMMUTABLE);
 
             Intent playIntent = new Intent(this, NotificationReceiver.class).setAction(ApplicationClass.ACTION_PLAY);
-            PendingIntent playPendingIntent = PendingIntent.getBroadcast(this, 0, playIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent playPendingIntent = PendingIntent.getBroadcast(this, 0, playIntent, PendingIntent.FLAG_IMMUTABLE);
 
             Intent nextIntent = new Intent(this, NotificationReceiver.class).setAction(ApplicationClass.ACTION_NEXT);
-            PendingIntent nextPendingIntent = PendingIntent.getBroadcast(this, 0, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent nextPendingIntent = PendingIntent.getBroadcast(this, 0, nextIntent, PendingIntent.FLAG_IMMUTABLE);
 
 
             Glide.with(this)
