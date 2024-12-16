@@ -99,7 +99,7 @@ public class ApplicationClass extends Application {
                                     .setSmallIcon(R.drawable.ic_launcher_foreground)
                                     .setLargeIcon(resource)
                                     .setContentTitle(MUSIC_TITLE)
-                                    .setOngoing(true)
+                                    .setOngoing(playPauseButton != R.drawable.play_arrow_24px)
                                     .setContentText(MUSIC_DESCRIPTION)
                                     .setStyle(new NotificationCompat.MediaStyle()
                                             .setMediaSession(mediaSession.getSessionToken())
