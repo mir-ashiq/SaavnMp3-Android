@@ -10,7 +10,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.support.v4.media.session.MediaSessionCompat;
 import android.util.Log;
 import android.view.View;
 
@@ -40,7 +39,6 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
     private String SONG_URL = "";
     private String IMAGE_URL = "";
     MusicService musicService;
-    MediaSessionCompat mediaSession;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -83,7 +81,7 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
             handler.removeCallbacks(runnable);
             mediaPlayer.reset();
         });
-
+        //((ApplicationClass)getApplication()).setMusicDetails("","","","");
         showData();
     }
 
@@ -117,7 +115,16 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
     void showData() {
         if (getIntent().getExtras() == null) return;
         final ApiManager apiManager = new ApiManager(this);
-        apiManager.retrieveSongById(getIntent().getExtras().getString("id", "3IoDK8qI"), null, new RequestNetwork.RequestListener() {
+        final String ID = getIntent().getExtras().getString("id", "");
+        //((ApplicationClass)getApplicationContext()).setMusicDetails(null,null,null,ID);
+        if (ApplicationClass.MUSIC_ID.equals(ID)) {
+            updateSeekbar();
+            if (mediaPlayerUtil.isPlaying())
+                binding.playPauseImage.setImageResource(R.drawable.baseline_pause_24);
+            else
+                binding.playPauseImage.setImageResource(R.drawable.play_arrow_24px);
+        }
+        apiManager.retrieveSongById(ID, null, new RequestNetwork.RequestListener() {
             @Override
             public void onResponse(String tag, String response, HashMap<String, Object> responseHeaders) {
                 SongResponse songResponse = new Gson().fromJson(response, SongResponse.class);
@@ -136,15 +143,22 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
 
                     //Log.i(TAG, "onResponse: " + downloadUrls.get(downloadUrls.size() - 1).url());
                     SONG_URL = downloadUrls.get(downloadUrls.size() - 1).url();
-                    if (((ApplicationClass) getApplicationContext()).IMAGE_URL.equals(IMAGE_URL)) {
-                        updateSeekbar();
-                        if (mediaPlayerUtil.isPlaying())
-                            binding.playPauseImage.setImageResource(R.drawable.baseline_pause_24);
-                        else
-                            binding.playPauseImage.setImageResource(R.drawable.play_arrow_24px);
-                    } else
+//                    if (ApplicationClass.MUSIC_ID.equals(ID)) {
+//                        updateSeekbar();
+//                        if (mediaPlayerUtil.isPlaying())
+//                            binding.playPauseImage.setImageResource(R.drawable.baseline_pause_24);
+//                        else
+//                            binding.playPauseImage.setImageResource(R.drawable.play_arrow_24px);
+//                    } else
+//                        prepareMediaPLayer();
+
+                    if(!ApplicationClass.MUSIC_ID.equals(ID)){
+                        ApplicationClass applicationClass = (ApplicationClass) getApplicationContext();
+                        applicationClass.setMusicDetails(IMAGE_URL, binding.title.getText().toString(), binding.description.getText().toString(), ID);
                         prepareMediaPLayer();
-                    //mediaPlayerUtil.playSong(binding.title.getText().toString(), binding.description.getText().toString(), SONG_URL, image.get(image.size() - 1).url());
+                    }
+
+                    //binding.main.setBackgroundColor(ApplicationClass.IMAGE_BG_COLOR);
 
                 } else
                     finish();
@@ -243,7 +257,7 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
 
     public void showNotification(int playPauseButton) {
         ApplicationClass applicationClass = (ApplicationClass) getApplicationContext();
-        applicationClass.setMusicDetails(IMAGE_URL, binding.title.getText().toString(), binding.description.getText().toString(), getIntent().getExtras().getString("id", "3IoDK8qI"));
+        applicationClass.setMusicDetails(IMAGE_URL, binding.title.getText().toString(), binding.description.getText().toString(), getIntent().getExtras().getString("id", ""));
         applicationClass.showNotification(playPauseButton);
     }
 

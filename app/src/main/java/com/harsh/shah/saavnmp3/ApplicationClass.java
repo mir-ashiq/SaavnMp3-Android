@@ -7,6 +7,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.v4.media.session.MediaSessionCompat;
@@ -34,12 +35,15 @@ public class ApplicationClass extends Application {
     public static final MediaPlayerUtil mediaPlayerUtil = MediaPlayerUtil.getInstance();
     private MediaSessionCompat mediaSession;
 
-    private String MUSIC_TITLE = "";
-    private String MUSIC_DESCRIPTION = "";
-    public String IMAGE_URL = "";
-    public String MUSIC_ID = "";
+    public static String MUSIC_TITLE = "";
+    public static String MUSIC_DESCRIPTION = "";
+    public static String IMAGE_URL = "";
+    public static String MUSIC_ID = "";
 
     public SharedPreferenceManager sharedPreferenceManager;
+    private final String TAG = "ApplicationClass";
+    public static int IMAGE_BG_COLOR = Color.argb(255,25,20,20);
+    public static int TEXT_ON_IMAGE_COLOR = IMAGE_BG_COLOR ^ 0x00FFFFFF;
 
     @Override
     public void onCreate() {
@@ -66,18 +70,22 @@ public class ApplicationClass extends Application {
     }
 
     public void setMusicDetails(String image, String title, String description, String id) {
-        IMAGE_URL = image;
-        MUSIC_TITLE = title;
-        MUSIC_DESCRIPTION = description;
+        if(image!=null) IMAGE_URL = image;
+        if(title!=null) MUSIC_TITLE = title;
+        if(description!=null) MUSIC_DESCRIPTION = description;
         MUSIC_ID = id;
+        Log.i(TAG, "setMusicDetails: " + MUSIC_TITLE + "\t" + MUSIC_ID);
     }
 
     public void showNotification(int playPauseButton) {
         try {
 
+            Log.i(TAG, "showNotification: " + MUSIC_TITLE + "\t" + MUSIC_ID);
+
             Intent intent = new Intent(this, MusicOverviewActivity.class);
             intent.putExtra("id", MUSIC_ID);
-            PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            PendingIntent contentIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
 
             Intent prevIntent = new Intent(this, NotificationReceiver.class).setAction(ACTION_PREV);
             PendingIntent prevPendingIntent = PendingIntent.getBroadcast(this, 0, prevIntent, PendingIntent.FLAG_IMMUTABLE);
@@ -95,6 +103,9 @@ public class ApplicationClass extends Application {
                     .into(new CustomTarget<Bitmap>() {
                         @Override
                         public void onResourceReady(@NonNull Bitmap resource, Transition<? super Bitmap> transition) {
+                            IMAGE_BG_COLOR = calculateDominantColor(resource);
+                            TEXT_ON_IMAGE_COLOR = invertColor(IMAGE_BG_COLOR);
+
                             Notification notification = new androidx.core.app.NotificationCompat.Builder(ApplicationClass.this, CHANNEL_ID_1)
                                     .setSmallIcon(R.drawable.ic_launcher_foreground)
                                     .setLargeIcon(resource)
@@ -110,7 +121,7 @@ public class ApplicationClass extends Application {
                                     .addAction(new androidx.core.app.NotificationCompat.Action(R.drawable.skip_previous_24px, "prev", prevPendingIntent))
                                     .addAction(new androidx.core.app.NotificationCompat.Action(playPauseButton, "play", playPendingIntent))
                                     .addAction(new androidx.core.app.NotificationCompat.Action(R.drawable.skip_next_24px, "next", nextPendingIntent))
-                                    .setPriority(Notification.PRIORITY_LOW)
+                                    .setPriority(Notification.PRIORITY_DEFAULT)
                                     .setContentIntent(contentIntent)
                                     .setOnlyAlertOnce(true)
                                     .build();
@@ -132,5 +143,32 @@ public class ApplicationClass extends Application {
         }
     }
 
+    private int invertColor(int color) {
+        return (color ^ 0x00FFFFFF);
+    }
+    int calculateDominantColor(Bitmap bitmap) {
+        int[] pixels = new int[bitmap.getWidth() * bitmap.getHeight()];
+        bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+
+        int redSum = 0;
+        int greenSum = 0;
+        int blueSum = 0;
+
+        for (int pixel : pixels) {
+            int red = Color.red(pixel);
+            int green = Color.green(pixel);
+            int blue = Color.blue(pixel);
+
+            redSum += red;
+            greenSum += green;
+            blueSum += blue;
+        }
+
+        int dominantRed = redSum / pixels.length;
+        int dominantGreen = greenSum / pixels.length;
+        int dominantBlue = blueSum / pixels.length;
+
+        return Color.argb(255, dominantRed, dominantGreen, dominantBlue);
+    }
 
 }

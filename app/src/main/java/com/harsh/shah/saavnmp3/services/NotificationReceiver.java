@@ -3,9 +3,11 @@ package com.harsh.shah.saavnmp3.services;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import com.harsh.shah.saavnmp3.ApplicationClass;
 import com.harsh.shah.saavnmp3.R;
+import com.harsh.shah.saavnmp3.activities.MusicOverviewActivity;
 
 public class NotificationReceiver extends BroadcastReceiver {
     @Override
@@ -44,6 +46,13 @@ public class NotificationReceiver extends BroadcastReceiver {
                 ApplicationClass applicationClass = (ApplicationClass) context.getApplicationContext();
                 applicationClass.showNotification(ApplicationClass.mediaPlayerUtil.isPlaying() ? R.drawable.baseline_pause_24 : R.drawable.play_arrow_24px);
                 break;
+            case "action_click":
+                context.startActivity(new Intent(context, MusicOverviewActivity.class).putExtra("id", intent.getStringExtra("id")).setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
+                break;
+            default:
+                Log.i("NotificationReceiver", "onReceive: " + intent.getAction());
+                break;
         }
+        Log.i("NotificationReceiver", "onReceive: " + intent.getAction());
     }
 }

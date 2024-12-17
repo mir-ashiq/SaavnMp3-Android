@@ -62,7 +62,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
-
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/refreshLayout"
         android:layout_width="match_parent"
@@ -186,7 +185,9 @@
                     android:layout_marginTop="@dimen/_8sdp"
                     android:orientation="vertical"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/__popular_albums_section">
+                    app:layout_constraintTop_toBottomOf="@id/__popular_albums_section"
+                    android:elevation="@dimen/_8sdp"
+                    android:layout_marginBottom="@dimen/_50sdp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -217,4 +218,83 @@
         </androidx.core.widget.NestedScrollView>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <LinearLayout
+        android:id="@+id/play_bar_background"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="@dimen/_12sdp"
+        android:layout_marginVertical="@dimen/_8sdp"
+        android:padding="@dimen/_8sdp"
+        android:gravity="center_vertical"
+        android:background="@drawable/play_bar_background"
+        android:elevation="@dimen/_12sdp">
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+            app:cardBackgroundColor="@android:color/transparent"
+            app:cardCornerRadius="@dimen/_8sdp"
+            app:strokeWidth="0dp">
+
+            <ImageView
+                android:id="@+id/play_bar_cover_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/spotify_dark_green"/>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/play_bar_music_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text="@string/app_name"
+                android:textStyle="bold"
+                android:textSize="@dimen/_12ssp"/>
+
+            <TextView
+                android:id="@+id/play_bar_music_desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text="@string/app_name"
+                android:textSize="@dimen/_10ssp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+<!--            <ImageView-->
+<!--                android:layout_width="@dimen/_30sdp"-->
+<!--                android:layout_height="@dimen/_30sdp"-->
+<!--                android:src="@android:drawable/ic_menu_share"-->
+<!--                android:padding="@dimen/_4sdp"/>-->
+
+            <ImageView
+                android:id="@+id/play_bar_play_pause_icon"
+                android:layout_width="@dimen/_30sdp"
+                android:layout_height="@dimen/_30sdp"
+                android:src="@drawable/play_arrow_24px"
+                android:padding="@dimen/_4sdp"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
