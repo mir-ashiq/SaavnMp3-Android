@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.gson.Gson;
+import com.harsh.shah.saavnmp3.ApplicationClass;
 import com.harsh.shah.saavnmp3.adapters.ActivityListSongsItemAdapter;
 import com.harsh.shah.saavnmp3.databinding.ActivityListBinding;
 import com.harsh.shah.saavnmp3.model.AlbumItem;
@@ -27,6 +28,8 @@ public class ListActivity extends AppCompatActivity {
 
     ActivityListBinding binding;
 
+    private List<String> trackQueue = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,7 +37,6 @@ public class ListActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        // OverScrollDecoratorHelper.setUpOverScroll(binding.recyclerView, OverScrollDecoratorHelper.ORIENTATION_VERTICAL);
 
         List<SongResponse.Song> data = new ArrayList<>();
         for (int i = 0; i < 11; i++) {
@@ -60,6 +62,13 @@ public class ListActivity extends AppCompatActivity {
         }
         binding.recyclerView.setAdapter(new ActivityListSongsItemAdapter(data));
 
+        binding.playAllBtn.setOnClickListener(view -> {
+            if (!trackQueue.isEmpty()) {
+                ((ApplicationClass)getApplicationContext()).setTrackQueue(trackQueue);
+                ((ApplicationClass)getApplicationContext()).nextTrack();
+            }
+        });
+
         showData();
     }
 
@@ -78,6 +87,8 @@ public class ListActivity extends AppCompatActivity {
                     AlbumSearch albumSearch = new Gson().fromJson(response, AlbumSearch.class);
                     if (albumSearch.success()) {
                         binding.recyclerView.setAdapter(new ActivityListSongsItemAdapter(albumSearch.data().songs()));
+                        for (SongResponse.Song song : albumSearch.data().songs())
+                            trackQueue.add(song.id());
                     }
                 }
 
@@ -95,6 +106,8 @@ public class ListActivity extends AppCompatActivity {
                 PlaylistSearch playlistSearch = new Gson().fromJson(response, PlaylistSearch.class);
                 if (playlistSearch.success()) {
                     binding.recyclerView.setAdapter(new ActivityListSongsItemAdapter(playlistSearch.data().songs()));
+                    for (SongResponse.Song song : playlistSearch.data().songs())
+                        trackQueue.add(song.id());
                 }
             }
 

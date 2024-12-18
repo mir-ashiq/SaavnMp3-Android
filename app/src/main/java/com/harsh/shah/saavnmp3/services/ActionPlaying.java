@@ -7,5 +7,6 @@ public interface ActionPlaying {
     void prevClicked();
 
     void playClicked();
+    void onProgressChanged(int progress);
 
 }

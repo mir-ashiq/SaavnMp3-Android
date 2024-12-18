@@ -16,18 +16,22 @@ public class NotificationReceiver extends BroadcastReceiver {
 
         Intent intent1 = new Intent(context, MusicService.class);
 
+        final ApplicationClass applicationClass = (ApplicationClass) context.getApplicationContext();
+
         switch (intent.getAction()) {
             case ApplicationClass.ACTION_NEXT:
                 // Handle next action
                 //Toast.makeText(context, "next", Toast.LENGTH_SHORT).show();
                 intent1.putExtra("action", intent.getAction());
                 //context.startService(intent1);
+                applicationClass.nextTrack();
                 break;
             case ApplicationClass.ACTION_PREV:
                 // Handle previous action
                 //Toast.makeText(context, "prev", Toast.LENGTH_SHORT).show();
                 intent1.putExtra("action", intent.getAction());
                 //context.startService(intent1);
+                applicationClass.prevTrack();
                 break;
             case ApplicationClass.ACTION_PLAY:
                 // Handle play/pause action
@@ -43,7 +47,6 @@ public class NotificationReceiver extends BroadcastReceiver {
                 intent1.putExtra("fromNotification", true);
                 context.startService(intent1);
 
-                ApplicationClass applicationClass = (ApplicationClass) context.getApplicationContext();
                 applicationClass.showNotification(ApplicationClass.mediaPlayerUtil.isPlaying() ? R.drawable.baseline_pause_24 : R.drawable.play_arrow_24px);
                 break;
             case "action_click":

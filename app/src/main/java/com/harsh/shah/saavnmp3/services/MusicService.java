@@ -8,6 +8,7 @@ import android.os.IBinder;
 import androidx.annotation.Nullable;
 
 import com.harsh.shah.saavnmp3.ApplicationClass;
+import com.harsh.shah.saavnmp3.activities.MusicOverviewActivity;
 
 public class MusicService extends Service {
 
@@ -50,6 +51,10 @@ public class MusicService extends Service {
                     if (actionPlaying != null) {
                         actionPlaying.playClicked();
                     }
+                    break;
+
+                case "action_click":
+                    startActivity(new Intent(this, MusicOverviewActivity.class).putExtra("id", intent.getStringExtra("id")).setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
                     break;
             }
         }

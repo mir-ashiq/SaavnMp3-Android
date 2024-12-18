@@ -1,5 +1,8 @@
 package com.harsh.shah.saavnmp3;
 
+import static com.harsh.shah.saavnmp3.activities.MusicOverviewActivity.convertPlayCount;
+
+import android.app.Activity;
 import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -19,10 +22,19 @@ import androidx.media.app.NotificationCompat;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.google.gson.Gson;
 import com.harsh.shah.saavnmp3.activities.MusicOverviewActivity;
+import com.harsh.shah.saavnmp3.network.ApiManager;
+import com.harsh.shah.saavnmp3.network.utility.RequestNetwork;
+import com.harsh.shah.saavnmp3.records.SongResponse;
 import com.harsh.shah.saavnmp3.services.NotificationReceiver;
 import com.harsh.shah.saavnmp3.utils.MediaPlayerUtil;
 import com.harsh.shah.saavnmp3.utils.SharedPreferenceManager;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class ApplicationClass extends Application {
 
@@ -31,19 +43,28 @@ public class ApplicationClass extends Application {
     public static final String ACTION_NEXT = "next";
     public static final String ACTION_PREV = "prev";
     public static final String ACTION_PLAY = "play";
-
     public static final MediaPlayerUtil mediaPlayerUtil = MediaPlayerUtil.getInstance();
     private MediaSessionCompat mediaSession;
-
+    private List<String> trackQueue = new ArrayList<>();
     public static String MUSIC_TITLE = "";
     public static String MUSIC_DESCRIPTION = "";
     public static String IMAGE_URL = "";
     public static String MUSIC_ID = "";
-
+    public static String SONG_URL = "";
+    public static int track_position = -1;
     public SharedPreferenceManager sharedPreferenceManager;
     private final String TAG = "ApplicationClass";
     public static int IMAGE_BG_COLOR = Color.argb(255,25,20,20);
     public static int TEXT_ON_IMAGE_COLOR = IMAGE_BG_COLOR ^ 0x00FFFFFF;
+    private static Activity currentActivity = null;
+
+    public static Activity getCurrentActivity() {
+        return currentActivity;
+    }
+
+    public static void setCurrentActivity(Activity activity){
+        currentActivity = activity;
+    }
 
     @Override
     public void onCreate() {
@@ -52,6 +73,11 @@ public class ApplicationClass extends Application {
         mediaSession.setActive(true);
         createNotificationChannel();
         sharedPreferenceManager = SharedPreferenceManager.getInstance(this);
+
+        mediaPlayerUtil.setOnCompletionListener(mediaPlayer -> {
+            if(!trackQueue.isEmpty())
+                nextTrack();
+        });
     }
 
     private void createNotificationChannel() {
@@ -77,14 +103,22 @@ public class ApplicationClass extends Application {
         Log.i(TAG, "setMusicDetails: " + MUSIC_TITLE + "\t" + MUSIC_ID);
     }
 
+    public void setSongUrl(String songUrl){
+        SONG_URL = songUrl;
+    }
+
+    public void setTrackQueue(List<String> que){
+        this.trackQueue = que;
+    }
+
     public void showNotification(int playPauseButton) {
         try {
 
             Log.i(TAG, "showNotification: " + MUSIC_TITLE + "\t" + MUSIC_ID);
 
-            Intent intent = new Intent(this, MusicOverviewActivity.class);
+            Intent intent = new Intent(this, NotificationReceiver.class);
             intent.putExtra("id", MUSIC_ID);
-            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.setAction("action_click");
             PendingIntent contentIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
 
             Intent prevIntent = new Intent(this, NotificationReceiver.class).setAction(ACTION_PREV);
@@ -143,6 +177,83 @@ public class ApplicationClass extends Application {
         }
     }
 
+    public void togglePlayPause() {
+        if (mediaPlayerUtil.isPlaying()) {
+            mediaPlayerUtil.pause();
+        } else {
+            mediaPlayerUtil.start();
+        }
+        showNotification();
+    }
+
+    public void nextTrack(){
+        if(!trackQueue.isEmpty() && track_position < trackQueue.size()-1){
+            track_position++;
+            MUSIC_ID = trackQueue.get(track_position);
+            playTrack();
+            startActivity(new Intent(this, MusicOverviewActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("id", MUSIC_ID));
+        }
+    }
+
+    public void prevTrack(){
+        if(track_position>0){
+            track_position--;
+            MUSIC_ID = trackQueue.get(track_position);
+            playTrack();
+            startActivity(new Intent(this, MusicOverviewActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP).putExtra("id", MUSIC_ID));
+        }
+    }
+
+    public void prepareMediaPlayer() {
+        try {
+            try {
+                mediaPlayerUtil.reset();
+            } catch (Exception ignored) {
+            }
+            mediaPlayerUtil.setDataSource(SONG_URL);
+            mediaPlayerUtil.prepare();
+            //mediaPlayerUtil.start();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    private void playTrack(){
+        ApiManager apiManager = new ApiManager(currentActivity);
+        apiManager.retrieveSongById(MUSIC_ID, null, new RequestNetwork.RequestListener() {
+            @Override
+            public void onResponse(String tag, String response, HashMap<String, Object> responseHeaders) {
+                SongResponse songResponse = new Gson().fromJson(response, SongResponse.class);
+                if (songResponse.success()) {
+                    MUSIC_TITLE = (songResponse.data().get(0).name());
+                    MUSIC_DESCRIPTION = (
+                            String.format("%s plays | %s | %s",
+                                    convertPlayCount(songResponse.data().get(0).playCount()),
+                                    songResponse.data().get(0).year(),
+                                    songResponse.data().get(0).copyright())
+                    );
+                    List<SongResponse.Image> image = songResponse.data().get(0).image();
+                    IMAGE_URL = image.get(image.size() - 1).url();
+
+                    List<SongResponse.DownloadUrl> downloadUrls = songResponse.data().get(0).downloadUrl();
+
+                    SONG_URL = downloadUrls.get(downloadUrls.size() - 1).url();
+                    setMusicDetails(IMAGE_URL, MUSIC_TITLE, MUSIC_DESCRIPTION, MUSIC_ID);
+                    prepareMediaPlayer();
+                    showNotification();
+                }
+            }
+
+            @Override
+            public void onErrorResponse(String tag, String message) {
+
+            }
+        });
+    }
+    private void showNotification(){
+        showNotification(mediaPlayerUtil.isPlaying() ? R.drawable.baseline_pause_24 : R.drawable.play_arrow_24px);
+    }
     private int invertColor(int color) {
         return (color ^ 0x00FFFFFF);
     }

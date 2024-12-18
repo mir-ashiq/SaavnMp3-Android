@@ -26,7 +26,6 @@ import com.harsh.shah.saavnmp3.services.ActionPlaying;
 import com.harsh.shah.saavnmp3.services.MusicService;
 import com.squareup.picasso.Picasso;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -82,6 +81,12 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
             mediaPlayer.reset();
         });
         //((ApplicationClass)getApplication()).setMusicDetails("","","","");
+
+        final ApplicationClass applicationClass = (ApplicationClass) getApplicationContext();
+
+        binding.nextIcon.setOnClickListener(view -> applicationClass.nextTrack());
+        binding.prevIcon.setOnClickListener(view -> applicationClass.prevTrack());
+
         showData();
     }
 
@@ -155,8 +160,12 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
                     if(!ApplicationClass.MUSIC_ID.equals(ID)){
                         ApplicationClass applicationClass = (ApplicationClass) getApplicationContext();
                         applicationClass.setMusicDetails(IMAGE_URL, binding.title.getText().toString(), binding.description.getText().toString(), ID);
+                        applicationClass.setSongUrl(SONG_URL);
                         prepareMediaPLayer();
                     }
+
+                    playClicked();
+                    binding.playPauseImage.performClick();
 
                     //binding.main.setBackgroundColor(ApplicationClass.IMAGE_BG_COLOR);
 
@@ -175,13 +184,13 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
         finish();
     }
 
-    String convertPlayCount(int playCount) {
+    public static String convertPlayCount(int playCount) {
         if (playCount < 1000) return playCount + "";
         if (playCount < 1000000) return playCount / 1000 + "K";
         return playCount / 1000000 + "M";
     }
 
-    String convertDuration(long duration) {
+    public static String convertDuration(long duration) {
         String timeString = "";
         String secondString;
 
@@ -201,20 +210,10 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
     }
 
     void prepareMediaPLayer() {
-        try {
-            try {
-                mediaPlayerUtil.reset();
-            } catch (Exception ignored) {
-            }
-            mediaPlayerUtil.setDataSource(SONG_URL);
-            mediaPlayerUtil.prepare();
-            binding.totalDuration.setText(convertDuration(mediaPlayerUtil.getDuration()));
-            playClicked();
-            binding.playPauseImage.performClick();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
+        ((ApplicationClass)getApplicationContext()).prepareMediaPlayer();
+        binding.totalDuration.setText(convertDuration(mediaPlayerUtil.getDuration()));
+        playClicked();
+        binding.playPauseImage.performClick();
     }
 
     private final Runnable runnable = this::updateSeekbar;
@@ -253,6 +252,11 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
         } else {
             binding.playPauseImage.setImageResource(R.drawable.baseline_pause_24);
         }
+    }
+
+    @Override
+    public void onProgressChanged(int progress) {
+
     }
 
     public void showNotification(int playPauseButton) {

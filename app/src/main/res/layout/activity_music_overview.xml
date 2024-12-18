@@ -197,6 +197,7 @@
             </com.google.android.material.card.MaterialCardView>
 
             <ImageView
+                android:id="@+id/prevIcon"
                 android:layout_width="@dimen/_30sdp"
                 android:layout_height="@dimen/_30sdp"
                 android:layout_marginEnd="@dimen/_8sdp"
@@ -206,6 +207,7 @@
                 app:layout_constraintTop_toTopOf="@id/__play_pause_icon_bg" />
 
             <ImageView
+                android:id="@+id/nextIcon"
                 android:layout_width="@dimen/_30sdp"
                 android:layout_height="@dimen/_30sdp"
                 android:layout_marginStart="@dimen/_8sdp"

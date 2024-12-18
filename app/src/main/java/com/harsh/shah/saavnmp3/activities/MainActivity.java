@@ -2,6 +2,7 @@ package com.harsh.shah.saavnmp3.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -84,6 +85,8 @@ public class MainActivity extends AppCompatActivity {
 
         applicationClass = (ApplicationClass) getApplicationContext();
 
+        ApplicationClass.setCurrentActivity(this);
+
         int span = calculateNoOfColumns(this, 200);
         binding.playlistRecyclerView.setLayoutManager(new GridLayoutManager(this, span));
 
@@ -103,6 +106,17 @@ public class MainActivity extends AppCompatActivity {
             showShimmerData();
             showData();
             binding.refreshLayout.setRefreshing(false);
+        });
+
+        binding.playBarPlayPauseIcon.setOnClickListener(view -> {
+            if(ApplicationClass.mediaPlayerUtil.isPlaying())
+                ApplicationClass.mediaPlayerUtil.pause();
+            else
+                ApplicationClass.mediaPlayerUtil.start();
+
+            ApplicationClass applicationClass = (ApplicationClass) getApplicationContext();
+            applicationClass.showNotification(ApplicationClass.mediaPlayerUtil.isPlaying() ? R.drawable.baseline_pause_24 : R.drawable.play_arrow_24px);
+            binding.playBarPlayPauseIcon.setImageResource(ApplicationClass.mediaPlayerUtil.isPlaying() ? R.drawable.baseline_pause_24 : R.drawable.play_arrow_24px);
         });
 
         showShimmerData();
@@ -134,17 +148,12 @@ public class MainActivity extends AppCompatActivity {
 
         binding.playBarMusicTitle.setTextColor(ApplicationClass.TEXT_ON_IMAGE_COLOR);
         binding.playBarMusicDesc.setTextColor(ApplicationClass.TEXT_ON_IMAGE_COLOR);
+
+        binding.playBarPlayPauseIcon.setImageTintList(ColorStateList.valueOf(ApplicationClass.TEXT_ON_IMAGE_COLOR));
+
+        OverScrollDecoratorHelper.setUpStaticOverScroll(binding.getRoot(), OverScrollDecoratorHelper.ORIENTATION_VERTICAL);
+
         handler.postDelayed(runnable, 1000);
-
-        binding.playBarPlayPauseIcon.setOnClickListener(view -> {
-            if(ApplicationClass.mediaPlayerUtil.isPlaying())
-                ApplicationClass.mediaPlayerUtil.pause();
-            else
-                ApplicationClass.mediaPlayerUtil.start();
-
-            ApplicationClass applicationClass = (ApplicationClass) getApplicationContext();
-            applicationClass.showNotification(ApplicationClass.mediaPlayerUtil.isPlaying() ? R.drawable.baseline_pause_24 : R.drawable.play_arrow_24px);
-        });
     }
 
 
