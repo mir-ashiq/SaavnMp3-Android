@@ -28,7 +28,7 @@ public class ListActivity extends AppCompatActivity {
 
     ActivityListBinding binding;
 
-    private List<String> trackQueue = new ArrayList<>();
+    private final List<String> trackQueue = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +89,8 @@ public class ListActivity extends AppCompatActivity {
                         binding.recyclerView.setAdapter(new ActivityListSongsItemAdapter(albumSearch.data().songs()));
                         for (SongResponse.Song song : albumSearch.data().songs())
                             trackQueue.add(song.id());
+
+                        ((ApplicationClass)getApplicationContext()).setTrackQueue(trackQueue);
                     }
                 }
 
@@ -108,6 +110,8 @@ public class ListActivity extends AppCompatActivity {
                     binding.recyclerView.setAdapter(new ActivityListSongsItemAdapter(playlistSearch.data().songs()));
                     for (SongResponse.Song song : playlistSearch.data().songs())
                         trackQueue.add(song.id());
+
+                    ((ApplicationClass)getApplicationContext()).setTrackQueue(trackQueue);
                 }
             }
 

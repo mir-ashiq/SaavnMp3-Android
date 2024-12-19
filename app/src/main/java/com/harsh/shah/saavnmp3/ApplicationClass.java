@@ -18,6 +18,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.media.app.NotificationCompat;
+import androidx.palette.graphics.Palette;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
@@ -55,6 +56,7 @@ public class ApplicationClass extends Application {
     private final String TAG = "ApplicationClass";
     public static int IMAGE_BG_COLOR = Color.argb(255,25,20,20);
     public static int TEXT_ON_IMAGE_COLOR = IMAGE_BG_COLOR ^ 0x00FFFFFF;
+    public static int TEXT_ON_IMAGE_COLOR1 = IMAGE_BG_COLOR ^ 0x00FFFFFF;
     private static Activity currentActivity = null;
 
     public static Activity getCurrentActivity() {
@@ -138,6 +140,18 @@ public class ApplicationClass extends Application {
                         public void onResourceReady(@NonNull Bitmap resource, Transition<? super Bitmap> transition) {
                             IMAGE_BG_COLOR = calculateDominantColor(resource);
                             TEXT_ON_IMAGE_COLOR = invertColor(IMAGE_BG_COLOR);
+
+                            Palette.from(resource)
+                                    .generate(palette -> {
+                                        Palette.Swatch textSwatch = palette.getLightVibrantSwatch();
+                                        if (textSwatch == null) {
+                                            Log.i("ApplicationClass", "Null swatch :(");
+                                            return;
+                                        }
+                                        IMAGE_BG_COLOR = (textSwatch.getRgb());
+                                        TEXT_ON_IMAGE_COLOR = (textSwatch.getTitleTextColor());
+                                        TEXT_ON_IMAGE_COLOR1 = (textSwatch.getBodyTextColor());
+                                    });
 
                             Notification notification = new androidx.core.app.NotificationCompat.Builder(ApplicationClass.this, CHANNEL_ID_1)
                                     .setSmallIcon(R.drawable.ic_launcher_foreground)

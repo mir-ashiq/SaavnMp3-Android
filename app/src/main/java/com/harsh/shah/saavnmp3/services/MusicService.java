@@ -31,7 +31,9 @@ public class MusicService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        String actionName = intent.getStringExtra("action");
+        if (intent == null || intent.getExtras() == null) return START_STICKY;
+
+        String actionName = intent.getExtras().getString("action","");
         if (actionName != null) {
             switch (actionName) {
                 case ApplicationClass.ACTION_NEXT:

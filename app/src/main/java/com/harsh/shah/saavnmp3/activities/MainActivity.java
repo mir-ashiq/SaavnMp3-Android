@@ -119,6 +119,11 @@ public class MainActivity extends AppCompatActivity {
             binding.playBarPlayPauseIcon.setImageResource(ApplicationClass.mediaPlayerUtil.isPlaying() ? R.drawable.baseline_pause_24 : R.drawable.play_arrow_24px);
         });
 
+        binding.playBarBackground.setOnClickListener(view -> {
+            if(!ApplicationClass.MUSIC_ID.isBlank())
+                startActivity(new Intent(this, MusicOverviewActivity.class).putExtra("id", ApplicationClass.MUSIC_ID));
+        });
+
         showShimmerData();
         showOfflineData();
 
@@ -147,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
         binding.playBarBackground.setBackground(gradientDrawable);
 
         binding.playBarMusicTitle.setTextColor(ApplicationClass.TEXT_ON_IMAGE_COLOR);
-        binding.playBarMusicDesc.setTextColor(ApplicationClass.TEXT_ON_IMAGE_COLOR);
+        binding.playBarMusicDesc.setTextColor(ApplicationClass.TEXT_ON_IMAGE_COLOR1);
 
         binding.playBarPlayPauseIcon.setImageTintList(ColorStateList.valueOf(ApplicationClass.TEXT_ON_IMAGE_COLOR));
 

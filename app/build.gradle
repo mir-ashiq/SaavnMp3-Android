@@ -71,4 +71,6 @@ dependencies {
     implementation libs.overscroll.decor.android
 
     implementation libs.core
+
+    implementation 'androidx.palette:palette:1.0.0'
 }
