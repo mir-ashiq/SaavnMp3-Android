@@ -26,6 +26,8 @@ import com.harsh.shah.saavnmp3.services.ActionPlaying;
 import com.harsh.shah.saavnmp3.services.MusicService;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -78,7 +80,9 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
             binding.elapsedDuration.setText("00:00");
             binding.playPauseImage.setImageResource(R.drawable.play_arrow_24px);
             handler.removeCallbacks(runnable);
+            mediaPlayer.seekTo(0);
             mediaPlayer.reset();
+            ((ApplicationClass)getApplication()).nextTrack();
         });
         //((ApplicationClass)getApplication()).setMusicDetails("","","","");
 
@@ -88,6 +92,8 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
         binding.prevIcon.setOnClickListener(view -> applicationClass.prevTrack());
 
         showData();
+
+        updateTrackInfo();
     }
 
     @Override
@@ -129,6 +135,12 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
             else
                 binding.playPauseImage.setImageResource(R.drawable.play_arrow_24px);
         }
+
+        if(getIntent().getExtras().getString("type", "").equals("clear")){
+            ApplicationClass applicationClass = (ApplicationClass) getApplicationContext();
+            applicationClass.setTrackQueue(new ArrayList<>(Collections.singletonList(ID)));
+        }
+
         apiManager.retrieveSongById(ID, null, new RequestNetwork.RequestListener() {
             @Override
             public void onResponse(String tag, String response, HashMap<String, Object> responseHeaders) {
@@ -164,8 +176,10 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
                         prepareMediaPLayer();
                     }
 
-                    playClicked();
-                    binding.playPauseImage.performClick();
+                    if(!mediaPlayerUtil.isPlaying()){
+                        playClicked();
+                        binding.playPauseImage.performClick();
+                    }
 
                     //binding.main.setBackgroundColor(ApplicationClass.IMAGE_BG_COLOR);
 
@@ -225,6 +239,27 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
             binding.elapsedDuration.setText(convertDuration(currentDuration));
             handler.postDelayed(runnable, 1000);
         }
+    }
+
+    private final Handler mHandler = new Handler();
+    private final Runnable mUpdateTimeTask = this::updateTrackInfo;
+
+    private void updateTrackInfo() {
+        if(!binding.title.getText().toString().equals(ApplicationClass.MUSIC_TITLE)) binding.title.setText(ApplicationClass.MUSIC_TITLE);
+        if(!binding.title.getText().toString().equals(ApplicationClass.MUSIC_TITLE)) binding.description.setText(ApplicationClass.MUSIC_DESCRIPTION);
+        Picasso.get().load(Uri.parse(ApplicationClass.IMAGE_URL)).into(binding.coverImage);
+        binding.seekbar.setProgress((int) (((float) mediaPlayerUtil.getCurrentPosition() / mediaPlayerUtil.getDuration()) * 100));
+        long currentDuration = mediaPlayerUtil.getCurrentPosition();
+        binding.elapsedDuration.setText(convertDuration(currentDuration));
+        if(!binding.totalDuration.getText().toString().equals(convertDuration(mediaPlayerUtil.getDuration())))
+            binding.totalDuration.setText(convertDuration(mediaPlayerUtil.getDuration()));
+
+        if(mediaPlayerUtil.isPlaying())
+            binding.playPauseImage.setImageResource(R.drawable.baseline_pause_24);
+        else
+            binding.playPauseImage.setImageResource(R.drawable.play_arrow_24px);
+
+        mHandler.postDelayed(mUpdateTimeTask, 1000);
     }
 
 

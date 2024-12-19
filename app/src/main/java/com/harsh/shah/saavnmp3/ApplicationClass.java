@@ -23,7 +23,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.google.gson.Gson;
-import com.harsh.shah.saavnmp3.activities.MusicOverviewActivity;
 import com.harsh.shah.saavnmp3.network.ApiManager;
 import com.harsh.shah.saavnmp3.network.utility.RequestNetwork;
 import com.harsh.shah.saavnmp3.records.SongResponse;
@@ -191,7 +190,7 @@ public class ApplicationClass extends Application {
             track_position++;
             MUSIC_ID = trackQueue.get(track_position);
             playTrack();
-            startActivity(new Intent(this, MusicOverviewActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("id", MUSIC_ID));
+            //startActivity(new Intent(this, MusicOverviewActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("id", MUSIC_ID));
         }
     }
 
@@ -200,7 +199,7 @@ public class ApplicationClass extends Application {
             track_position--;
             MUSIC_ID = trackQueue.get(track_position);
             playTrack();
-            startActivity(new Intent(this, MusicOverviewActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP).putExtra("id", MUSIC_ID));
+            //startActivity(new Intent(this, MusicOverviewActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP).putExtra("id", MUSIC_ID));
         }
     }
 
@@ -212,7 +211,7 @@ public class ApplicationClass extends Application {
             }
             mediaPlayerUtil.setDataSource(SONG_URL);
             mediaPlayerUtil.prepare();
-            //mediaPlayerUtil.start();
+            mediaPlayerUtil.start();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -51,7 +51,7 @@ public class ActivityMainPopularSongs extends RecyclerView.Adapter<ActivityMainP
         Picasso.get().load(Uri.parse(data.get(position).albumCover())).into(coverImage);
 
         holder.itemView.setOnClickListener(v -> {
-            v.getContext().startActivity(new Intent(v.getContext(), MusicOverviewActivity.class).putExtra("type", "album").putExtra("id", data.get(position).id()));
+            v.getContext().startActivity(new Intent(v.getContext(), MusicOverviewActivity.class).putExtra("type", "clear").putExtra("id", data.get(position).id()));
         });
     }
 
