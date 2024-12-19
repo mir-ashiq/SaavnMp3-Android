@@ -17,6 +17,20 @@ A simple music player inspired by spotify and developed using the unofficial Jio
 
 ## Screenshots
 
+<img src="docs/home.png" alt="" width="300" style="margin:10px;"/>
+<img src="docs/artists.png" alt="" width="300" style="margin:10px;" />
+<img src="docs/playlist.png" alt="" width="300"  style="margin:10px;"/>
+<img src="docs/search.png" alt="" width="300" style="margin:10px;" />
+<img src="docs/track.png" alt="" width="300" style="margin:10px;" />
+<img src="docs/notification.png" alt="" width="300" style="margin:10px;" />
+
+<!-- ![HOME_SCREEN_PNG](docs/home.png)
+![HOME_SCREEN_PNG](docs/artists.png)
+![HOME_SCREEN_PNG](docs/playlist.png)
+![HOME_SCREEN_PNG](docs/search.png)
+![HOME_SCREEN_PNG](docs/track.png)
+![HOME_SCREEN_PNG](docs/notification.png) -->
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
@@ -40,16 +54,16 @@ These instructions will get you a copy of the project up and running on your loc
 
 ## Built with
 
-* Java 17 - The programming language used.
-* Saavn.dev - The unofficial JioSaav API used.
-* Glide - Image library used to load the images from URL.
-* Picasso - Image library used to load the images from URL.
-* Gson - Gson library to parse the json response from API.
-* OkHttp - Library to send requests to the APIs and receive the data.
-* SwiperefreshLayout - Library to add feature of pull to refresh list.
-* Shimmer - Library to add an animated loading effect to the layout.
-* OverscrollDecor - IOS style (bouncy) overscroll effect in scrollable layouts.
-* SSP & SDP - Dimension Values library to make UI responsive.
+* [Java 17](https://openjdk.org/projects/jdk/17/) - The programming language used.
+* [Saavn.dev](https://github.com/sumitkolhe/jiosaavn-api) - The unofficial JioSaav API used.
+* [Glide](https://github.com/bumptech/glide) - Image library used to load the images from URL.
+* [Picasso](https://github.com/square/picasso) - Image library used to load the images from URL.
+* [Gson](https://github.com/google/gson) - Gson library to parse the json response from API.
+* [OkHttp](https://github.com/square/okhttp) - Library to send requests to the APIs and receive the data.
+* [SwiperefreshLayout](https://developer.android.com/jetpack/androidx/releases/swiperefreshlayout) - Library to add feature of pull to refresh list.
+* [Shimmer](https://github.com/facebookarchive/shimmer-android) - Library to add an animated loading effect to the layout.
+* [OverscrollDecor](https://github.com/EverythingMe/overscroll-decor) - IOS style (bouncy) overscroll effect in scrollable layouts.
+* [SSP](https://github.com/intuit/ssp) & [SDP](https://github.com/intuit/sdp) - Dimension Values library to make UI responsive.
 
 ## Contributing
 
@@ -66,6 +80,28 @@ If you'd like to contribute to SaavnMp3-Android, here are some guidelines:
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
+
+MIT License
+
+Copyright (c) 2024 Harsh S Shah
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 
 ## Acknowledgements
 
