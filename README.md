@@ -17,13 +17,14 @@ A simple music player inspired by spotify and developed using the unofficial Jio
 
 ## Screenshots
 
-<img src="docs/home.png" alt="" width="250" style="margin:10px;"/>
-<img src="docs/artists.png" alt="" width="250" style="margin:10px;" />
-<img src="docs/playlist.png" alt="" width="250"  style="margin:10px;"/>
-<img src="docs/search.png" alt="" width="250" style="margin:10px;" />
-<img src="docs/track.png" alt="" width="250" style="margin:10px;" />
-<img src="docs/notification.png" alt="" width="250" style="margin:10px;" />
-
+<div style="display:flex; gap:80; flex-wrap:wrap;">
+    <img src="docs/home.png" alt="" width="250" style="margin:10px;"/>
+    <img src="docs/artists.png" alt="" width="250" style="margin:10px;" />
+    <img src="docs/playlist.png" alt="" width="250"  style="margin:10px;"/>
+    <img src="docs/search.png" alt="" width="250" style="margin:10px;" />
+    <img src="docs/track.png" alt="" width="250" style="margin:10px;" />
+    <img src="docs/notification.png" alt="" width="250" style="margin:10px;" />
+</div>
 <!-- ![HOME_SCREEN_PNG](docs/home.png)
 ![HOME_SCREEN_PNG](docs/artists.png)
 ![HOME_SCREEN_PNG](docs/playlist.png)
