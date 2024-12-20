@@ -4,6 +4,7 @@ import android.media.MediaPlayer;
 
 public class MediaPlayerUtil extends MediaPlayer {
     private static MediaPlayerUtil instance;
+
     private final String TAG = "MediaPlayerUtil";
 
     public static MediaPlayerUtil getInstance() {

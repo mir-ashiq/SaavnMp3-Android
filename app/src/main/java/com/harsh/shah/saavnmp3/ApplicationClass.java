@@ -18,12 +18,15 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.media.app.NotificationCompat;
+import androidx.media3.common.MediaItem;
+import androidx.media3.exoplayer.ExoPlayer;
 import androidx.palette.graphics.Palette;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.google.gson.Gson;
+import com.harsh.shah.saavnmp3.activities.MainActivity;
 import com.harsh.shah.saavnmp3.network.ApiManager;
 import com.harsh.shah.saavnmp3.network.utility.RequestNetwork;
 import com.harsh.shah.saavnmp3.records.SongResponse;
@@ -31,7 +34,6 @@ import com.harsh.shah.saavnmp3.services.NotificationReceiver;
 import com.harsh.shah.saavnmp3.utils.MediaPlayerUtil;
 import com.harsh.shah.saavnmp3.utils.SharedPreferenceManager;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +46,8 @@ public class ApplicationClass extends Application {
     public static final String ACTION_PREV = "prev";
     public static final String ACTION_PLAY = "play";
     public static final MediaPlayerUtil mediaPlayerUtil = MediaPlayerUtil.getInstance();
+
+    public static ExoPlayer player;
     private MediaSessionCompat mediaSession;
     private List<String> trackQueue = new ArrayList<>();
     public static String MUSIC_TITLE = "";
@@ -70,15 +74,17 @@ public class ApplicationClass extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        player = new ExoPlayer.Builder(this).build();
         mediaSession = new MediaSessionCompat(this, "ApplicationClass");
         mediaSession.setActive(true);
         createNotificationChannel();
         sharedPreferenceManager = SharedPreferenceManager.getInstance(this);
 
-        mediaPlayerUtil.setOnCompletionListener(mediaPlayer -> {
-            if(!trackQueue.isEmpty())
-                nextTrack();
-        });
+//        mediaPlayerUtil.setOnCompletionListener(mediaPlayer -> {
+//            if(!trackQueue.isEmpty())
+//                nextTrack();
+//        });
+
     }
 
     private void createNotificationChannel() {
@@ -117,7 +123,7 @@ public class ApplicationClass extends Application {
 
             Log.i(TAG, "showNotification: " + MUSIC_TITLE + "\t" + MUSIC_ID);
 
-            Intent intent = new Intent(this, NotificationReceiver.class);
+            Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra("id", MUSIC_ID);
             intent.setAction("action_click");
             PendingIntent contentIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
@@ -191,11 +197,16 @@ public class ApplicationClass extends Application {
     }
 
     public void togglePlayPause() {
-        if (mediaPlayerUtil.isPlaying()) {
-            mediaPlayerUtil.pause();
-        } else {
-            mediaPlayerUtil.start();
-        }
+//        if (mediaPlayerUtil.isPlaying()) {
+//            mediaPlayerUtil.pause();
+//        } else {
+//            mediaPlayerUtil.start();
+//        }
+        if(player.isPlaying())
+            player.pause();
+        else
+            player.play();
+
         showNotification();
     }
 
@@ -219,15 +230,21 @@ public class ApplicationClass extends Application {
 
     public void prepareMediaPlayer() {
         try {
-            try {
-                mediaPlayerUtil.reset();
-            } catch (Exception ignored) {
-            }
-            mediaPlayerUtil.setDataSource(SONG_URL);
-            mediaPlayerUtil.prepare();
-            mediaPlayerUtil.start();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+
+            MediaItem mediaItem = MediaItem.fromUri(SONG_URL);
+            player.setMediaItem(mediaItem);
+            player.prepare();
+            player.play();
+
+//            try {
+//                mediaPlayerUtil.reset();
+//            } catch (Exception ignored) {
+//            }
+//            mediaPlayerUtil.setDataSource(SONG_URL);
+//            mediaPlayerUtil.prepare();
+//            mediaPlayerUtil.start();
+        } catch (Exception e) {
+            Log.e(TAG, "prepareMediaPlayer: ", e);
         }
     }
 
@@ -265,7 +282,8 @@ public class ApplicationClass extends Application {
         });
     }
     private void showNotification(){
-        showNotification(mediaPlayerUtil.isPlaying() ? R.drawable.baseline_pause_24 : R.drawable.play_arrow_24px);
+        //showNotification(mediaPlayerUtil.isPlaying() ? R.drawable.baseline_pause_24 : R.drawable.play_arrow_24px);
+        showNotification(player.isPlaying() ? R.drawable.baseline_pause_24 : R.drawable.play_arrow_24px);
     }
     private int invertColor(int color) {
         return (color ^ 0x00FFFFFF);

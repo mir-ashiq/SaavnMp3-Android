@@ -90,7 +90,7 @@ public class ListActivity extends AppCompatActivity {
                         for (SongResponse.Song song : albumSearch.data().songs())
                             trackQueue.add(song.id());
 
-                        ((ApplicationClass)getApplicationContext()).setTrackQueue(trackQueue);
+                        //((ApplicationClass)getApplicationContext()).setTrackQueue(trackQueue);
                     }
                 }
 
@@ -111,7 +111,7 @@ public class ListActivity extends AppCompatActivity {
                     for (SongResponse.Song song : playlistSearch.data().songs())
                         trackQueue.add(song.id());
 
-                    ((ApplicationClass)getApplicationContext()).setTrackQueue(trackQueue);
+                    //((ApplicationClass)getApplicationContext()).setTrackQueue(trackQueue);
                 }
             }
 

@@ -37,17 +37,19 @@ public class NotificationReceiver extends BroadcastReceiver {
                 // Handle play/pause action
                 //Toast.makeText(context, "play", Toast.LENGTH_SHORT).show();
 
-                if (ApplicationClass.mediaPlayerUtil.isPlaying()) {
-                    ApplicationClass.mediaPlayerUtil.pause();
-                } else {
-                    ApplicationClass.mediaPlayerUtil.start();
-                }
+//                if (ApplicationClass.mediaPlayerUtil.isPlaying()) {
+//                    ApplicationClass.mediaPlayerUtil.pause();
+//                } else {
+//                    ApplicationClass.mediaPlayerUtil.start();
+//                }
+
+                applicationClass.togglePlayPause();
 
                 intent1.putExtra("action", intent.getAction());
                 intent1.putExtra("fromNotification", true);
                 context.startService(intent1);
 
-                applicationClass.showNotification(ApplicationClass.mediaPlayerUtil.isPlaying() ? R.drawable.baseline_pause_24 : R.drawable.play_arrow_24px);
+                applicationClass.showNotification(ApplicationClass.player.isPlaying() ? R.drawable.baseline_pause_24 : R.drawable.play_arrow_24px);
                 break;
             case "action_click":
                 context.startActivity(new Intent(context, MusicOverviewActivity.class).putExtra("id", intent.getStringExtra("id")).setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));

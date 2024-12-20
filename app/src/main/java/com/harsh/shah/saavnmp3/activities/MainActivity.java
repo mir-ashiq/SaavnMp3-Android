@@ -109,14 +109,10 @@ public class MainActivity extends AppCompatActivity {
         });
 
         binding.playBarPlayPauseIcon.setOnClickListener(view -> {
-            if(ApplicationClass.mediaPlayerUtil.isPlaying())
-                ApplicationClass.mediaPlayerUtil.pause();
-            else
-                ApplicationClass.mediaPlayerUtil.start();
-
             ApplicationClass applicationClass = (ApplicationClass) getApplicationContext();
-            applicationClass.showNotification(ApplicationClass.mediaPlayerUtil.isPlaying() ? R.drawable.baseline_pause_24 : R.drawable.play_arrow_24px);
-            binding.playBarPlayPauseIcon.setImageResource(ApplicationClass.mediaPlayerUtil.isPlaying() ? R.drawable.baseline_pause_24 : R.drawable.play_arrow_24px);
+            applicationClass.togglePlayPause();
+            applicationClass.showNotification(ApplicationClass.player.isPlaying() ? R.drawable.baseline_pause_24 : R.drawable.play_arrow_24px);
+            binding.playBarPlayPauseIcon.setImageResource(ApplicationClass.player.isPlaying() ? R.drawable.baseline_pause_24 : R.drawable.play_arrow_24px);
         });
 
         binding.playBarBackground.setOnClickListener(view -> {
@@ -139,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
         binding.playBarMusicTitle.setText(ApplicationClass.MUSIC_TITLE);
         binding.playBarMusicDesc.setText(ApplicationClass.MUSIC_DESCRIPTION);
         Picasso.get().load(Uri.parse(ApplicationClass.IMAGE_URL)).into(binding.playBarCoverImage);
-        if(ApplicationClass.mediaPlayerUtil.isPlaying()){
+        if(ApplicationClass.player.isPlaying()){
             binding.playBarPlayPauseIcon.setImageResource(R.drawable.baseline_pause_24);
         }else{
             binding.playBarPlayPauseIcon.setImageResource(R.drawable.play_arrow_24px);

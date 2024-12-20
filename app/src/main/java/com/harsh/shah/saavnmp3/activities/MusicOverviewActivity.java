@@ -1,7 +1,5 @@
 package com.harsh.shah.saavnmp3.activities;
 
-import static com.harsh.shah.saavnmp3.ApplicationClass.mediaPlayerUtil;
-
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -52,38 +50,39 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
         binding.description.setSelected(true);
 
         binding.playPauseImage.setOnClickListener(view -> {
-            if (mediaPlayerUtil.isPlaying()) {
+            if (ApplicationClass.player.isPlaying()) {
                 handler.removeCallbacks(runnable);
-                mediaPlayerUtil.pause();
+                ApplicationClass.player.pause();
                 binding.playPauseImage.setImageResource(com.harsh.shah.saavnmp3.R.drawable.play_arrow_24px);
             } else {
-                mediaPlayerUtil.start();
+                ApplicationClass.player.play();
                 binding.playPauseImage.setImageResource(R.drawable.baseline_pause_24);
                 updateSeekbar();
             }
-            showNotification(mediaPlayerUtil.isPlaying() ? R.drawable.baseline_pause_24 : R.drawable.play_arrow_24px);
+            showNotification(ApplicationClass.player.isPlaying() ? R.drawable.baseline_pause_24 : R.drawable.play_arrow_24px);
         });
 
         binding.seekbar.setMax(100);
 
-        mediaPlayerUtil.setOnBufferingUpdateListener((mediaPlayer, i) -> binding.seekbar.setSecondaryProgress(i));
+        //ApplicationClass.player.setOnBufferingUpdateListener((mediaPlayer, i) -> binding.seekbar.setSecondaryProgress(i));
+
 
         binding.seekbar.setOnTouchListener((v, event) -> {
-            int playPosition = (mediaPlayerUtil.getDuration() / 100) * binding.seekbar.getProgress();
-            mediaPlayerUtil.seekTo(playPosition);
-            binding.elapsedDuration.setText(convertDuration(mediaPlayerUtil.getCurrentPosition()));
+            int playPosition = (int) ((ApplicationClass.player.getDuration() / 100) * binding.seekbar.getProgress());
+            ApplicationClass.player.seekTo(playPosition);
+            binding.elapsedDuration.setText(convertDuration(ApplicationClass.player.getCurrentPosition()));
             return false;
         });
 
-        mediaPlayerUtil.setOnCompletionListener(mediaPlayer -> {
-            binding.seekbar.setProgress(0);
-            binding.elapsedDuration.setText("00:00");
-            binding.playPauseImage.setImageResource(R.drawable.play_arrow_24px);
-            handler.removeCallbacks(runnable);
-            mediaPlayer.seekTo(0);
-            mediaPlayer.reset();
-            ((ApplicationClass)getApplication()).nextTrack();
-        });
+//        ApplicationClass.player.setOnCompletionListener(mediaPlayer -> {
+//            binding.seekbar.setProgress(0);
+//            binding.elapsedDuration.setText("00:00");
+//            binding.playPauseImage.setImageResource(R.drawable.play_arrow_24px);
+//            handler.removeCallbacks(runnable);
+//            mediaPlayer.seekTo(0);
+//            mediaPlayer.reset();
+//            ((ApplicationClass)getApplication()).nextTrack();
+//        });
         //((ApplicationClass)getApplication()).setMusicDetails("","","","");
 
         final ApplicationClass applicationClass = (ApplicationClass) getApplicationContext();
@@ -130,7 +129,7 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
         //((ApplicationClass)getApplicationContext()).setMusicDetails(null,null,null,ID);
         if (ApplicationClass.MUSIC_ID.equals(ID)) {
             updateSeekbar();
-            if (mediaPlayerUtil.isPlaying())
+            if (ApplicationClass.player.isPlaying())
                 binding.playPauseImage.setImageResource(R.drawable.baseline_pause_24);
             else
                 binding.playPauseImage.setImageResource(R.drawable.play_arrow_24px);
@@ -162,7 +161,7 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
                     SONG_URL = downloadUrls.get(downloadUrls.size() - 1).url();
 //                    if (ApplicationClass.MUSIC_ID.equals(ID)) {
 //                        updateSeekbar();
-//                        if (mediaPlayerUtil.isPlaying())
+//                        if (ApplicationClass.player.isPlaying())
 //                            binding.playPauseImage.setImageResource(R.drawable.baseline_pause_24);
 //                        else
 //                            binding.playPauseImage.setImageResource(R.drawable.play_arrow_24px);
@@ -176,7 +175,7 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
                         prepareMediaPLayer();
                     }
 
-                    if(!mediaPlayerUtil.isPlaying()){
+                    if(!ApplicationClass.player.isPlaying()){
                         playClicked();
                         binding.playPauseImage.performClick();
                     }
@@ -225,7 +224,7 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
 
     void prepareMediaPLayer() {
         ((ApplicationClass)getApplicationContext()).prepareMediaPlayer();
-        binding.totalDuration.setText(convertDuration(mediaPlayerUtil.getDuration()));
+        binding.totalDuration.setText(convertDuration(ApplicationClass.player.getDuration()));
         playClicked();
         binding.playPauseImage.performClick();
     }
@@ -233,9 +232,9 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
     private final Runnable runnable = this::updateSeekbar;
 
     void updateSeekbar() {
-        if (mediaPlayerUtil.isPlaying()) {
-            binding.seekbar.setProgress((int) (((float) mediaPlayerUtil.getCurrentPosition() / mediaPlayerUtil.getDuration()) * 100));
-            long currentDuration = mediaPlayerUtil.getCurrentPosition();
+        if (ApplicationClass.player.isPlaying()) {
+            binding.seekbar.setProgress((int) (((float) ApplicationClass.player.getCurrentPosition() / ApplicationClass.player.getDuration()) * 100));
+            long currentDuration = ApplicationClass.player.getCurrentPosition();
             binding.elapsedDuration.setText(convertDuration(currentDuration));
             handler.postDelayed(runnable, 1000);
         }
@@ -248,13 +247,13 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
         if(!binding.title.getText().toString().equals(ApplicationClass.MUSIC_TITLE)) binding.title.setText(ApplicationClass.MUSIC_TITLE);
         if(!binding.title.getText().toString().equals(ApplicationClass.MUSIC_TITLE)) binding.description.setText(ApplicationClass.MUSIC_DESCRIPTION);
         Picasso.get().load(Uri.parse(ApplicationClass.IMAGE_URL)).into(binding.coverImage);
-        binding.seekbar.setProgress((int) (((float) mediaPlayerUtil.getCurrentPosition() / mediaPlayerUtil.getDuration()) * 100));
-        long currentDuration = mediaPlayerUtil.getCurrentPosition();
+        binding.seekbar.setProgress((int) (((float) ApplicationClass.player.getCurrentPosition() / ApplicationClass.player.getDuration()) * 100));
+        long currentDuration = ApplicationClass.player.getCurrentPosition();
         binding.elapsedDuration.setText(convertDuration(currentDuration));
-        if(!binding.totalDuration.getText().toString().equals(convertDuration(mediaPlayerUtil.getDuration())))
-            binding.totalDuration.setText(convertDuration(mediaPlayerUtil.getDuration()));
+        if(!binding.totalDuration.getText().toString().equals(convertDuration(ApplicationClass.player.getDuration())))
+            binding.totalDuration.setText(convertDuration(ApplicationClass.player.getDuration()));
 
-        if(mediaPlayerUtil.isPlaying())
+        if(ApplicationClass.player.isPlaying())
             binding.playPauseImage.setImageResource(R.drawable.baseline_pause_24);
         else
             binding.playPauseImage.setImageResource(R.drawable.play_arrow_24px);
@@ -265,7 +264,7 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
 
     @Override
     public void nextClicked() {
-        if (mediaPlayerUtil.isPlaying())
+        if (ApplicationClass.player.isPlaying())
             showNotification(R.drawable.baseline_pause_24);
         else
             showNotification(R.drawable.play_arrow_24px);
@@ -273,7 +272,7 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
 
     @Override
     public void prevClicked() {
-        if (mediaPlayerUtil.isPlaying())
+        if (ApplicationClass.player.isPlaying())
             showNotification(R.drawable.baseline_pause_24);
         else
             showNotification(R.drawable.play_arrow_24px);
@@ -282,7 +281,7 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
     @Override
     public void playClicked() {
         //binding.playPauseImage.performClick();
-        if (!mediaPlayerUtil.isPlaying()) {
+        if (!ApplicationClass.player.isPlaying()) {
             binding.playPauseImage.setImageResource(R.drawable.play_arrow_24px);
         } else {
             binding.playPauseImage.setImageResource(R.drawable.baseline_pause_24);
