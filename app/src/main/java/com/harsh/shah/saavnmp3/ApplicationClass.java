@@ -115,6 +115,7 @@ public class ApplicationClass extends Application {
     }
 
     public void setTrackQueue(List<String> que){
+        track_position = -1;
         this.trackQueue = que;
     }
 
@@ -235,6 +236,7 @@ public class ApplicationClass extends Application {
             player.setMediaItem(mediaItem);
             player.prepare();
             player.play();
+            showNotification();
 
 //            try {
 //                mediaPlayerUtil.reset();
@@ -281,7 +283,7 @@ public class ApplicationClass extends Application {
             }
         });
     }
-    private void showNotification(){
+    public void showNotification(){
         //showNotification(mediaPlayerUtil.isPlaying() ? R.drawable.baseline_pause_24 : R.drawable.play_arrow_24px);
         showNotification(player.isPlaying() ? R.drawable.baseline_pause_24 : R.drawable.play_arrow_24px);
     }

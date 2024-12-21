@@ -86,6 +86,7 @@ public class ListActivity extends AppCompatActivity {
                 public void onResponse(String tag, String response, HashMap<String, Object> responseHeaders) {
                     AlbumSearch albumSearch = new Gson().fromJson(response, AlbumSearch.class);
                     if (albumSearch.success()) {
+                        binding.albumTitle.setText(albumSearch.data().name());
                         binding.recyclerView.setAdapter(new ActivityListSongsItemAdapter(albumSearch.data().songs()));
                         for (SongResponse.Song song : albumSearch.data().songs())
                             trackQueue.add(song.id());
@@ -107,6 +108,7 @@ public class ListActivity extends AppCompatActivity {
                 Log.i("API_RESPONSE", "onResponse: " + response);
                 PlaylistSearch playlistSearch = new Gson().fromJson(response, PlaylistSearch.class);
                 if (playlistSearch.success()) {
+                    binding.albumTitle.setText(playlistSearch.data().name());
                     binding.recyclerView.setAdapter(new ActivityListSongsItemAdapter(playlistSearch.data().songs()));
                     for (SongResponse.Song song : playlistSearch.data().songs())
                         trackQueue.add(song.id());

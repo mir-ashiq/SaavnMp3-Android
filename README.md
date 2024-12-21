@@ -2,6 +2,10 @@
 
 A simple music player inspired by spotify and developed using the unofficial JioSaavn API. Has a lot of features like Search for an Artist, Song, Playlist, Albums. Not just search this app also provides you functionality to play the songs and view the artist info and much more.
 
+![GitHub repo size](https://img.shields.io/github/repo-size/Harshshah6/SaavnMp3-Android)
+![GitHub watchers](https://img.shields.io/github/watchers/Harshshah6/SaavnMp3-Android)
+![GitHub Repo stars](https://img.shields.io/github/stars/Harshshah6/SaavnMp3-Android)
+
 ## Features
 
 * No Ads

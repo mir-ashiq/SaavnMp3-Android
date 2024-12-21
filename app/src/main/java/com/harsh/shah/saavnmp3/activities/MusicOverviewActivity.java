@@ -250,6 +250,7 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
         binding.seekbar.setProgress((int) (((float) ApplicationClass.player.getCurrentPosition() / ApplicationClass.player.getDuration()) * 100));
         long currentDuration = ApplicationClass.player.getCurrentPosition();
         binding.elapsedDuration.setText(convertDuration(currentDuration));
+
         if(!binding.totalDuration.getText().toString().equals(convertDuration(ApplicationClass.player.getDuration())))
             binding.totalDuration.setText(convertDuration(ApplicationClass.player.getDuration()));
 
@@ -258,24 +259,18 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
         else
             binding.playPauseImage.setImageResource(R.drawable.play_arrow_24px);
 
+        ((ApplicationClass)getApplicationContext()).showNotification();
+
         mHandler.postDelayed(mUpdateTimeTask, 1000);
     }
 
 
     @Override
     public void nextClicked() {
-        if (ApplicationClass.player.isPlaying())
-            showNotification(R.drawable.baseline_pause_24);
-        else
-            showNotification(R.drawable.play_arrow_24px);
     }
 
     @Override
     public void prevClicked() {
-        if (ApplicationClass.player.isPlaying())
-            showNotification(R.drawable.baseline_pause_24);
-        else
-            showNotification(R.drawable.play_arrow_24px);
     }
 
     @Override
@@ -296,7 +291,7 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
     public void showNotification(int playPauseButton) {
         ApplicationClass applicationClass = (ApplicationClass) getApplicationContext();
         applicationClass.setMusicDetails(IMAGE_URL, binding.title.getText().toString(), binding.description.getText().toString(), getIntent().getExtras().getString("id", ""));
-        applicationClass.showNotification(playPauseButton);
+        applicationClass.showNotification();
     }
 
 
