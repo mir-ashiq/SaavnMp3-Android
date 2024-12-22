@@ -19,6 +19,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.media.app.NotificationCompat;
 import androidx.media3.common.MediaItem;
+import androidx.media3.common.Player;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.palette.graphics.Palette;
 
@@ -26,7 +27,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.google.gson.Gson;
-import com.harsh.shah.saavnmp3.activities.MainActivity;
+import com.harsh.shah.saavnmp3.activities.MusicOverviewActivity;
 import com.harsh.shah.saavnmp3.network.ApiManager;
 import com.harsh.shah.saavnmp3.network.utility.RequestNetwork;
 import com.harsh.shah.saavnmp3.records.SongResponse;
@@ -119,15 +120,20 @@ public class ApplicationClass extends Application {
         this.trackQueue = que;
     }
 
+    public List<String> getTrackQueue(){
+        return trackQueue;
+    }
+
     public void showNotification(int playPauseButton) {
         try {
 
             Log.i(TAG, "showNotification: " + MUSIC_TITLE + "\t" + MUSIC_ID);
 
-            Intent intent = new Intent(this, MainActivity.class);
+            // TODO: fix content intent not updating MUSIC_ID
+            Intent intent = new Intent(this, MusicOverviewActivity.class);
             intent.putExtra("id", MUSIC_ID);
-            intent.setAction("action_click");
-            PendingIntent contentIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
             Intent prevIntent = new Intent(this, NotificationReceiver.class).setAction(ACTION_PREV);
             PendingIntent prevPendingIntent = PendingIntent.getBroadcast(this, 0, prevIntent, PendingIntent.FLAG_IMMUTABLE);
@@ -145,12 +151,12 @@ public class ApplicationClass extends Application {
                     .into(new CustomTarget<Bitmap>() {
                         @Override
                         public void onResourceReady(@NonNull Bitmap resource, Transition<? super Bitmap> transition) {
-                            IMAGE_BG_COLOR = calculateDominantColor(resource);
-                            TEXT_ON_IMAGE_COLOR = invertColor(IMAGE_BG_COLOR);
+                            //IMAGE_BG_COLOR = calculateDominantColor(resource);
+                            //TEXT_ON_IMAGE_COLOR = invertColor(IMAGE_BG_COLOR);
 
                             Palette.from(resource)
                                     .generate(palette -> {
-                                        Palette.Swatch textSwatch = palette.getLightVibrantSwatch();
+                                        Palette.Swatch textSwatch = palette.getDominantSwatch();
                                         if (textSwatch == null) {
                                             Log.i("ApplicationClass", "Null swatch :(");
                                             return;
@@ -213,20 +219,28 @@ public class ApplicationClass extends Application {
 
     public void nextTrack(){
         if(!trackQueue.isEmpty() && track_position < trackQueue.size()-1){
-            track_position++;
+            if(player.getShuffleModeEnabled())
+                track_position = (int)(Math.random() * trackQueue.size());
+            else
+                track_position++;
             MUSIC_ID = trackQueue.get(track_position);
             playTrack();
             //startActivity(new Intent(this, MusicOverviewActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("id", MUSIC_ID));
         }
+        showNotification();
     }
 
     public void prevTrack(){
         if(track_position>0){
-            track_position--;
+            if(player.getShuffleModeEnabled())
+                track_position = (int)(Math.random() * trackQueue.size());
+            else
+                track_position--;
             MUSIC_ID = trackQueue.get(track_position);
             playTrack();
             //startActivity(new Intent(this, MusicOverviewActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP).putExtra("id", MUSIC_ID));
         }
+        showNotification();
     }
 
     public void prepareMediaPlayer() {
@@ -236,7 +250,20 @@ public class ApplicationClass extends Application {
             player.setMediaItem(mediaItem);
             player.prepare();
             player.play();
-            showNotification();
+            player.addListener(new Player.Listener() {
+                @Override
+                public void onPlaybackStateChanged(int playbackState) {
+                    Player.Listener.super.onPlaybackStateChanged(playbackState);
+                    showNotification();
+                }
+
+                @Override
+                public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+                    Player.Listener.super.onPlayerStateChanged(playWhenReady, playbackState);
+                    if(playbackState == Player.STATE_ENDED)
+                        nextTrack();
+                }
+            });
 
 //            try {
 //                mediaPlayerUtil.reset();

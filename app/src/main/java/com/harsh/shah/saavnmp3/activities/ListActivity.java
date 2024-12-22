@@ -1,5 +1,6 @@
 package com.harsh.shah.saavnmp3.activities;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -66,6 +67,7 @@ public class ListActivity extends AppCompatActivity {
             if (!trackQueue.isEmpty()) {
                 ((ApplicationClass)getApplicationContext()).setTrackQueue(trackQueue);
                 ((ApplicationClass)getApplicationContext()).nextTrack();
+                startActivity(new Intent(ListActivity.this, MusicOverviewActivity.class).putExtra("id", ApplicationClass.MUSIC_ID));
             }
         });
 

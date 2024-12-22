@@ -1,18 +1,21 @@
 package com.harsh.shah.saavnmp3.activities;
 
-import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
+import android.widget.SeekBar;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.media3.common.Player;
 
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 import com.harsh.shah.saavnmp3.ApplicationClass;
 import com.harsh.shah.saavnmp3.R;
@@ -39,7 +42,7 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
     private String IMAGE_URL = "";
     MusicService musicService;
 
-    @SuppressLint("ClickableViewAccessibility")
+    //@SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +51,9 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
 
         binding.title.setSelected(true);
         binding.description.setSelected(true);
+
+        if(!(((ApplicationClass)getApplicationContext()).getTrackQueue().size() > 1))
+            binding.shuffleIcon.setVisibility(View.INVISIBLE);
 
         binding.playPauseImage.setOnClickListener(view -> {
             if (ApplicationClass.player.isPlaying()) {
@@ -59,19 +65,28 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
                 binding.playPauseImage.setImageResource(R.drawable.baseline_pause_24);
                 updateSeekbar();
             }
-            showNotification(ApplicationClass.player.isPlaying() ? R.drawable.baseline_pause_24 : R.drawable.play_arrow_24px);
+            //showNotification(ApplicationClass.player.isPlaying() ? R.drawable.baseline_pause_24 : R.drawable.play_arrow_24px);
         });
 
         binding.seekbar.setMax(100);
 
-        //ApplicationClass.player.setOnBufferingUpdateListener((mediaPlayer, i) -> binding.seekbar.setSecondaryProgress(i));
+        binding.seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
 
+            }
 
-        binding.seekbar.setOnTouchListener((v, event) -> {
-            int playPosition = (int) ((ApplicationClass.player.getDuration() / 100) * binding.seekbar.getProgress());
-            ApplicationClass.player.seekTo(playPosition);
-            binding.elapsedDuration.setText(convertDuration(ApplicationClass.player.getCurrentPosition()));
-            return false;
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                int playPosition = (int) ((ApplicationClass.player.getDuration() / 100) * binding.seekbar.getProgress());
+                ApplicationClass.player.seekTo(playPosition);
+                binding.elapsedDuration.setText(convertDuration(ApplicationClass.player.getCurrentPosition()));
+            }
         });
 
 //        ApplicationClass.player.setOnCompletionListener(mediaPlayer -> {
@@ -89,6 +104,43 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
 
         binding.nextIcon.setOnClickListener(view -> applicationClass.nextTrack());
         binding.prevIcon.setOnClickListener(view -> applicationClass.prevTrack());
+
+        binding.repeatIcon.setOnClickListener(view -> {
+            if(ApplicationClass.player.getRepeatMode() == Player.REPEAT_MODE_OFF)
+                ApplicationClass.player.setRepeatMode(Player.REPEAT_MODE_ONE);
+            else
+                ApplicationClass.player.setRepeatMode(Player.REPEAT_MODE_OFF);
+
+            if(ApplicationClass.player.getRepeatMode() == Player.REPEAT_MODE_OFF)
+                binding.repeatIcon.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.textSec)));
+            else
+                binding.repeatIcon.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.spotify_green)));
+        });
+
+        binding.shuffleIcon.setOnClickListener(view -> {
+            ApplicationClass.player.setShuffleModeEnabled(!ApplicationClass.player.getShuffleModeEnabled());
+
+            if(ApplicationClass.player.getShuffleModeEnabled())
+                binding.shuffleIcon.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.spotify_green)));
+            else
+                binding.shuffleIcon.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.textSec)));
+        });
+
+        binding.shareIcon.setOnClickListener(view -> {
+            if(SHARE_URL.isBlank()) return;
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, SHARE_URL);
+            sendIntent.setType("text/plain");
+            startActivity(sendIntent);
+        });
+
+        binding.moreIcon.setOnClickListener(view -> {
+            BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(MusicOverviewActivity.this, R.style.MyBottomSheetDialogTheme);
+            bottomSheetDialog.setContentView(R.layout.music_overview_more_info_bottom_sheet);
+            bottomSheetDialog.create();
+            bottomSheetDialog.show();
+        });
 
         showData();
 
@@ -122,6 +174,8 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
         musicService = null;
     }
 
+    private String SHARE_URL = "";
+
     void showData() {
         if (getIntent().getExtras() == null) return;
         final ApiManager apiManager = new ApiManager(this);
@@ -154,6 +208,7 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
                     );
                     List<SongResponse.Image> image = songResponse.data().get(0).image();
                     IMAGE_URL = image.get(image.size() - 1).url();
+                    SHARE_URL = songResponse.data().get(0).url();
                     Picasso.get().load(Uri.parse(image.get(image.size() - 1).url())).into(binding.coverImage);
                     List<SongResponse.DownloadUrl> downloadUrls = songResponse.data().get(0).downloadUrl();
 
@@ -174,6 +229,8 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
                         applicationClass.setSongUrl(SONG_URL);
                         prepareMediaPLayer();
                     }
+
+                    //prepareMediaPLayer();
 
                     if(!ApplicationClass.player.isPlaying()){
                         playClicked();
@@ -259,7 +316,7 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
         else
             binding.playPauseImage.setImageResource(R.drawable.play_arrow_24px);
 
-        ((ApplicationClass)getApplicationContext()).showNotification();
+        //((ApplicationClass)getApplicationContext()).showNotification();
 
         mHandler.postDelayed(mUpdateTimeTask, 1000);
     }
