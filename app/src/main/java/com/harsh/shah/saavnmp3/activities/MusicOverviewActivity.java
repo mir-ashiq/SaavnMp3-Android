@@ -10,7 +10,11 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.media3.common.Player;
@@ -20,11 +24,13 @@ import com.google.gson.Gson;
 import com.harsh.shah.saavnmp3.ApplicationClass;
 import com.harsh.shah.saavnmp3.R;
 import com.harsh.shah.saavnmp3.databinding.ActivityMusicOverviewBinding;
+import com.harsh.shah.saavnmp3.model.BasicDataRecord;
 import com.harsh.shah.saavnmp3.network.ApiManager;
 import com.harsh.shah.saavnmp3.network.utility.RequestNetwork;
 import com.harsh.shah.saavnmp3.records.SongResponse;
 import com.harsh.shah.saavnmp3.services.ActionPlaying;
 import com.harsh.shah.saavnmp3.services.MusicService;
+import com.harsh.shah.saavnmp3.utils.customview.BottomSheetItemView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -41,6 +47,7 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
     private String SONG_URL = "";
     private String IMAGE_URL = "";
     MusicService musicService;
+    private List<SongResponse.Artist> artsitsList = new ArrayList<>();
 
     //@SuppressLint("ClickableViewAccessibility")
     @Override
@@ -115,6 +122,8 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
                 binding.repeatIcon.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.textSec)));
             else
                 binding.repeatIcon.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.spotify_green)));
+
+            Toast.makeText(MusicOverviewActivity.this, "Repeat Mode Changed.", Toast.LENGTH_SHORT).show();
         });
 
         binding.shuffleIcon.setOnClickListener(view -> {
@@ -124,6 +133,8 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
                 binding.shuffleIcon.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.spotify_green)));
             else
                 binding.shuffleIcon.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.textSec)));
+
+            Toast.makeText(MusicOverviewActivity.this, "Shuffle Mode Changed.", Toast.LENGTH_SHORT).show();
         });
 
         binding.shareIcon.setOnClickListener(view -> {
@@ -136,8 +147,29 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
         });
 
         binding.moreIcon.setOnClickListener(view -> {
-            BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(MusicOverviewActivity.this, R.style.MyBottomSheetDialogTheme);
-            bottomSheetDialog.setContentView(R.layout.music_overview_more_info_bottom_sheet);
+            final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(MusicOverviewActivity.this, R.style.MyBottomSheetDialogTheme);
+            final View _v = View.inflate(MusicOverviewActivity.this, R.layout.music_overview_more_info_bottom_sheet, null);
+            ((TextView)_v.findViewById(R.id.albumTitle)).setText(binding.title.getText().toString());
+            ((TextView)_v.findViewById(R.id.albumSubTitle)).setText(binding.description.getText().toString());
+            Picasso.get().load(Uri.parse(IMAGE_URL)).into(((ImageView)_v.findViewById(R.id.coverImage)));
+            final LinearLayout linearLayout = _v.findViewById(R.id.main);
+
+            for(SongResponse.Artist artist : artsitsList){
+                try{
+                    final String imgUrl = artist.image().isEmpty()?"":artist.image().get(artist.image().size() - 1).url();
+                    BottomSheetItemView bottomSheetItemView = new BottomSheetItemView(MusicOverviewActivity.this, artist.name(), imgUrl, artist.id());
+                    bottomSheetItemView.setOnClickListener(bottom ->{
+                        startActivity(new Intent(MusicOverviewActivity.this, ArtistProfileActivity.class)
+                                .putExtra("data", new Gson().toJson(
+                                        new BasicDataRecord(artist.id(), artist.name(), "", imgUrl)))
+                        );
+                    });
+                    linearLayout.addView(bottomSheetItemView);
+                }catch (Exception e){
+                    Log.e(TAG, "BottomSheetDialog: ", e);
+                }
+            }
+            bottomSheetDialog.setContentView(_v);
             bottomSheetDialog.create();
             bottomSheetDialog.show();
         });
@@ -146,6 +178,7 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
 
         updateTrackInfo();
     }
+
 
     @Override
     protected void onResume() {
@@ -211,6 +244,8 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
                     SHARE_URL = songResponse.data().get(0).url();
                     Picasso.get().load(Uri.parse(image.get(image.size() - 1).url())).into(binding.coverImage);
                     List<SongResponse.DownloadUrl> downloadUrls = songResponse.data().get(0).downloadUrl();
+
+                    artsitsList = songResponse.data().get(0).artists().primary();
 
                     //Log.i(TAG, "onResponse: " + downloadUrls.get(downloadUrls.size() - 1).url());
                     SONG_URL = downloadUrls.get(downloadUrls.size() - 1).url();
@@ -317,6 +352,16 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
             binding.playPauseImage.setImageResource(R.drawable.play_arrow_24px);
 
         //((ApplicationClass)getApplicationContext()).showNotification();
+
+        if(ApplicationClass.player.getRepeatMode() == Player.REPEAT_MODE_OFF)
+            binding.repeatIcon.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.textSec)));
+        else
+            binding.repeatIcon.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.spotify_green)));
+
+        if(ApplicationClass.player.getShuffleModeEnabled())
+            binding.shuffleIcon.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.spotify_green)));
+        else
+            binding.shuffleIcon.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.textSec)));
 
         mHandler.postDelayed(mUpdateTimeTask, 1000);
     }

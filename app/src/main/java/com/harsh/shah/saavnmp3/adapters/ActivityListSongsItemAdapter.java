@@ -60,8 +60,9 @@ public class ActivityListSongsItemAdapter extends RecyclerView.Adapter<ActivityL
         Picasso.get().load(Uri.parse(song.image().get(song.image().size() - 1).url())).into(((ImageView) holder.itemView.findViewById(R.id.coverImage)));
 
         holder.itemView.setOnClickListener(view -> {
-            if(((ApplicationClass)holder.itemView.getContext().getApplicationContext()).getTrackQueue() != null)
-                ApplicationClass.track_position = holder.getBindingAdapterPosition();
+            if(ApplicationClass.trackQueue != null)
+                if(ApplicationClass.trackQueue.contains(song.id()))
+                    ApplicationClass.track_position = holder.getBindingAdapterPosition();
             holder.itemView.getContext().startActivity(new Intent(view.getContext(), MusicOverviewActivity.class).putExtra("id", song.id()));
         });
     }

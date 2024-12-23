@@ -50,7 +50,7 @@ public class ApplicationClass extends Application {
 
     public static ExoPlayer player;
     private MediaSessionCompat mediaSession;
-    private List<String> trackQueue = new ArrayList<>();
+    public static List<String> trackQueue = new ArrayList<>();
     public static String MUSIC_TITLE = "";
     public static String MUSIC_DESCRIPTION = "";
     public static String IMAGE_URL = "";

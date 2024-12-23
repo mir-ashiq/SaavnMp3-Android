@@ -3,15 +3,21 @@ package com.harsh.shah.saavnmp3.utils.customview;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.harsh.shah.saavnmp3.R;
+import com.squareup.picasso.Picasso;
 
 
 public class BottomSheetItemView extends LinearLayout {
+
+    private String ID = "";
+    private String NAME = "";
+    private String IMAGE_URL = "";
 
     public BottomSheetItemView(Context context) {
         super(context);
@@ -28,6 +34,16 @@ public class BottomSheetItemView extends LinearLayout {
         init(attrs, defStyle);
     }
 
+    public BottomSheetItemView(Context context, String string, String imageUrl, String id){
+        super(context);
+        init(null, 0);
+        getTitleTextView().setText(string);
+        if(!imageUrl.isBlank())Picasso.get().load(Uri.parse(imageUrl)).into(getIconImageView());
+        ID = id;
+        NAME = string;
+        IMAGE_URL = imageUrl;
+    }
+
     private void init(AttributeSet attrs, int defStyle) {
         // Load attributes
         final String title;
@@ -35,6 +51,10 @@ public class BottomSheetItemView extends LinearLayout {
 
         inflate(getContext(), R.layout.bottom_sheet_items_custom_view, this);
 
+        setFocusable(true);
+        setClickable(true);
+
+        if(attrs==null) return;
 
         TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.BottomSheetItemView, defStyle, 0);
 
@@ -45,10 +65,18 @@ public class BottomSheetItemView extends LinearLayout {
                         R.styleable.BottomSheetItemView_android_src);
 
 
-            ((TextView)findViewById(R.id.text)).setText(title);
-            ((ImageView)findViewById(R.id.icon)).setImageDrawable(mExampleDrawable);
+            getTitleTextView().setText(title);
+            getIconImageView().setImageDrawable(mExampleDrawable);
 
 
             a.recycle();
+    }
+
+    public TextView getTitleTextView() {
+        return findViewById(R.id.text);
+    }
+
+    public ImageView getIconImageView() {
+        return findViewById(R.id.icon);
     }
 }

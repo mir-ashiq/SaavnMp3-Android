@@ -16,6 +16,7 @@
         android:background="@color/textSec"/>
 
     <LinearLayout
+        android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
@@ -40,6 +41,7 @@
                 app:strokeWidth="0dp">
 
                 <ImageView
+                    android:id="@+id/coverImage"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/textSec"/>
@@ -71,29 +73,13 @@
 
         </LinearLayout>
 
-        <com.harsh.shah.saavnmp3.utils.customview.BottomSheetItemView
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:title="@string/app_name"
-            android:src="@drawable/play_arrow_24px"/>
-
-        <com.harsh.shah.saavnmp3.utils.customview.BottomSheetItemView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:title="@string/app_name"
-            android:src="@drawable/play_arrow_24px"/>
-
-        <com.harsh.shah.saavnmp3.utils.customview.BottomSheetItemView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:title="@string/app_name"
-            android:src="@drawable/play_arrow_24px"/>
-
-        <com.harsh.shah.saavnmp3.utils.customview.BottomSheetItemView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:title="@string/app_name"
-            android:src="@drawable/play_arrow_24px"/>
+            android:text="Artists"
+            android:textSize="@dimen/_14ssp"
+            android:paddingHorizontal="@dimen/_12sdp"
+            android:paddingVertical="@dimen/_4sdp"/>
 
     </LinearLayout>
 
