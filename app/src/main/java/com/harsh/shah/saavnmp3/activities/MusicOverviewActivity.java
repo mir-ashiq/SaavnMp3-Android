@@ -30,6 +30,7 @@ import com.harsh.shah.saavnmp3.network.utility.RequestNetwork;
 import com.harsh.shah.saavnmp3.records.SongResponse;
 import com.harsh.shah.saavnmp3.services.ActionPlaying;
 import com.harsh.shah.saavnmp3.services.MusicService;
+import com.harsh.shah.saavnmp3.utils.SharedPreferenceManager;
 import com.harsh.shah.saavnmp3.utils.customview.BottomSheetItemView;
 import com.squareup.picasso.Picasso;
 
@@ -45,6 +46,7 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
     private final Handler handler = new Handler();
     ActivityMusicOverviewBinding binding;
     private String SONG_URL = "";
+    private String ID_FROM_EXTRA = "";
     private String IMAGE_URL = "";
     MusicService musicService;
     private List<SongResponse.Artist> artsitsList = new ArrayList<>();
@@ -158,7 +160,10 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
                 try{
                     final String imgUrl = artist.image().isEmpty()?"":artist.image().get(artist.image().size() - 1).url();
                     BottomSheetItemView bottomSheetItemView = new BottomSheetItemView(MusicOverviewActivity.this, artist.name(), imgUrl, artist.id());
-                    bottomSheetItemView.setOnClickListener(bottom ->{
+                    bottomSheetItemView.setFocusable(true);
+                    bottomSheetItemView.setClickable(true);
+                    bottomSheetItemView.setOnClickListener(view1 -> {
+                        Log.i(TAG, "BottomSheetItemView: onCLicked!");
                         startActivity(new Intent(MusicOverviewActivity.this, ArtistProfileActivity.class)
                                 .putExtra("data", new Gson().toJson(
                                         new BasicDataRecord(artist.id(), artist.name(), "", imgUrl)))
@@ -213,6 +218,7 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
         if (getIntent().getExtras() == null) return;
         final ApiManager apiManager = new ApiManager(this);
         final String ID = getIntent().getExtras().getString("id", "");
+        ID_FROM_EXTRA = ID;
         //((ApplicationClass)getApplicationContext()).setMusicDetails(null,null,null,ID);
         if (ApplicationClass.MUSIC_ID.equals(ID)) {
             updateSeekbar();
@@ -232,23 +238,43 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
             public void onResponse(String tag, String response, HashMap<String, Object> responseHeaders) {
                 SongResponse songResponse = new Gson().fromJson(response, SongResponse.class);
                 if (songResponse.success()) {
-                    binding.title.setText(songResponse.data().get(0).name());
-                    binding.description.setText(
-                            String.format("%s plays | %s | %s",
-                                    convertPlayCount(songResponse.data().get(0).playCount()),
-                                    songResponse.data().get(0).year(),
-                                    songResponse.data().get(0).copyright())
-                    );
-                    List<SongResponse.Image> image = songResponse.data().get(0).image();
-                    IMAGE_URL = image.get(image.size() - 1).url();
-                    SHARE_URL = songResponse.data().get(0).url();
-                    Picasso.get().load(Uri.parse(image.get(image.size() - 1).url())).into(binding.coverImage);
-                    List<SongResponse.DownloadUrl> downloadUrls = songResponse.data().get(0).downloadUrl();
+                    onSongFetched(songResponse);
+                    SharedPreferenceManager.getInstance(MusicOverviewActivity.this).setSongResponseById(ID, songResponse);
+                } else
+                    if(SharedPreferenceManager.getInstance(MusicOverviewActivity.this).isSongResponseById(ID))
+                        onSongFetched(SharedPreferenceManager.getInstance(MusicOverviewActivity.this).getSongResponseById(ID));
+                    else
+                        finish();
+            }
 
-                    artsitsList = songResponse.data().get(0).artists().primary();
+            @Override
+            public void onErrorResponse(String tag, String message) {
+                if(SharedPreferenceManager.getInstance(MusicOverviewActivity.this).isSongResponseById(ID))
+                    onSongFetched(SharedPreferenceManager.getInstance(MusicOverviewActivity.this).getSongResponseById(ID));
+                else
+                    Toast.makeText(MusicOverviewActivity.this, message, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
-                    //Log.i(TAG, "onResponse: " + downloadUrls.get(downloadUrls.size() - 1).url());
-                    SONG_URL = downloadUrls.get(downloadUrls.size() - 1).url();
+    private void onSongFetched(SongResponse songResponse){
+        binding.title.setText(songResponse.data().get(0).name());
+        binding.description.setText(
+                String.format("%s plays | %s | %s",
+                        convertPlayCount(songResponse.data().get(0).playCount()),
+                        songResponse.data().get(0).year(),
+                        songResponse.data().get(0).copyright())
+        );
+        List<SongResponse.Image> image = songResponse.data().get(0).image();
+        IMAGE_URL = image.get(image.size() - 1).url();
+        SHARE_URL = songResponse.data().get(0).url();
+        Picasso.get().load(Uri.parse(image.get(image.size() - 1).url())).into(binding.coverImage);
+        List<SongResponse.DownloadUrl> downloadUrls = songResponse.data().get(0).downloadUrl();
+
+        artsitsList = songResponse.data().get(0).artists().primary();
+
+        //Log.i(TAG, "onResponse: " + downloadUrls.get(downloadUrls.size() - 1).url());
+        SONG_URL = downloadUrls.get(downloadUrls.size() - 1).url();
 //                    if (ApplicationClass.MUSIC_ID.equals(ID)) {
 //                        updateSeekbar();
 //                        if (ApplicationClass.player.isPlaying())
@@ -258,31 +284,21 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
 //                    } else
 //                        prepareMediaPLayer();
 
-                    if(!ApplicationClass.MUSIC_ID.equals(ID)){
-                        ApplicationClass applicationClass = (ApplicationClass) getApplicationContext();
-                        applicationClass.setMusicDetails(IMAGE_URL, binding.title.getText().toString(), binding.description.getText().toString(), ID);
-                        applicationClass.setSongUrl(SONG_URL);
-                        prepareMediaPLayer();
-                    }
+        if(!ApplicationClass.MUSIC_ID.equals(ID_FROM_EXTRA)){
+            ApplicationClass applicationClass = (ApplicationClass) getApplicationContext();
+            applicationClass.setMusicDetails(IMAGE_URL, binding.title.getText().toString(), binding.description.getText().toString(), ID_FROM_EXTRA);
+            applicationClass.setSongUrl(SONG_URL);
+            prepareMediaPLayer();
+        }
 
-                    //prepareMediaPLayer();
+        //prepareMediaPLayer();
 
-                    if(!ApplicationClass.player.isPlaying()){
-                        playClicked();
-                        binding.playPauseImage.performClick();
-                    }
+        if(!ApplicationClass.player.isPlaying()){
+            playClicked();
+            binding.playPauseImage.performClick();
+        }
 
-                    //binding.main.setBackgroundColor(ApplicationClass.IMAGE_BG_COLOR);
-
-                } else
-                    finish();
-            }
-
-            @Override
-            public void onErrorResponse(String tag, String message) {
-
-            }
-        });
+        //binding.main.setBackgroundColor(ApplicationClass.IMAGE_BG_COLOR);
     }
 
     public void backPress(View view) {

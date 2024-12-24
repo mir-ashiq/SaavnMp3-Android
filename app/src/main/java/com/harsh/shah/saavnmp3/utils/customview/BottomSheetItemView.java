@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -53,6 +54,10 @@ public class BottomSheetItemView extends LinearLayout {
 
         setFocusable(true);
         setClickable(true);
+
+        setOnClickListener(view -> {
+            Log.i("BottomSheetItemView", "init: " + "Clicked!!");
+        });
 
         if(attrs==null) return;
 
