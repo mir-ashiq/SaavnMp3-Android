@@ -4,8 +4,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
+import com.harsh.shah.saavnmp3.records.AlbumSearch;
 import com.harsh.shah.saavnmp3.records.AlbumsSearch;
 import com.harsh.shah.saavnmp3.records.ArtistsSearch;
+import com.harsh.shah.saavnmp3.records.PlaylistSearch;
 import com.harsh.shah.saavnmp3.records.PlaylistsSearch;
 import com.harsh.shah.saavnmp3.records.SongResponse;
 import com.harsh.shah.saavnmp3.records.SongSearch;
@@ -68,6 +70,20 @@ public class SharedPreferenceManager {
 
     public boolean isSongResponseById(String id){
         return sharedPreferences.contains(id);
+    }
+
+    public void setAlbumResponseById(String id, AlbumSearch albumSearch){
+        sharedPreferences.edit().putString(id, new Gson().toJson(albumSearch)).apply();
+    }
+    public AlbumSearch getAlbumResponseById(String id){
+        return new Gson().fromJson(sharedPreferences.getString(id, ""), AlbumSearch.class);
+    }
+
+    public void setPlaylistResponseById(String id, PlaylistSearch playlistSearch){
+        sharedPreferences.edit().putString(id, new Gson().toJson(playlistSearch)).apply();
+    }
+    public PlaylistSearch getPlaylistResponseById(String id){
+        return new Gson().fromJson(sharedPreferences.getString(id, ""), PlaylistSearch.class);
     }
 
 }

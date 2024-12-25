@@ -19,6 +19,7 @@ import com.harsh.shah.saavnmp3.network.utility.RequestNetwork;
 import com.harsh.shah.saavnmp3.records.AlbumSearch;
 import com.harsh.shah.saavnmp3.records.PlaylistSearch;
 import com.harsh.shah.saavnmp3.records.SongResponse;
+import com.harsh.shah.saavnmp3.utils.SharedPreferenceManager;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -79,21 +80,24 @@ public class ListActivity extends AppCompatActivity {
         final AlbumItem albumItem = new Gson().fromJson(getIntent().getExtras().getString("data"), AlbumItem.class);
         binding.albumTitle.setText(albumItem.albumTitle());
         binding.albumSubTitle.setText(albumItem.albumSubTitle());
-        Picasso.get().load(Uri.parse(albumItem.albumCover())).into(binding.albumCover);
+        if(!albumItem.albumCover().isBlank())
+            Picasso.get().load(Uri.parse(albumItem.albumCover())).into(binding.albumCover);
 
         final ApiManager apiManager = new ApiManager(this);
+        final SharedPreferenceManager sharedPreferenceManager = SharedPreferenceManager.getInstance(this);
+
         if (getIntent().getExtras().getString("type", "").equals("album")) {
+            if(sharedPreferenceManager.getAlbumResponseById(albumItem.id()) != null){
+                onAlbumFetched(sharedPreferenceManager.getAlbumResponseById(albumItem.id()));
+                return;
+            }
             apiManager.retrieveAlbumById(albumItem.id(), new RequestNetwork.RequestListener() {
                 @Override
                 public void onResponse(String tag, String response, HashMap<String, Object> responseHeaders) {
                     AlbumSearch albumSearch = new Gson().fromJson(response, AlbumSearch.class);
                     if (albumSearch.success()) {
-                        binding.albumTitle.setText(albumSearch.data().name());
-                        binding.recyclerView.setAdapter(new ActivityListSongsItemAdapter(albumSearch.data().songs()));
-                        for (SongResponse.Song song : albumSearch.data().songs())
-                            trackQueue.add(song.id());
-
-                        //((ApplicationClass)getApplicationContext()).setTrackQueue(trackQueue);
+                        sharedPreferenceManager.setAlbumResponseById(albumItem.id(), albumSearch);
+                        onAlbumFetched(albumSearch);
                     }
                 }
 
@@ -104,18 +108,19 @@ public class ListActivity extends AppCompatActivity {
             });
             return;
         }
+
+        if(sharedPreferenceManager.getPlaylistResponseById(albumItem.id()) != null){
+            onPlaylistFetched(sharedPreferenceManager.getPlaylistResponseById(albumItem.id()));
+            return;
+        }
         apiManager.retrievePlaylistById(albumItem.id(), 0, 50, new RequestNetwork.RequestListener() {
             @Override
             public void onResponse(String tag, String response, HashMap<String, Object> responseHeaders) {
                 Log.i("API_RESPONSE", "onResponse: " + response);
                 PlaylistSearch playlistSearch = new Gson().fromJson(response, PlaylistSearch.class);
                 if (playlistSearch.success()) {
-                    binding.albumTitle.setText(playlistSearch.data().name());
-                    binding.recyclerView.setAdapter(new ActivityListSongsItemAdapter(playlistSearch.data().songs()));
-                    for (SongResponse.Song song : playlistSearch.data().songs())
-                        trackQueue.add(song.id());
-
-                    //((ApplicationClass)getApplicationContext()).setTrackQueue(trackQueue);
+                    sharedPreferenceManager.setPlaylistResponseById(albumItem.id(), playlistSearch);
+                    onPlaylistFetched(playlistSearch);
                 }
             }
 
@@ -124,6 +129,28 @@ public class ListActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void onAlbumFetched(AlbumSearch albumSearch){
+        binding.albumTitle.setText(albumSearch.data().name());
+        binding.albumSubTitle.setText(albumSearch.data().description());
+        Picasso.get().load(Uri.parse(albumSearch.data().image().get(albumSearch.data().image().size() - 1).url())).into(binding.albumCover);
+        binding.recyclerView.setAdapter(new ActivityListSongsItemAdapter(albumSearch.data().songs()));
+        for (SongResponse.Song song : albumSearch.data().songs())
+            trackQueue.add(song.id());
+
+        //((ApplicationClass)getApplicationContext()).setTrackQueue(trackQueue);
+    }
+
+    private void onPlaylistFetched(PlaylistSearch playlistSearch){
+        binding.albumTitle.setText(playlistSearch.data().name());
+        binding.albumSubTitle.setText(playlistSearch.data().description());
+        Picasso.get().load(Uri.parse(playlistSearch.data().image().get(playlistSearch.data().image().size() - 1).url())).into(binding.albumCover);
+        binding.recyclerView.setAdapter(new ActivityListSongsItemAdapter(playlistSearch.data().songs()));
+        for (SongResponse.Song song : playlistSearch.data().songs())
+            trackQueue.add(song.id());
+
+        //((ApplicationClass)getApplicationContext()).setTrackQueue(trackQueue);
     }
 
     public void backPress(View view) {

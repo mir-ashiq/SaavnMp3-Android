@@ -251,12 +251,13 @@
 
 
         <TextView
+            android:id="@+id/track_quality"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="@dimen/_4sdp"
             android:layout_marginBottom="@dimen/_8sdp"
-            android:text="Up Next"
+            android:text="320kbps"
             android:textSize="@dimen/_14ssp"
             android:textStyle="bold" />
 

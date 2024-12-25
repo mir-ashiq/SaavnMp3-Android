@@ -24,6 +24,7 @@ import com.google.gson.Gson;
 import com.harsh.shah.saavnmp3.ApplicationClass;
 import com.harsh.shah.saavnmp3.R;
 import com.harsh.shah.saavnmp3.databinding.ActivityMusicOverviewBinding;
+import com.harsh.shah.saavnmp3.model.AlbumItem;
 import com.harsh.shah.saavnmp3.model.BasicDataRecord;
 import com.harsh.shah.saavnmp3.network.ApiManager;
 import com.harsh.shah.saavnmp3.network.utility.RequestNetwork;
@@ -61,7 +62,7 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
         binding.title.setSelected(true);
         binding.description.setSelected(true);
 
-        if(!(((ApplicationClass)getApplicationContext()).getTrackQueue().size() > 1))
+        if (!(((ApplicationClass) getApplicationContext()).getTrackQueue().size() > 1))
             binding.shuffleIcon.setVisibility(View.INVISIBLE);
 
         binding.playPauseImage.setOnClickListener(view -> {
@@ -74,7 +75,7 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
                 binding.playPauseImage.setImageResource(R.drawable.baseline_pause_24);
                 updateSeekbar();
             }
-            //showNotification(ApplicationClass.player.isPlaying() ? R.drawable.baseline_pause_24 : R.drawable.play_arrow_24px);
+            showNotification(ApplicationClass.player.isPlaying() ? R.drawable.baseline_pause_24 : R.drawable.play_arrow_24px);
         });
 
         binding.seekbar.setMax(100);
@@ -115,12 +116,12 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
         binding.prevIcon.setOnClickListener(view -> applicationClass.prevTrack());
 
         binding.repeatIcon.setOnClickListener(view -> {
-            if(ApplicationClass.player.getRepeatMode() == Player.REPEAT_MODE_OFF)
+            if (ApplicationClass.player.getRepeatMode() == Player.REPEAT_MODE_OFF)
                 ApplicationClass.player.setRepeatMode(Player.REPEAT_MODE_ONE);
             else
                 ApplicationClass.player.setRepeatMode(Player.REPEAT_MODE_OFF);
 
-            if(ApplicationClass.player.getRepeatMode() == Player.REPEAT_MODE_OFF)
+            if (ApplicationClass.player.getRepeatMode() == Player.REPEAT_MODE_OFF)
                 binding.repeatIcon.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.textSec)));
             else
                 binding.repeatIcon.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.spotify_green)));
@@ -131,7 +132,7 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
         binding.shuffleIcon.setOnClickListener(view -> {
             ApplicationClass.player.setShuffleModeEnabled(!ApplicationClass.player.getShuffleModeEnabled());
 
-            if(ApplicationClass.player.getShuffleModeEnabled())
+            if (ApplicationClass.player.getShuffleModeEnabled())
                 binding.shuffleIcon.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.spotify_green)));
             else
                 binding.shuffleIcon.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.textSec)));
@@ -140,7 +141,7 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
         });
 
         binding.shareIcon.setOnClickListener(view -> {
-            if(SHARE_URL.isBlank()) return;
+            if (SHARE_URL.isBlank()) return;
             Intent sendIntent = new Intent();
             sendIntent.setAction(Intent.ACTION_SEND);
             sendIntent.putExtra(Intent.EXTRA_TEXT, SHARE_URL);
@@ -151,14 +152,25 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
         binding.moreIcon.setOnClickListener(view -> {
             final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(MusicOverviewActivity.this, R.style.MyBottomSheetDialogTheme);
             final View _v = View.inflate(MusicOverviewActivity.this, R.layout.music_overview_more_info_bottom_sheet, null);
-            ((TextView)_v.findViewById(R.id.albumTitle)).setText(binding.title.getText().toString());
-            ((TextView)_v.findViewById(R.id.albumSubTitle)).setText(binding.description.getText().toString());
-            Picasso.get().load(Uri.parse(IMAGE_URL)).into(((ImageView)_v.findViewById(R.id.coverImage)));
+            ((TextView) _v.findViewById(R.id.albumTitle)).setText(binding.title.getText().toString());
+            ((TextView) _v.findViewById(R.id.albumSubTitle)).setText(binding.description.getText().toString());
+            Picasso.get().load(Uri.parse(IMAGE_URL)).into(((ImageView) _v.findViewById(R.id.coverImage)));
             final LinearLayout linearLayout = _v.findViewById(R.id.main);
 
-            for(SongResponse.Artist artist : artsitsList){
-                try{
-                    final String imgUrl = artist.image().isEmpty()?"":artist.image().get(artist.image().size() - 1).url();
+            _v.findViewById(R.id.go_to_album).setOnClickListener(go_to_album -> {
+                if (mSongResponse == null) return;
+                if (mSongResponse.data().get(0).album() == null) return;
+                final SongResponse.Album album = mSongResponse.data().get(0).album();
+                startActivity(new Intent(MusicOverviewActivity.this, ListActivity.class)
+                        .putExtra("type", "album")
+                        .putExtra("id", album.id())
+                        .putExtra("data", new Gson().toJson(new AlbumItem(album.name(), "", "", album.id())))
+                );
+            });
+
+            for (SongResponse.Artist artist : artsitsList) {
+                try {
+                    final String imgUrl = artist.image().isEmpty() ? "" : artist.image().get(artist.image().size() - 1).url();
                     BottomSheetItemView bottomSheetItemView = new BottomSheetItemView(MusicOverviewActivity.this, artist.name(), imgUrl, artist.id());
                     bottomSheetItemView.setFocusable(true);
                     bottomSheetItemView.setClickable(true);
@@ -170,7 +182,7 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
                         );
                     });
                     linearLayout.addView(bottomSheetItemView);
-                }catch (Exception e){
+                } catch (Exception e) {
                     Log.e(TAG, "BottomSheetDialog: ", e);
                 }
             }
@@ -228,36 +240,40 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
                 binding.playPauseImage.setImageResource(R.drawable.play_arrow_24px);
         }
 
-        if(getIntent().getExtras().getString("type", "").equals("clear")){
+        if (getIntent().getExtras().getString("type", "").equals("clear")) {
             ApplicationClass applicationClass = (ApplicationClass) getApplicationContext();
             applicationClass.setTrackQueue(new ArrayList<>(Collections.singletonList(ID)));
         }
-
-        apiManager.retrieveSongById(ID, null, new RequestNetwork.RequestListener() {
-            @Override
-            public void onResponse(String tag, String response, HashMap<String, Object> responseHeaders) {
-                SongResponse songResponse = new Gson().fromJson(response, SongResponse.class);
-                if (songResponse.success()) {
-                    onSongFetched(songResponse);
-                    SharedPreferenceManager.getInstance(MusicOverviewActivity.this).setSongResponseById(ID, songResponse);
-                } else
-                    if(SharedPreferenceManager.getInstance(MusicOverviewActivity.this).isSongResponseById(ID))
+        if (SharedPreferenceManager.getInstance(MusicOverviewActivity.this).isSongResponseById(ID))
+            onSongFetched(SharedPreferenceManager.getInstance(MusicOverviewActivity.this).getSongResponseById(ID));
+        else
+            apiManager.retrieveSongById(ID, null, new RequestNetwork.RequestListener() {
+                @Override
+                public void onResponse(String tag, String response, HashMap<String, Object> responseHeaders) {
+                    SongResponse songResponse = new Gson().fromJson(response, SongResponse.class);
+                    if (songResponse.success()) {
+                        onSongFetched(songResponse);
+                        SharedPreferenceManager.getInstance(MusicOverviewActivity.this).setSongResponseById(ID, songResponse);
+                    } else if (SharedPreferenceManager.getInstance(MusicOverviewActivity.this).isSongResponseById(ID))
                         onSongFetched(SharedPreferenceManager.getInstance(MusicOverviewActivity.this).getSongResponseById(ID));
                     else
                         finish();
-            }
+                }
 
-            @Override
-            public void onErrorResponse(String tag, String message) {
-                if(SharedPreferenceManager.getInstance(MusicOverviewActivity.this).isSongResponseById(ID))
-                    onSongFetched(SharedPreferenceManager.getInstance(MusicOverviewActivity.this).getSongResponseById(ID));
-                else
-                    Toast.makeText(MusicOverviewActivity.this, message, Toast.LENGTH_SHORT).show();
-            }
-        });
+                @Override
+                public void onErrorResponse(String tag, String message) {
+                    if (SharedPreferenceManager.getInstance(MusicOverviewActivity.this).isSongResponseById(ID))
+                        onSongFetched(SharedPreferenceManager.getInstance(MusicOverviewActivity.this).getSongResponseById(ID));
+                    else
+                        Toast.makeText(MusicOverviewActivity.this, message, Toast.LENGTH_SHORT).show();
+                }
+            });
     }
 
-    private void onSongFetched(SongResponse songResponse){
+    private SongResponse mSongResponse;
+
+    private void onSongFetched(SongResponse songResponse) {
+        mSongResponse = songResponse;
         binding.title.setText(songResponse.data().get(0).name());
         binding.description.setText(
                 String.format("%s plays | %s | %s",
@@ -284,7 +300,7 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
 //                    } else
 //                        prepareMediaPLayer();
 
-        if(!ApplicationClass.MUSIC_ID.equals(ID_FROM_EXTRA)){
+        if (!ApplicationClass.MUSIC_ID.equals(ID_FROM_EXTRA)) {
             ApplicationClass applicationClass = (ApplicationClass) getApplicationContext();
             applicationClass.setMusicDetails(IMAGE_URL, binding.title.getText().toString(), binding.description.getText().toString(), ID_FROM_EXTRA);
             applicationClass.setSongUrl(SONG_URL);
@@ -293,10 +309,10 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
 
         //prepareMediaPLayer();
 
-        if(!ApplicationClass.player.isPlaying()){
-            playClicked();
-            binding.playPauseImage.performClick();
-        }
+//        if(!ApplicationClass.player.isPlaying()){
+//            playClicked();
+//            binding.playPauseImage.performClick();
+//        }
 
         //binding.main.setBackgroundColor(ApplicationClass.IMAGE_BG_COLOR);
     }
@@ -331,7 +347,7 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
     }
 
     void prepareMediaPLayer() {
-        ((ApplicationClass)getApplicationContext()).prepareMediaPlayer();
+        ((ApplicationClass) getApplicationContext()).prepareMediaPlayer();
         binding.totalDuration.setText(convertDuration(ApplicationClass.player.getDuration()));
         playClicked();
         binding.playPauseImage.performClick();
@@ -352,29 +368,31 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
     private final Runnable mUpdateTimeTask = this::updateTrackInfo;
 
     private void updateTrackInfo() {
-        if(!binding.title.getText().toString().equals(ApplicationClass.MUSIC_TITLE)) binding.title.setText(ApplicationClass.MUSIC_TITLE);
-        if(!binding.title.getText().toString().equals(ApplicationClass.MUSIC_TITLE)) binding.description.setText(ApplicationClass.MUSIC_DESCRIPTION);
+        if (!binding.title.getText().toString().equals(ApplicationClass.MUSIC_TITLE))
+            binding.title.setText(ApplicationClass.MUSIC_TITLE);
+        if (!binding.title.getText().toString().equals(ApplicationClass.MUSIC_TITLE))
+            binding.description.setText(ApplicationClass.MUSIC_DESCRIPTION);
         Picasso.get().load(Uri.parse(ApplicationClass.IMAGE_URL)).into(binding.coverImage);
         binding.seekbar.setProgress((int) (((float) ApplicationClass.player.getCurrentPosition() / ApplicationClass.player.getDuration()) * 100));
         long currentDuration = ApplicationClass.player.getCurrentPosition();
         binding.elapsedDuration.setText(convertDuration(currentDuration));
 
-        if(!binding.totalDuration.getText().toString().equals(convertDuration(ApplicationClass.player.getDuration())))
+        if (!binding.totalDuration.getText().toString().equals(convertDuration(ApplicationClass.player.getDuration())))
             binding.totalDuration.setText(convertDuration(ApplicationClass.player.getDuration()));
 
-        if(ApplicationClass.player.isPlaying())
+        if (ApplicationClass.player.isPlaying())
             binding.playPauseImage.setImageResource(R.drawable.baseline_pause_24);
         else
             binding.playPauseImage.setImageResource(R.drawable.play_arrow_24px);
 
         //((ApplicationClass)getApplicationContext()).showNotification();
 
-        if(ApplicationClass.player.getRepeatMode() == Player.REPEAT_MODE_OFF)
+        if (ApplicationClass.player.getRepeatMode() == Player.REPEAT_MODE_OFF)
             binding.repeatIcon.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.textSec)));
         else
             binding.repeatIcon.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.spotify_green)));
 
-        if(ApplicationClass.player.getShuffleModeEnabled())
+        if (ApplicationClass.player.getShuffleModeEnabled())
             binding.shuffleIcon.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.spotify_green)));
         else
             binding.shuffleIcon.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.textSec)));

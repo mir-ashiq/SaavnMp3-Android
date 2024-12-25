@@ -117,7 +117,7 @@ public class ApplicationClass extends Application {
 
     public void setTrackQueue(List<String> que){
         track_position = -1;
-        this.trackQueue = que;
+        trackQueue = que;
     }
 
     public List<String> getTrackQueue(){
@@ -130,10 +130,14 @@ public class ApplicationClass extends Application {
             Log.i(TAG, "showNotification: " + MUSIC_TITLE + "\t" + MUSIC_ID);
 
             // TODO: fix content intent not updating MUSIC_ID
+
+            int reqCode = MUSIC_ID.hashCode();
+
             Intent intent = new Intent(this, MusicOverviewActivity.class);
             intent.putExtra("id", MUSIC_ID);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+
+            PendingIntent contentIntent = PendingIntent.getActivity(this, reqCode, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
             Intent prevIntent = new Intent(this, NotificationReceiver.class).setAction(ACTION_PREV);
             PendingIntent prevPendingIntent = PendingIntent.getBroadcast(this, 0, prevIntent, PendingIntent.FLAG_IMMUTABLE);
@@ -300,7 +304,7 @@ public class ApplicationClass extends Application {
                     SONG_URL = downloadUrls.get(downloadUrls.size() - 1).url();
                     setMusicDetails(IMAGE_URL, MUSIC_TITLE, MUSIC_DESCRIPTION, MUSIC_ID);
                     prepareMediaPlayer();
-                    showNotification();
+                    //showNotification();
                 }
             }
 

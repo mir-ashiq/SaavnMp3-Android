@@ -73,6 +73,13 @@
 
         </LinearLayout>
 
+        <com.harsh.shah.saavnmp3.utils.customview.BottomSheetItemView
+            android:id="@+id/go_to_album"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:title="Go to album"
+            android:src="@drawable/baseline_album_24"/>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
