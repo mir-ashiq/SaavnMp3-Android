@@ -49,6 +49,7 @@ public class ApplicationClass extends Application {
     public static final MediaPlayerUtil mediaPlayerUtil = MediaPlayerUtil.getInstance();
 
     public static ExoPlayer player;
+    public static String TRACK_QUALITY = "320kbps";
     private MediaSessionCompat mediaSession;
     public static List<String> trackQueue = new ArrayList<>();
     public static String MUSIC_TITLE = "";
@@ -57,7 +58,7 @@ public class ApplicationClass extends Application {
     public static String MUSIC_ID = "";
     public static String SONG_URL = "";
     public static int track_position = -1;
-    public SharedPreferenceManager sharedPreferenceManager;
+    public static SharedPreferenceManager sharedPreferenceManager;
     private final String TAG = "ApplicationClass";
     public static int IMAGE_BG_COLOR = Color.argb(255,25,20,20);
     public static int TEXT_ON_IMAGE_COLOR = IMAGE_BG_COLOR ^ 0x00FFFFFF;
@@ -72,6 +73,11 @@ public class ApplicationClass extends Application {
         currentActivity = activity;
     }
 
+    public static void setTrackQuality(String string) {
+        TRACK_QUALITY = string;
+        sharedPreferenceManager.setTrackQuality(string);
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -80,11 +86,7 @@ public class ApplicationClass extends Application {
         mediaSession.setActive(true);
         createNotificationChannel();
         sharedPreferenceManager = SharedPreferenceManager.getInstance(this);
-
-//        mediaPlayerUtil.setOnCompletionListener(mediaPlayer -> {
-//            if(!trackQueue.isEmpty())
-//                nextTrack();
-//        });
+        TRACK_QUALITY = sharedPreferenceManager.getTrackQuality();
 
     }
 
@@ -93,13 +95,8 @@ public class ApplicationClass extends Application {
             NotificationChannel notificationChannel1 = new NotificationChannel(CHANNEL_ID_1, "Media Controls", NotificationManager.IMPORTANCE_DEFAULT);
             notificationChannel1.setDescription("Notifications for media playback");
 
-//            NotificationChannel notificationChannel2 = new NotificationChannel(CHANNEL_ID_2, "Fallback Media Control", NotificationManager.IMPORTANCE_LOW);
-//            notificationChannel2.setDescription("Notifications For media playback");
-
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(notificationChannel1);
-//            notificationManager.createNotificationChannel(notificationChannel2);
-
         }
     }
 
@@ -129,8 +126,6 @@ public class ApplicationClass extends Application {
 
             Log.i(TAG, "showNotification: " + MUSIC_TITLE + "\t" + MUSIC_ID);
 
-            // TODO: fix content intent not updating MUSIC_ID
-
             int reqCode = MUSIC_ID.hashCode();
 
             Intent intent = new Intent(this, MusicOverviewActivity.class);
@@ -147,7 +142,6 @@ public class ApplicationClass extends Application {
 
             Intent nextIntent = new Intent(this, NotificationReceiver.class).setAction(ApplicationClass.ACTION_NEXT);
             PendingIntent nextPendingIntent = PendingIntent.getBroadcast(this, 0, nextIntent, PendingIntent.FLAG_IMMUTABLE);
-
 
             Glide.with(this)
                     .asBitmap()
@@ -301,7 +295,7 @@ public class ApplicationClass extends Application {
 
                     List<SongResponse.DownloadUrl> downloadUrls = songResponse.data().get(0).downloadUrl();
 
-                    SONG_URL = downloadUrls.get(downloadUrls.size() - 1).url();
+                    SONG_URL = getDownloadUrl(downloadUrls);
                     setMusicDetails(IMAGE_URL, MUSIC_TITLE, MUSIC_DESCRIPTION, MUSIC_ID);
                     prepareMediaPlayer();
                     //showNotification();
@@ -314,6 +308,17 @@ public class ApplicationClass extends Application {
             }
         });
     }
+
+    public static String getDownloadUrl(List<SongResponse.DownloadUrl> downloadUrlList){
+        if(downloadUrlList.isEmpty()) return "";
+        for (SongResponse.DownloadUrl downloadUrl : downloadUrlList) {
+            if (downloadUrl.quality().equals(TRACK_QUALITY))
+                return downloadUrl.url();
+        }
+
+        return downloadUrlList.get(downloadUrlList.size() - 1).url();
+    }
+
     public void showNotification(){
         //showNotification(mediaPlayerUtil.isPlaying() ? R.drawable.baseline_pause_24 : R.drawable.play_arrow_24px);
         showNotification(player.isPlaying() ? R.drawable.baseline_pause_24 : R.drawable.play_arrow_24px);

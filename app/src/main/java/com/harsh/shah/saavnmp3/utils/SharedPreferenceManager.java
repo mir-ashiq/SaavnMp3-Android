@@ -86,4 +86,10 @@ public class SharedPreferenceManager {
         return new Gson().fromJson(sharedPreferences.getString(id, ""), PlaylistSearch.class);
     }
 
+    public void setTrackQuality(String string){
+        sharedPreferences.edit().putString("track_quality", string).apply();
+    }
+    public String getTrackQuality(){
+        return sharedPreferences.getString("track_quality", "320kbps");
+    }
 }

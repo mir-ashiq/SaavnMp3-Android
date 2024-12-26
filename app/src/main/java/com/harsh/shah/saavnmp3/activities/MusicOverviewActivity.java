@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.media3.common.Player;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -191,6 +192,23 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
             bottomSheetDialog.show();
         });
 
+        binding.trackQuality.setOnClickListener(view -> {
+            PopupMenu popupMenu = new PopupMenu(MusicOverviewActivity.this, view);
+            popupMenu.getMenuInflater().inflate(R.menu.track_quality_menu, popupMenu.getMenu());
+            popupMenu.setOnMenuItemClickListener(menuItem -> {
+                Toast.makeText(MusicOverviewActivity.this, menuItem.getTitle(), Toast.LENGTH_SHORT).show();
+                //Objects.requireNonNull(menuItem.getTitle());
+                ApplicationClass.setTrackQuality(menuItem.getTitle().toString());
+                onSongFetched(mSongResponse, true);
+                prepareMediaPLayer();
+                binding.trackQuality.setText(ApplicationClass.TRACK_QUALITY);
+                return true;
+            });
+            popupMenu.show();
+        });
+
+        binding.trackQuality.setText(ApplicationClass.TRACK_QUALITY);
+
         showData();
 
         updateTrackInfo();
@@ -272,7 +290,10 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
 
     private SongResponse mSongResponse;
 
-    private void onSongFetched(SongResponse songResponse) {
+    private void onSongFetched(SongResponse songResponse){
+        onSongFetched(songResponse, false);
+    }
+    private void onSongFetched(SongResponse songResponse, boolean forced) {
         mSongResponse = songResponse;
         binding.title.setText(songResponse.data().get(0).name());
         binding.description.setText(
@@ -290,7 +311,7 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
         artsitsList = songResponse.data().get(0).artists().primary();
 
         //Log.i(TAG, "onResponse: " + downloadUrls.get(downloadUrls.size() - 1).url());
-        SONG_URL = downloadUrls.get(downloadUrls.size() - 1).url();
+        SONG_URL = ApplicationClass.getDownloadUrl(downloadUrls);
 //                    if (ApplicationClass.MUSIC_ID.equals(ID)) {
 //                        updateSeekbar();
 //                        if (ApplicationClass.player.isPlaying())
@@ -300,7 +321,7 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
 //                    } else
 //                        prepareMediaPLayer();
 
-        if (!ApplicationClass.MUSIC_ID.equals(ID_FROM_EXTRA)) {
+        if ((!ApplicationClass.MUSIC_ID.equals(ID_FROM_EXTRA) || forced)) {
             ApplicationClass applicationClass = (ApplicationClass) getApplicationContext();
             applicationClass.setMusicDetails(IMAGE_URL, binding.title.getText().toString(), binding.description.getText().toString(), ID_FROM_EXTRA);
             applicationClass.setSongUrl(SONG_URL);
