@@ -73,6 +73,10 @@ public class BottomSheetItemView extends LinearLayout {
             getTitleTextView().setText(title);
             getIconImageView().setImageDrawable(mExampleDrawable);
 
+            final int padding = a.getDimensionPixelSize(R.styleable.BottomSheetItemView_srcPadding, 4);
+
+            getIconImageView().setPadding(padding,padding,padding,padding);
+
 
             a.recycle();
     }

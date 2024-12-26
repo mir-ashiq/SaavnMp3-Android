@@ -35,6 +35,8 @@ import com.harsh.shah.saavnmp3.records.PlaylistsSearch;
 import com.harsh.shah.saavnmp3.records.SongSearch;
 import com.harsh.shah.saavnmp3.utils.NetworkUtil;
 import com.squareup.picasso.Picasso;
+import com.yarolegovich.slidingrootnav.SlidingRootNav;
+import com.yarolegovich.slidingrootnav.SlidingRootNavBuilder;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -77,6 +79,8 @@ public class MainActivity extends AppCompatActivity {
         return (int) (screenWidthDp / columnWidthDp + 0.5); // +0.5 for correct rounding to int.
     }
 
+    private SlidingRootNav slidingRootNavBuilder;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,8 +88,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         applicationClass = (ApplicationClass) getApplicationContext();
-
         ApplicationClass.setCurrentActivity(this);
+
+        slidingRootNavBuilder = new SlidingRootNavBuilder(this).withMenuLayout(R.layout.main_drawer_layout).inject();
+
+        binding.profileIcon.setOnClickListener(view -> slidingRootNavBuilder.openMenu(true));
 
         int span = calculateNoOfColumns(this, 200);
         binding.playlistRecyclerView.setLayoutManager(new GridLayoutManager(this, span));

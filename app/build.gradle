@@ -74,5 +74,9 @@ dependencies {
 
     implementation libs.palette
 
+    //TRACK PLAYER / AUDIO PLAYER
     implementation libs.bundles.media3Exoplayer
+
+    //Animated Sliding Drawer
+    implementation libs.slidingrootnav
 }

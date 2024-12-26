@@ -20,6 +20,7 @@ palette = "1.0.0"
 picasso = "2.8"
 sdpAndroid = "1.1.1"
 shimmer = "0.5.0"
+slidingrootnav = "v1.1.1"
 sspAndroid = "1.1.1"
 swiperefreshlayout = "1.2.0-alpha01"
 
@@ -47,6 +48,7 @@ palette = { module = "androidx.palette:palette", version.ref = "palette" }
 picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
 sdp-android = { module = "com.intuit.sdp:sdp-android", version.ref = "sdpAndroid" }
 shimmer = { module = "com.facebook.shimmer:shimmer", version.ref = "shimmer" }
+slidingrootnav = { module = "com.github.yarolegovich:SlidingRootNav", version.ref = "slidingrootnav" }
 ssp-android = { module = "com.intuit.ssp:ssp-android", version.ref = "sspAndroid" }
 swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
 
