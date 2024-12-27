@@ -67,12 +67,13 @@
                 android:layout_height="wrap_content"
                 android:text="Data-saving and offline"
                 android:paddingHorizontal="@dimen/_12sdp"
-                android:paddingVertical="@dimen/_8sdp"
+                android:paddingVertical="@dimen/_4sdp"
                 android:textColor="@color/textMain"
                 android:textStyle="bold"
                 android:textSize="@dimen/_14sdp"/>
 
             <com.harsh.shah.saavnmp3.utils.customview.MaterialCustomSwitch
+                android:id="@+id/download_over_cellular"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:textHead="Downloads over cellular"
@@ -81,11 +82,62 @@
                 app:checked="true"/>
 
             <com.harsh.shah.saavnmp3.utils.customview.MaterialCustomSwitch
+                android:id="@+id/high_quality_track"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:textHead="Stream tracks in high quality"
                 app:textOff="Stream tracks in low/medium quality when you're not connected to Wi-Fi."
                 app:textOn="Stream tracks in high quality when you're connected to Wi-Fi or cellular."
+                app:checked="true"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.2dp"
+                android:layout_marginVertical="@dimen/_8sdp"
+                android:background="@color/textSec"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Storage"
+                android:paddingHorizontal="@dimen/_12sdp"
+                android:paddingVertical="@dimen/_4sdp"
+                android:textColor="@color/textMain"
+                android:textStyle="bold"
+                android:textSize="@dimen/_14sdp"/>
+
+            <com.harsh.shah.saavnmp3.utils.customview.MaterialCustomSwitch
+                android:id="@+id/store_in_cache"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:textHead="Store Track &amp; Album Data"
+                app:textOff="Will not store any details to cache. More Data Consumption."
+                app:textOn="Will store data to cache. Less Data Consumption. Helps when API Server is down."
+                app:checked="true"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.2dp"
+                android:layout_marginVertical="@dimen/_8sdp"
+                android:background="@color/textSec"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Other"
+                android:paddingHorizontal="@dimen/_12sdp"
+                android:paddingVertical="@dimen/_4sdp"
+                android:textColor="@color/textMain"
+                android:textStyle="bold"
+                android:textSize="@dimen/_14sdp"/>
+
+            <com.harsh.shah.saavnmp3.utils.customview.MaterialCustomSwitch
+                android:id="@+id/explicit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:textHead="Allow explicit content"
+                app:textOff="No explicit content will be listed or played."
+                app:textOn="Explicit content (labelled as 18+) is playable."
                 app:checked="true"/>
 
         </LinearLayout>

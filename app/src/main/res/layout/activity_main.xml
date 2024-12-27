@@ -26,13 +26,15 @@
             android:layout_width="@dimen/_25sdp"
             android:layout_height="@dimen/_25sdp"
             app:cardCornerRadius="999dp"
-            app:strokeWidth="0dp">
+            app:strokeWidth="0dp"
+            app:cardBackgroundColor="@android:color/transparent">
 
             <ImageView
                 android:id="@+id/profile_icon"
                 android:layout_width="@dimen/_25sdp"
                 android:layout_height="@dimen/_25sdp"
-                android:background="@color/textSec" />
+                android:padding="@dimen/_2sdp"
+                android:src="@drawable/round_menu_24"/>
         </com.google.android.material.card.MaterialCardView>
 
         <TextView
