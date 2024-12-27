@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -60,6 +61,7 @@
         android:layout_marginVertical="@dimen/_8sdp"/>
 
     <com.harsh.shah.saavnmp3.utils.customview.BottomSheetItemView
+        android:id="@+id/library"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:title="Your Library"
@@ -67,6 +69,7 @@
         app:srcPadding="@dimen/_4sdp"/>
 
     <com.harsh.shah.saavnmp3.utils.customview.BottomSheetItemView
+        android:id="@+id/whats_new"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:title="What's new"
@@ -74,10 +77,25 @@
         app:srcPadding="@dimen/_4sdp"/>
 
     <com.harsh.shah.saavnmp3.utils.customview.BottomSheetItemView
+        android:id="@+id/settings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:title="Settings and privacy"
         android:src="@drawable/settings_24px"
         app:srcPadding="@dimen/_4sdp"/>
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="version 1.0.0"
+        android:gravity="center"
+        android:paddingStart="@dimen/_12sdp"
+        tools:ignore="RtlSymmetry"
+        android:textColor="@color/textSec"/>
 
 </LinearLayout>

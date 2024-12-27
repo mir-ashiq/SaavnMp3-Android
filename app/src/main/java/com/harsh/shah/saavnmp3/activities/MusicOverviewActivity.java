@@ -169,6 +169,11 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
                 );
             });
 
+            _v.findViewById(R.id.download).setOnClickListener(v->{
+                // TODO: develop this
+                Toast.makeText(MusicOverviewActivity.this, "Under Development", Toast.LENGTH_SHORT).show();
+            });
+
             for (SongResponse.Artist artist : artsitsList) {
                 try {
                     final String imgUrl = artist.image().isEmpty() ? "" : artist.image().get(artist.image().size() - 1).url();

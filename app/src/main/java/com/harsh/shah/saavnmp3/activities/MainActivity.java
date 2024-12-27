@@ -90,7 +90,13 @@ public class MainActivity extends AppCompatActivity {
         applicationClass = (ApplicationClass) getApplicationContext();
         ApplicationClass.setCurrentActivity(this);
 
-        slidingRootNavBuilder = new SlidingRootNavBuilder(this).withMenuLayout(R.layout.main_drawer_layout).inject();
+        slidingRootNavBuilder = new SlidingRootNavBuilder(this)
+                .withMenuLayout(R.layout.main_drawer_layout)
+                .withContentClickableWhenMenuOpened(false)
+                .withDragDistance(250)
+                .inject();
+
+        onDrawerItemsClicked();
 
         binding.profileIcon.setOnClickListener(view -> slidingRootNavBuilder.openMenu(true));
 
@@ -135,6 +141,14 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void onDrawerItemsClicked() {
+        slidingRootNavBuilder.getLayout().findViewById(R.id.settings).setOnClickListener(v->{
+            slidingRootNavBuilder.closeMenu();
+            startActivity(new Intent(this, SettingsActivity.class));
+        });
+
+    }
+
     Handler handler = new Handler();
     Runnable runnable = this::showPlayBarData;
 
@@ -175,6 +189,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         NetworkChangeReceiver.unregisterReceiver(this, networkChangeReceiver);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (slidingRootNavBuilder.isMenuOpened())
+            slidingRootNavBuilder.closeMenu();
+        else
+            super.onBackPressed();
     }
 
     private void showData() {
