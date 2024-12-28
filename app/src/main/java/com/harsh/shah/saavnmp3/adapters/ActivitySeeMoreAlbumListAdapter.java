@@ -10,41 +10,41 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.facebook.shimmer.ShimmerFrameLayout;
+import com.google.gson.Gson;
 import com.harsh.shah.saavnmp3.R;
-import com.harsh.shah.saavnmp3.activities.MusicOverviewActivity;
-import com.harsh.shah.saavnmp3.records.SongResponse;
+import com.harsh.shah.saavnmp3.activities.ListActivity;
+import com.harsh.shah.saavnmp3.model.AlbumItem;
+import com.harsh.shah.saavnmp3.records.AlbumsSearch;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ActivitySeeMoreListAdapter extends RecyclerView.Adapter<ActivitySeeMoreListAdapter.ViewHolder> {
+public class ActivitySeeMoreAlbumListAdapter extends RecyclerView.Adapter<ActivitySeeMoreAlbumListAdapter.ViewHolder> {
 
-    private final List<SongResponse.Song> data;
-    private static final int LOADING = 0;
-    private static final int ITEM = 1;
-    private boolean isLoadingAdded = false;
+    private final List<AlbumsSearch.Data.Results> data;
 
-    public ActivitySeeMoreListAdapter(List<SongResponse.Song> data) {
+    public ActivitySeeMoreAlbumListAdapter(List<AlbumsSearch.Data.Results> data) {
         this.data = data;
     }
 
-    public ActivitySeeMoreListAdapter(){
+    public ActivitySeeMoreAlbumListAdapter(){
         this.data = new ArrayList<>();
     }
 
     @NonNull
     @Override
-    public ActivitySeeMoreListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View _v = View.inflate(parent.getContext(), viewType == 1 ? R.layout.activity_artist_profile_view_top_songs_item : R.layout.progress_bar_layout, null);
+    public ActivitySeeMoreAlbumListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View _v = View.inflate(parent.getContext(), viewType == 1 ? R.layout.activity_artist_profile_view_top_songs_item : R.layout.artist_profile_view_top_songs_shimmer, null);
         _v.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        return new ActivitySeeMoreListAdapter.ViewHolder(_v);
+        return new ActivitySeeMoreAlbumListAdapter.ViewHolder(_v);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ActivitySeeMoreListAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ActivitySeeMoreAlbumListAdapter.ViewHolder holder, int position) {
         if (getItemViewType(position) == 0) {
-            //((ShimmerFrameLayout) holder.itemView.findViewById(R.id.shimmer)).startShimmer();
+            ((ShimmerFrameLayout) holder.itemView.findViewById(R.id.shimmer)).startShimmer();
             return;
         }
 
@@ -57,12 +57,21 @@ public class ActivitySeeMoreListAdapter extends RecyclerView.Adapter<ActivitySee
         positionTextView.setText(String.valueOf(position + 1));
         coverTitle.setText(data.get(position).name());
         coverPlayed.setText(
-                String.format("%s | %s", data.get(position).year(), data.get(position).label())
+                String.format("%s | %s", data.get(position).year(), data.get(position).language())
         );
         Picasso.get().load(Uri.parse(data.get(position).image().get(data.get(position).image().size() - 1).url())).into(coverImage);
 
         holder.itemView.setOnClickListener(view -> {
-            view.getContext().startActivity(new Intent(view.getContext(), MusicOverviewActivity.class).putExtra("id", data.get(position).id()));
+            AlbumItem albumItem = new AlbumItem(
+                    data.get(position).id(),
+                    data.get(position).name(),
+                    data.get(position).image().get(data.get(position).image().size() - 1).url(),
+                    data.get(position).id()
+            );
+            holder.itemView.getContext().startActivity(new Intent(holder.itemView.getContext(), ListActivity.class)
+                    .putExtra("data", new Gson().toJson(albumItem))
+                    .putExtra("type", "album")
+                    .putExtra("id", data.get(position).id()));
         });
     }
 
@@ -76,13 +85,13 @@ public class ActivitySeeMoreListAdapter extends RecyclerView.Adapter<ActivitySee
         return 1;
     }
 
-    public void add(SongResponse.Song da) {
+    public void add(AlbumsSearch.Data.Results da) {
         data.add(da);
         notifyItemInserted(data.size() - 1);
     }
 
-    public void addAll(List<SongResponse.Song> moveResults) {
-        for (SongResponse.Song result : moveResults) {
+    public void addAll(List<AlbumsSearch.Data.Results> moveResults) {
+        for (AlbumsSearch.Data.Results result : moveResults) {
             add(result);
         }
     }
@@ -91,11 +100,5 @@ public class ActivitySeeMoreListAdapter extends RecyclerView.Adapter<ActivitySee
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
         }
-    }
-
-    public enum Mode{
-        TOP_SONGS,
-        TOP_ALBUMS,
-        TOP_SINGLES
     }
 }

@@ -225,6 +225,21 @@ public class ApiManager {
         retrieveArtistSongs(artistId, 0, null, null, requestListener);
     }
 
+    public void retrieveArtistAlbums(String artistId, int page, SortBy sortBy, SortOrder sortOrder, RequestNetwork.RequestListener requestListener){
+        HashMap<String, Object> queryMap = new HashMap<>();
+        queryMap.put("page", page==-1?0:page);
+        if (sortBy != null) queryMap.put("sortBy", sortBy.name());
+        if (sortOrder != null) queryMap.put("sortOrder", sortOrder.name());
+
+        requestNetwork.setParams(queryMap, RequestNetworkController.REQUEST_PARAM);
+        requestNetwork.startRequestNetwork(RequestNetworkController.GET, "https://saavn.dev/api/artists/"+Integer.valueOf(artistId)+"/albums", "", requestListener);
+    }
+
+    public void retrieveArtistAlbums(String artistId, int page, RequestNetwork.RequestListener requestListener){
+        retrieveArtistAlbums(artistId, page, null, null, requestListener);
+    }
+
+
     public enum SortBy {
         popularity,
         latest,

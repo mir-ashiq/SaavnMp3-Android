@@ -16,6 +16,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.harsh.shah.saavnmp3.adapters.ActivityArtistProfileTopAlbumsAdapter;
 import com.harsh.shah.saavnmp3.adapters.ActivityArtistProfileTopSongsAdapter;
+import com.harsh.shah.saavnmp3.adapters.ActivitySeeMoreListAdapter;
 import com.harsh.shah.saavnmp3.databinding.ActivityArtistProfileBinding;
 import com.harsh.shah.saavnmp3.model.BasicDataRecord;
 import com.harsh.shah.saavnmp3.network.ApiManager;
@@ -79,10 +80,14 @@ public class ArtistProfileActivity extends AppCompatActivity {
         binding.topSongsSeeMore.setOnClickListener(v -> {
             startActivity(new Intent(ArtistProfileActivity.this, SeeMoreActivity.class)
                     .putExtra("id", artistId)
+                    .putExtra("type", ActivitySeeMoreListAdapter.Mode.TOP_SONGS.name())
                     .putExtra("artist_name", binding.artistName.getText().toString()));
         });
         binding.topAlbumsSeeMore.setOnClickListener(v -> {
-
+            startActivity(new Intent(ArtistProfileActivity.this, SeeMoreActivity.class)
+                    .putExtra("id", artistId)
+                    .putExtra("type", ActivitySeeMoreListAdapter.Mode.TOP_ALBUMS.name())
+                    .putExtra("artist_name", binding.artistName.getText().toString()));
         });
         binding.topSinglesSeeMore.setOnClickListener(v -> {
 

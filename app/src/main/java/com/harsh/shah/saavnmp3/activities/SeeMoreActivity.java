@@ -8,10 +8,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.gson.Gson;
+import com.harsh.shah.saavnmp3.adapters.ActivitySeeMoreAlbumListAdapter;
 import com.harsh.shah.saavnmp3.adapters.ActivitySeeMoreListAdapter;
 import com.harsh.shah.saavnmp3.databinding.ActivitySeeMoreBinding;
 import com.harsh.shah.saavnmp3.network.ApiManager;
 import com.harsh.shah.saavnmp3.network.utility.RequestNetwork;
+import com.harsh.shah.saavnmp3.records.ArtistAllAlbum;
 import com.harsh.shah.saavnmp3.records.ArtistAllSongs;
 import com.paginate.Paginate;
 
@@ -46,7 +48,7 @@ public class SeeMoreActivity extends AppCompatActivity {
 
             @Override
             public boolean hasLoadedAllItems() {
-                return currentPage == totalItems/10;
+                return currentPage == totalItems / 10;
             }
         };
 
@@ -60,54 +62,97 @@ public class SeeMoreActivity extends AppCompatActivity {
     }
 
     private void showData() {
-        if(getIntent().getExtras() == null) finish();
+        if (getIntent().getExtras() == null) finish();
         binding.toolbarText.setText(getIntent().getExtras().getString("artist_name"));
         artistId = getIntent().getExtras().getString("id");
+        String type = getIntent().getExtras().getString("type", ActivitySeeMoreListAdapter.Mode.TOP_SONGS.name());
+        mode = ActivitySeeMoreListAdapter.Mode.valueOf(type);
+        binding.recyclerView.setAdapter(mode == ActivitySeeMoreListAdapter.Mode.TOP_SONGS ? activitySeeMoreListAdapter : activitySeeMoreAlbumListAdapter);
         requestDataFirst();
     }
 
     private String artistId = "";
-    private final ActivitySeeMoreListAdapter activitySeeMoreListAdapter = new ActivitySeeMoreListAdapter(ActivitySeeMoreListAdapter.Mode.TOP_SONGS);
+    private ActivitySeeMoreListAdapter.Mode mode = ActivitySeeMoreListAdapter.Mode.TOP_SONGS;
+    private final ActivitySeeMoreListAdapter activitySeeMoreListAdapter = new ActivitySeeMoreListAdapter();
+    private final ActivitySeeMoreAlbumListAdapter activitySeeMoreAlbumListAdapter = new ActivitySeeMoreAlbumListAdapter();
 
     private void requestDataFirst() {
         final ApiManager apiManager = new ApiManager(this);
-        apiManager.retrieveArtistSongs(artistId, 0,null,null, new RequestNetwork.RequestListener() {
-            @Override
-            public void onResponse(String tag, String response, HashMap<String, Object> responseHeaders) {
-                ArtistAllSongs artistAllSongs = new Gson().fromJson(response, ArtistAllSongs.class);
-                if(!artistAllSongs.success()) finish();
-                isLoading = false;
-                currentPage = 0;
-                totalItems = artistAllSongs.data().total();
-                activitySeeMoreListAdapter.addAll(artistAllSongs.data().songs());
-            }
+        if (mode == ActivitySeeMoreListAdapter.Mode.TOP_SONGS) {
+            apiManager.retrieveArtistSongs(artistId, 0, null, null, new RequestNetwork.RequestListener() {
+                @Override
+                public void onResponse(String tag, String response, HashMap<String, Object> responseHeaders) {
+                    ArtistAllSongs artistAllSongs = new Gson().fromJson(response, ArtistAllSongs.class);
+                    if (!artistAllSongs.success()) finish();
+                    isLoading = false;
+                    currentPage = 0;
+                    totalItems = artistAllSongs.data().total();
+                    activitySeeMoreListAdapter.addAll(artistAllSongs.data().songs());
+                }
 
-            @Override
-            public void onErrorResponse(String tag, String message) {
-                isLoading = false;
-                Toast.makeText(SeeMoreActivity.this, message, Toast.LENGTH_SHORT).show();
-            }
-        });
+                @Override
+                public void onErrorResponse(String tag, String message) {
+                    isLoading = false;
+                    Toast.makeText(SeeMoreActivity.this, message, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }else{
+            apiManager.retrieveArtistAlbums(artistId, 0, new RequestNetwork.RequestListener() {
+                @Override
+                public void onResponse(String tag, String response, HashMap<String, Object> responseHeaders) {
+                    ArtistAllAlbum artistAllSongs = new Gson().fromJson(response, ArtistAllAlbum.class);
+                    if (!artistAllSongs.success()) finish();
+                    isLoading = false;
+                    currentPage = 0;
+                    totalItems = artistAllSongs.data().total();
+                    activitySeeMoreAlbumListAdapter.addAll(artistAllSongs.data().albums());
+                }
+
+                @Override
+                public void onErrorResponse(String tag, String message) {
+                    isLoading = false;
+                    Toast.makeText(SeeMoreActivity.this, message, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     private void requestDataNext() {
         currentPage++;
         final ApiManager apiManager = new ApiManager(this);
-        apiManager.retrieveArtistSongs(artistId, currentPage,null,null, new RequestNetwork.RequestListener() {
-            @Override
-            public void onResponse(String tag, String response, HashMap<String, Object> responseHeaders) {
-                ArtistAllSongs artistAllSongs = new Gson().fromJson(response, ArtistAllSongs.class);
-                if(!artistAllSongs.success()) finish();
-                isLoading = false;
-                activitySeeMoreListAdapter.addAll(artistAllSongs.data().songs());
-            }
+        if (mode == ActivitySeeMoreListAdapter.Mode.TOP_SONGS) {
+            apiManager.retrieveArtistSongs(artistId, currentPage, null, null, new RequestNetwork.RequestListener() {
+                @Override
+                public void onResponse(String tag, String response, HashMap<String, Object> responseHeaders) {
+                    ArtistAllSongs artistAllSongs = new Gson().fromJson(response, ArtistAllSongs.class);
+                    if (!artistAllSongs.success()) finish();
+                    isLoading = false;
+                    activitySeeMoreListAdapter.addAll(artistAllSongs.data().songs());
+                }
 
-            @Override
-            public void onErrorResponse(String tag, String message) {
-                isLoading = false;
-                Toast.makeText(SeeMoreActivity.this, message, Toast.LENGTH_SHORT).show();
-            }
-        });
+                @Override
+                public void onErrorResponse(String tag, String message) {
+                    isLoading = false;
+                    Toast.makeText(SeeMoreActivity.this, message, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }else{
+            apiManager.retrieveArtistAlbums(artistId, currentPage, new RequestNetwork.RequestListener() {
+                @Override
+                public void onResponse(String tag, String response, HashMap<String, Object> responseHeaders) {
+                    ArtistAllAlbum artistAllSongs = new Gson().fromJson(response, ArtistAllAlbum.class);
+                    if (!artistAllSongs.success()) finish();
+                    isLoading = false;
+                    activitySeeMoreAlbumListAdapter.addAll(artistAllSongs.data().albums());
+                }
+
+                @Override
+                public void onErrorResponse(String tag, String message) {
+                    isLoading = false;
+                    Toast.makeText(SeeMoreActivity.this, message, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     public void backPress(View view) {
