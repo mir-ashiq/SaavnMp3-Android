@@ -79,4 +79,7 @@ dependencies {
 
     //Animated Sliding Drawer
     implementation libs.slidingrootnav
+
+    // PAGING LIBRARY FOR RECYCLERVIEW
+    implementation 'com.github.markomilos:paginate:1.0.0'
 }

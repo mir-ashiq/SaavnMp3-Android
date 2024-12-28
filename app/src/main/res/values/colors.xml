@@ -18,10 +18,10 @@
 
     <!-- Background colors -->
     <color name="background_dark">#121212</color>
-    <color name="background_light">#FFFFFF</color>
+    <color name="background_light">#FAF9F6</color>
 
     <!-- Text colors -->
-    <color name="text_light">#FFFFFF</color>
+    <color name="text_light">#FAF9F6</color>
     <color name="text_dark">#191414</color>
     <color name="text_secondary_light">#B3B3B3</color>
     <color name="text_secondary_dark">#B3B3B3</color>

@@ -1,5 +1,6 @@
 package com.harsh.shah.saavnmp3.activities;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -75,6 +76,18 @@ public class ArtistProfileActivity extends AppCompatActivity {
         binding.topAlbumsRecyclerview.setLayoutManager(new LinearLayoutManager(this));
         binding.topSinglesRecyclerview.setLayoutManager(new LinearLayoutManager(this));
 
+        binding.topSongsSeeMore.setOnClickListener(v -> {
+            startActivity(new Intent(ArtistProfileActivity.this, SeeMoreActivity.class)
+                    .putExtra("id", artistId)
+                    .putExtra("artist_name", binding.artistName.getText().toString()));
+        });
+        binding.topAlbumsSeeMore.setOnClickListener(v -> {
+
+        });
+        binding.topSinglesSeeMore.setOnClickListener(v -> {
+
+        });
+
         showShimmerData();
         //showData();
     }
@@ -91,12 +104,14 @@ public class ArtistProfileActivity extends AppCompatActivity {
         NetworkChangeReceiver.unregisterReceiver(this, networkChangeReceiver);
     }
 
+    private String artistId = "9999";
+
     void showData() {
         if (getIntent().getExtras() == null) return;
         final String artist = getIntent().getExtras().getString("data", "null");
         final BasicDataRecord artistItem = new Gson().fromJson(artist, BasicDataRecord.class);
         if (artistItem == null) return;
-        final String artistId = artistItem.id();
+        artistId = artistItem.id();
 
         Picasso.get().load(Uri.parse(artistItem.image())).into(binding.artistImg);
         binding.artistName.setText(artistItem.title());
