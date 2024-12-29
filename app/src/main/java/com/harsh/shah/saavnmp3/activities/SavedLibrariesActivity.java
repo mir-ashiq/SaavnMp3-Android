@@ -67,6 +67,8 @@ public class SavedLibrariesActivity extends AppCompatActivity {
                 Snackbar.make(binding.getRoot(), "Library added successfully", Snackbar.LENGTH_SHORT).show();
 
                 bottomSheetDialog.dismiss();
+
+                showData();
             });
             bottomSheetDialog.show();
         });

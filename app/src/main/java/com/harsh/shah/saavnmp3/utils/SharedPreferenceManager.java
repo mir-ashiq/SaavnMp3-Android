@@ -115,4 +115,11 @@ public class SharedPreferenceManager {
         savedLibraries.lists().remove(index);
         setSavedLibrariesData(savedLibraries);
     }
+
+    public void setSavedLibraryDataById(String id, SavedLibraries.Library library){
+        sharedPreferences.edit().putString(id, new Gson().toJson(library)).apply();
+    }
+    public SavedLibraries.Library getSavedLibraryDataById(String id) {
+        return sharedPreferences.contains(id) ? new Gson().fromJson(sharedPreferences.getString(id, ""), SavedLibraries.Library.class) : null;
+    }
 }

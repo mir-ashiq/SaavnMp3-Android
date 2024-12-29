@@ -15,6 +15,7 @@ import com.google.gson.Gson;
 import com.harsh.shah.saavnmp3.ApplicationClass;
 import com.harsh.shah.saavnmp3.R;
 import com.harsh.shah.saavnmp3.adapters.ActivityListSongsItemAdapter;
+import com.harsh.shah.saavnmp3.adapters.UserCreatedSongsListAdapter;
 import com.harsh.shah.saavnmp3.databinding.ActivityListBinding;
 import com.harsh.shah.saavnmp3.model.AlbumItem;
 import com.harsh.shah.saavnmp3.network.ApiManager;
@@ -43,6 +44,8 @@ public class ListActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        Log.i("ListActivity", "onCreate: reached ListActivity");
 
         showShimmerData();
 
@@ -160,7 +163,7 @@ public class ListActivity extends AppCompatActivity {
         final SharedPreferenceManager sharedPreferenceManager = SharedPreferenceManager.getInstance(this);
 
         if(getIntent().getExtras().getBoolean("createdByUser", false)){
-
+            onUserCreatedFetch();
             return;
         }
 
@@ -208,6 +211,32 @@ public class ListActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void onUserCreatedFetch(){
+
+        binding.addToLibrary.setVisibility(View.INVISIBLE);
+
+        final SharedPreferenceManager sharedPreferenceManager = SharedPreferenceManager.getInstance(this);
+        SavedLibraries savedLibraries = sharedPreferenceManager.getSavedLibrariesData();
+        if(savedLibraries == null || savedLibraries.lists().isEmpty()) finish();
+        SavedLibraries.Library library = null;
+        for(SavedLibraries.Library l: savedLibraries.lists()){
+            if(l.id().equals(albumItem.id())){
+                library = l;
+                break;
+            }
+        }
+        if(library == null) finish();
+        if(library != null) {
+            binding.albumTitle.setText(library.name());
+            binding.albumSubTitle.setText(library.description());
+            Picasso.get().load(Uri.parse(library.image())).into(binding.albumCover);
+            binding.recyclerView.setAdapter(new UserCreatedSongsListAdapter(library.songs()));
+            for (SavedLibraries.Library.Songs song : library.songs())
+                trackQueue.add(song.id());
+        }
+
     }
 
     private void onAlbumFetched(AlbumSearch albumSearch){
