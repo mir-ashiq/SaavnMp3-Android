@@ -71,7 +71,7 @@ public class ListActivity extends AppCompatActivity {
                         albumItem.id(),
                         false,
                         isAlbum,
-                        albumItem.albumTitle(),
+                        binding.albumTitle.getText().toString(),
                         albumItem.albumCover(),
                         binding.albumSubTitle.getText().toString(),
                         new ArrayList<>()

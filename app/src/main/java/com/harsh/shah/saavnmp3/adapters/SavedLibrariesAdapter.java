@@ -58,7 +58,7 @@ public class SavedLibrariesAdapter extends RecyclerView.Adapter<SavedLibrariesAd
                         .putExtra("type", "playlist")
                         .putExtra("createdByUser", true)
                 );
-                return; //TODO: implement if createdByUser
+                return;
             }
 
             v.getContext().startActivity(new Intent(v.getContext(), ListActivity.class)

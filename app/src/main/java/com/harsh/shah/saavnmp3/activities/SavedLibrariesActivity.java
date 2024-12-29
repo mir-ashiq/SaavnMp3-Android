@@ -66,9 +66,10 @@ public class SavedLibrariesActivity extends AppCompatActivity {
                 sharedPreferenceManager.addLibraryToSavedLibraries(library);
                 Snackbar.make(binding.getRoot(), "Library added successfully", Snackbar.LENGTH_SHORT).show();
 
+
                 bottomSheetDialog.dismiss();
 
-                showData();
+                showData(sharedPreferenceManager);
             });
             bottomSheetDialog.show();
         });
@@ -83,10 +84,14 @@ public class SavedLibrariesActivity extends AppCompatActivity {
         return simpleDateFormat.format(date);
     }
 
-    private void showData() {
-        savedLibraries = SharedPreferenceManager.getInstance(this).getSavedLibrariesData();
+
+    private void showData(SharedPreferenceManager sharedPreferenceManager){
+        savedLibraries = sharedPreferenceManager.getSavedLibrariesData();
         binding.emptyListTv.setVisibility(savedLibraries == null ? View.VISIBLE : View.GONE);
         if(savedLibraries != null) binding.recyclerView.setAdapter(new SavedLibrariesAdapter(savedLibraries.lists()));
+    }
+    private void showData() {
+        showData(SharedPreferenceManager.getInstance(this));
     }
 
     @Override
