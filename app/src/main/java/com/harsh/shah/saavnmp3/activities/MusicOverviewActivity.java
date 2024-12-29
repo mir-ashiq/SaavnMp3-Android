@@ -10,10 +10,10 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,15 +21,19 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.media3.common.Player;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.harsh.shah.saavnmp3.ApplicationClass;
 import com.harsh.shah.saavnmp3.R;
 import com.harsh.shah.saavnmp3.databinding.ActivityMusicOverviewBinding;
+import com.harsh.shah.saavnmp3.databinding.MusicOverviewMoreInfoBottomSheetBinding;
 import com.harsh.shah.saavnmp3.model.AlbumItem;
 import com.harsh.shah.saavnmp3.model.BasicDataRecord;
 import com.harsh.shah.saavnmp3.network.ApiManager;
 import com.harsh.shah.saavnmp3.network.utility.RequestNetwork;
 import com.harsh.shah.saavnmp3.records.SongResponse;
+import com.harsh.shah.saavnmp3.records.sharedpref.SavedLibraries;
 import com.harsh.shah.saavnmp3.services.ActionPlaying;
 import com.harsh.shah.saavnmp3.services.MusicService;
 import com.harsh.shah.saavnmp3.utils.SharedPreferenceManager;
@@ -152,13 +156,13 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
 
         binding.moreIcon.setOnClickListener(view -> {
             final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(MusicOverviewActivity.this, R.style.MyBottomSheetDialogTheme);
-            final View _v = View.inflate(MusicOverviewActivity.this, R.layout.music_overview_more_info_bottom_sheet, null);
-            ((TextView) _v.findViewById(R.id.albumTitle)).setText(binding.title.getText().toString());
-            ((TextView) _v.findViewById(R.id.albumSubTitle)).setText(binding.description.getText().toString());
-            Picasso.get().load(Uri.parse(IMAGE_URL)).into(((ImageView) _v.findViewById(R.id.coverImage)));
-            final LinearLayout linearLayout = _v.findViewById(R.id.main);
+            final MusicOverviewMoreInfoBottomSheetBinding _binding = MusicOverviewMoreInfoBottomSheetBinding.inflate(getLayoutInflater());
+            _binding.albumTitle.setText(binding.title.getText().toString());
+            _binding.albumSubTitle.setText(binding.description.getText().toString());
+            Picasso.get().load(Uri.parse(IMAGE_URL)).into(_binding.coverImage);
+            final LinearLayout linearLayout = _binding.main;
 
-            _v.findViewById(R.id.go_to_album).setOnClickListener(go_to_album -> {
+            _binding.goToAlbum.setOnClickListener(go_to_album -> {
                 if (mSongResponse == null) return;
                 if (mSongResponse.data().get(0).album() == null) return;
                 final SongResponse.Album album = mSongResponse.data().get(0).album();
@@ -169,7 +173,49 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
                 );
             });
 
-            _v.findViewById(R.id.download).setOnClickListener(v->{
+            _binding.addToLibrary.setOnClickListener(v->{
+                int index = -1;
+                final SharedPreferenceManager sharedPreferenceManager = SharedPreferenceManager.getInstance(MusicOverviewActivity.this);
+                SavedLibraries savedLibraries = sharedPreferenceManager.getSavedLibrariesData();
+                if (savedLibraries == null) savedLibraries = new SavedLibraries(new ArrayList<>());
+                if(savedLibraries.lists().isEmpty()){
+                    Snackbar.make(_binding.getRoot(), "No Libraries Found", Snackbar.LENGTH_SHORT).show();
+                    return;
+                }
+                final List<String> userCreatedLibraries = new ArrayList<>();
+                for (SavedLibraries.Library library : savedLibraries.lists()) {
+                    if (library.isCreatedByUser())
+                        userCreatedLibraries.add(library.name());
+                }
+
+                MaterialAlertDialogBuilder materialAlertDialogBuilder = new MaterialAlertDialogBuilder(MusicOverviewActivity.this);
+                ListAdapter listAdapter = new ArrayAdapter<>(MusicOverviewActivity.this, android.R.layout.simple_list_item_1, userCreatedLibraries);
+                SavedLibraries finalSavedLibraries = savedLibraries;
+                materialAlertDialogBuilder.setAdapter(listAdapter, (dialogInterface, i) -> {
+                    //index = i;
+                    Log.i(TAG, "pickedLibrary: " + i);
+
+                    final SongResponse.Song song = mSongResponse.data().get(0);
+
+                    SavedLibraries.Library.Songs songs = new SavedLibraries.Library.Songs(
+                            song.id(),
+                            song.name(),
+                            binding.description.getText().toString(),
+                            IMAGE_URL
+                    );
+
+                    finalSavedLibraries.lists().get(i).songs().add(songs);
+                    sharedPreferenceManager.setSavedLibrariesData(finalSavedLibraries);
+                    Toast.makeText(MusicOverviewActivity.this, "Added to " + finalSavedLibraries.lists().get(i).name(), Toast.LENGTH_SHORT).show();
+                });
+
+
+                materialAlertDialogBuilder.setTitle("Select Library");
+                materialAlertDialogBuilder.show();
+
+            });
+
+            _binding.download.setOnClickListener(v->{
                 // TODO: develop this
                 Toast.makeText(MusicOverviewActivity.this, "Under Development", Toast.LENGTH_SHORT).show();
             });
@@ -192,7 +238,7 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
                     Log.e(TAG, "BottomSheetDialog: ", e);
                 }
             }
-            bottomSheetDialog.setContentView(_v);
+            bottomSheetDialog.setContentView(_binding.getRoot());
             bottomSheetDialog.create();
             bottomSheetDialog.show();
         });

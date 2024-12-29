@@ -3,6 +3,7 @@
 
     <style name="MyBottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/MYBottomSheetStyle</item>
+        <item name="android:windowSoftInputMode">adjustResize</item>
     </style>
 
     <style name="MYBottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">

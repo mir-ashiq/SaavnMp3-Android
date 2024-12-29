@@ -44,7 +44,14 @@ public class SavedLibrariesAdapter extends RecyclerView.Adapter<SavedLibrariesAd
 
         holder.itemView.setOnClickListener(v -> {
 
-            if(data.get(position).isCreatedByUser()) return; //TODO: implement if createdByUser
+            if(data.get(position).isCreatedByUser()) {
+                v.getContext().startActivity(new Intent(v.getContext(), ListActivity.class)
+                        .putExtra("id", data.get(position).id())
+                        .putExtra("type", "playlist")
+                        .putExtra("createdByUser", true)
+                );
+                return; //TODO: implement if createdByUser
+            }
 
             AlbumItem albumItem = new AlbumItem(
                     data.get(position).name(),

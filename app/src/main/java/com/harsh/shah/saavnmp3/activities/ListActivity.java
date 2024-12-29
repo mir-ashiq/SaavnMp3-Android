@@ -1,5 +1,6 @@
 package com.harsh.shah.saavnmp3.activities;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,8 +10,10 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.harsh.shah.saavnmp3.ApplicationClass;
+import com.harsh.shah.saavnmp3.R;
 import com.harsh.shah.saavnmp3.adapters.ActivityListSongsItemAdapter;
 import com.harsh.shah.saavnmp3.databinding.ActivityListBinding;
 import com.harsh.shah.saavnmp3.model.AlbumItem;
@@ -19,6 +22,7 @@ import com.harsh.shah.saavnmp3.network.utility.RequestNetwork;
 import com.harsh.shah.saavnmp3.records.AlbumSearch;
 import com.harsh.shah.saavnmp3.records.PlaylistSearch;
 import com.harsh.shah.saavnmp3.records.SongResponse;
+import com.harsh.shah.saavnmp3.records.sharedpref.SavedLibraries;
 import com.harsh.shah.saavnmp3.utils.SharedPreferenceManager;
 import com.squareup.picasso.Picasso;
 
@@ -40,6 +44,82 @@ public class ListActivity extends AppCompatActivity {
 
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        showShimmerData();
+
+        binding.playAllBtn.setOnClickListener(view -> {
+            if (!trackQueue.isEmpty()) {
+                ((ApplicationClass)getApplicationContext()).setTrackQueue(trackQueue);
+                ((ApplicationClass)getApplicationContext()).nextTrack();
+                startActivity(new Intent(ListActivity.this, MusicOverviewActivity.class).putExtra("id", ApplicationClass.MUSIC_ID));
+            }
+        });
+        final SharedPreferenceManager sharedPreferenceManager = SharedPreferenceManager.getInstance(ListActivity.this);
+
+        binding.addToLibrary.setOnClickListener(view -> {
+            if (albumItem == null) return;
+
+            if(isAlbumInLibrary(albumItem, sharedPreferenceManager.getSavedLibrariesData())){
+                int index = getAlbumIndexInLibrary(albumItem, sharedPreferenceManager.getSavedLibrariesData());
+                if(index==-1) return;
+                sharedPreferenceManager.removeLibraryFromSavedLibraries(index);
+                Snackbar.make(binding.getRoot(), "Removed from Library", Snackbar.LENGTH_SHORT).show();
+            }else {
+                SavedLibraries.Library library = new SavedLibraries.Library(
+                        albumItem.id(),
+                        false,
+                        isAlbum,
+                        albumItem.albumTitle(),
+                        albumItem.albumCover(),
+                        binding.albumSubTitle.getText().toString(),
+                        new ArrayList<>()
+                );
+                sharedPreferenceManager.addLibraryToSavedLibraries(library);
+                Snackbar.make(binding.getRoot(), "Added to Library", Snackbar.LENGTH_SHORT).show();
+            }
+
+            updateAlbumInLibraryStatus();
+        });
+
+        showData();
+    }
+
+    private void updateAlbumInLibraryStatus(){
+        SharedPreferenceManager sharedPreferenceManager = SharedPreferenceManager.getInstance(ListActivity.this);
+        if(sharedPreferenceManager.getSavedLibrariesData() == null)
+            binding.addToLibrary.setImageResource(R.drawable.round_add_24);
+        else {
+            final SavedLibraries savedLibraries = sharedPreferenceManager.getSavedLibrariesData();
+            binding.addToLibrary.setImageResource(isAlbumInLibrary(albumItem, savedLibraries) ? R.drawable.round_done_24 : R.drawable.round_add_24);
+        }
+    }
+    @SuppressLint("NewApi")
+    private boolean isAlbumInLibrary(AlbumItem albumItem, SavedLibraries savedLibraries) {
+        if (savedLibraries == null || savedLibraries.lists() == null) {
+            return false;
+        }
+        Log.i("ListActivity", "isAlbumInLibrary: " + savedLibraries);
+        if(savedLibraries.lists().isEmpty()) return false;
+        return savedLibraries.lists().stream().anyMatch(library -> library.id().equals(albumItem.id()));
+    }
+
+    @SuppressLint("NewApi")
+    private int getAlbumIndexInLibrary(AlbumItem albumItem, SavedLibraries savedLibraries) {
+        if (savedLibraries == null || savedLibraries.lists() == null) {
+            return -1;
+        }
+        Log.i("ListActivity", "getAlbumIndexInLibrary: " + savedLibraries);
+        if(savedLibraries.lists().isEmpty()) return -1;
+        int index = -1;
+        for(SavedLibraries.Library library: savedLibraries.lists()){
+            if(library.id().equals(albumItem.id())){
+                index = savedLibraries.lists().indexOf(library);
+                break;
+            }
+        }
+        return index;
+    }
+
+    private void showShimmerData() {
         List<SongResponse.Song> data = new ArrayList<>();
         for (int i = 0; i < 11; i++) {
             data.add(new SongResponse.Song(
@@ -63,21 +143,14 @@ public class ListActivity extends AppCompatActivity {
             ));
         }
         binding.recyclerView.setAdapter(new ActivityListSongsItemAdapter(data));
-
-        binding.playAllBtn.setOnClickListener(view -> {
-            if (!trackQueue.isEmpty()) {
-                ((ApplicationClass)getApplicationContext()).setTrackQueue(trackQueue);
-                ((ApplicationClass)getApplicationContext()).nextTrack();
-                startActivity(new Intent(ListActivity.this, MusicOverviewActivity.class).putExtra("id", ApplicationClass.MUSIC_ID));
-            }
-        });
-
-        showData();
     }
 
+    private AlbumItem albumItem;
+    private boolean isAlbum = false;
     private void showData() {
         if (getIntent().getExtras() == null) return;
-        final AlbumItem albumItem = new Gson().fromJson(getIntent().getExtras().getString("data"), AlbumItem.class);
+        albumItem = new Gson().fromJson(getIntent().getExtras().getString("data"), AlbumItem.class);
+        updateAlbumInLibraryStatus();
         binding.albumTitle.setText(albumItem.albumTitle());
         binding.albumSubTitle.setText(albumItem.albumSubTitle());
         if(!albumItem.albumCover().isBlank())
@@ -86,7 +159,13 @@ public class ListActivity extends AppCompatActivity {
         final ApiManager apiManager = new ApiManager(this);
         final SharedPreferenceManager sharedPreferenceManager = SharedPreferenceManager.getInstance(this);
 
+        if(getIntent().getExtras().getBoolean("createdByUser", false)){
+
+            return;
+        }
+
         if (getIntent().getExtras().getString("type", "").equals("album")) {
+            isAlbum = true;
             if(sharedPreferenceManager.getAlbumResponseById(albumItem.id()) != null){
                 onAlbumFetched(sharedPreferenceManager.getAlbumResponseById(albumItem.id()));
                 return;

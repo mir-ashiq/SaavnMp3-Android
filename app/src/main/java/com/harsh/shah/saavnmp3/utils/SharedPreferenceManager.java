@@ -109,4 +109,10 @@ public class SharedPreferenceManager {
         setSavedLibrariesData(savedLibraries);
     }
 
+    public void removeLibraryFromSavedLibraries(int index) {
+        SavedLibraries savedLibraries = getSavedLibrariesData();
+        if (savedLibraries == null) return;
+        savedLibraries.lists().remove(index);
+        setSavedLibrariesData(savedLibraries);
+    }
 }

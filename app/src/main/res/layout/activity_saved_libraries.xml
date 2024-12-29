@@ -67,7 +67,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintVertical_weight="1"
-        tools:listitem="@layout/activity_list_song_item" />
+        tools:listitem="@layout/activity_list_song_item"
+        android:layout_marginTop="@dimen/_4sdp"/>
 
     <TextView
         android:id="@+id/empty_list_tv"
