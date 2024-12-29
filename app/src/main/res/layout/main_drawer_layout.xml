@@ -22,6 +22,7 @@
             app:cardBackgroundColor="@color/background">
 
             <ImageView
+                android:id="@+id/logo"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:importantForAccessibility="no"

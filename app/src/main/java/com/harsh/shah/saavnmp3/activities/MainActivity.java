@@ -143,9 +143,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void onDrawerItemsClicked() {
         slidingRootNavBuilder.getLayout().findViewById(R.id.settings).setOnClickListener(v->{
-            slidingRootNavBuilder.closeMenu();
             startActivity(new Intent(this, SettingsActivity.class));
+            slidingRootNavBuilder.closeMenu();
         });
+
+        slidingRootNavBuilder.getLayout().findViewById(R.id.logo).setOnClickListener(view -> slidingRootNavBuilder.closeMenu());
 
     }
 
@@ -208,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
 
         final ApiManager apiManager = new ApiManager(this);
 
-        apiManager.searchSongs(" ", 0, 10, new RequestNetwork.RequestListener() {
+        apiManager.searchSongs(" ", 0, 15, new RequestNetwork.RequestListener() {
             @Override
             public void onResponse(String tag, String response, HashMap<String, Object> responseHeaders) {
                 SongSearch songSearch = new Gson().fromJson(response, SongSearch.class);
@@ -220,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
                         binding.popularSongsRecyclerView.setAdapter(adapter);
                         adapter.notifyDataSetChanged();
                     });
-                    applicationClass.sharedPreferenceManager.setHomeSongsRecommended(songSearch);
+                    ApplicationClass.sharedPreferenceManager.setHomeSongsRecommended(songSearch);
                 } else {
                     try {
                         showOfflineData();
@@ -249,7 +251,7 @@ public class MainActivity extends AppCompatActivity {
                         binding.popularArtistsRecyclerView.setAdapter(adapter);
                         adapter.notifyDataSetChanged();
                     });
-                    applicationClass.sharedPreferenceManager.setHomeArtistsRecommended(artistSearch);
+                    ApplicationClass.sharedPreferenceManager.setHomeArtistsRecommended(artistSearch);
                 } else {
                     try {
                         showOfflineData();
@@ -278,7 +280,7 @@ public class MainActivity extends AppCompatActivity {
                         binding.popularAlbumsRecyclerView.setAdapter(adapter);
                         adapter.notifyDataSetChanged();
                     });
-                    applicationClass.sharedPreferenceManager.setHomeAlbumsRecommended(albumsSearch);
+                    ApplicationClass.sharedPreferenceManager.setHomeAlbumsRecommended(albumsSearch);
                 } else {
                     try {
                         Toast.makeText(MainActivity.this, new JSONObject(response).getString("message"), Toast.LENGTH_SHORT).show();
@@ -309,7 +311,7 @@ public class MainActivity extends AppCompatActivity {
                         binding.playlistRecyclerView.setAdapter(adapter);
                         adapter.notifyDataSetChanged();
                     });
-                    applicationClass.sharedPreferenceManager.setHomePlaylistRecommended(playlistsSearch);
+                    ApplicationClass.sharedPreferenceManager.setHomePlaylistRecommended(playlistsSearch);
                 } else {
                     try {
                         Toast.makeText(MainActivity.this, new JSONObject(response).getString("message"), Toast.LENGTH_SHORT).show();
@@ -360,8 +362,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showOfflineData(){
-        if(applicationClass.sharedPreferenceManager.getHomeSongsRecommended()!=null){
-            SongSearch songSearch = applicationClass.sharedPreferenceManager.getHomeSongsRecommended();
+        if(ApplicationClass.sharedPreferenceManager.getHomeSongsRecommended()!=null){
+            SongSearch songSearch = ApplicationClass.sharedPreferenceManager.getHomeSongsRecommended();
             songSearch.data().results().forEach(results -> {
                 songs.add(new AlbumItem(results.name(), results.language() + " " + results.year(), results.image().get(results.image().size() - 1).url(), results.id()));
                 ActivityMainPopularSongs adapter = new ActivityMainPopularSongs(songs);
@@ -370,8 +372,8 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
-        if(applicationClass.sharedPreferenceManager.getHomeArtistsRecommended()!=null){
-            ArtistsSearch artistsSearch = applicationClass.sharedPreferenceManager.getHomeArtistsRecommended();
+        if(ApplicationClass.sharedPreferenceManager.getHomeArtistsRecommended()!=null){
+            ArtistsSearch artistsSearch = ApplicationClass.sharedPreferenceManager.getHomeArtistsRecommended();
             artistsSearch.data().results().forEach(results -> {
                 artists.add(results);
                 ActivityMainArtistsItemAdapter adapter = new ActivityMainArtistsItemAdapter(artists);
@@ -380,8 +382,8 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
-        if(applicationClass.sharedPreferenceManager.getHomeAlbumsRecommended()!=null){
-            AlbumsSearch albumsSearch = applicationClass.sharedPreferenceManager.getHomeAlbumsRecommended();
+        if(ApplicationClass.sharedPreferenceManager.getHomeAlbumsRecommended()!=null){
+            AlbumsSearch albumsSearch = ApplicationClass.sharedPreferenceManager.getHomeAlbumsRecommended();
             albumsSearch.data().results().forEach(results -> {
                 albums.add(new AlbumItem(results.name(), results.language() + " " + results.year(), results.image().get(results.image().size() - 1).url(), results.id()));
                 ActivityMainAlbumItemAdapter adapter = new ActivityMainAlbumItemAdapter(albums);
@@ -390,8 +392,8 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
-        if(applicationClass.sharedPreferenceManager.getHomePlaylistRecommended()!=null){
-            PlaylistsSearch playlistsSearch = applicationClass.sharedPreferenceManager.getHomePlaylistRecommended();
+        if(ApplicationClass.sharedPreferenceManager.getHomePlaylistRecommended()!=null){
+            PlaylistsSearch playlistsSearch = ApplicationClass.sharedPreferenceManager.getHomePlaylistRecommended();
             playlistsSearch.data().results().forEach(results -> {
                 playlists.add(new AlbumItem(results.name(), "", results.image().get(results.image().size() - 1).url(), results.id()));
                 //binding.playlistRecyclerView.setAdapter(new ActivityMainPlaylistAdapter(playlists));
@@ -401,6 +403,8 @@ public class MainActivity extends AppCompatActivity {
                 adapter.notifyDataSetChanged();
             });
         }
+        
+        //showData(); //TODO: showData if new data is available
 
     }
 

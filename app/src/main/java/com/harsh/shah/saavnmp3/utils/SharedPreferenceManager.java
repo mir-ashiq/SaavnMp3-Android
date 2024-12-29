@@ -11,6 +11,9 @@ import com.harsh.shah.saavnmp3.records.PlaylistSearch;
 import com.harsh.shah.saavnmp3.records.PlaylistsSearch;
 import com.harsh.shah.saavnmp3.records.SongResponse;
 import com.harsh.shah.saavnmp3.records.SongSearch;
+import com.harsh.shah.saavnmp3.records.sharedpref.SavedLibraries;
+
+import java.util.ArrayList;
 
 public class SharedPreferenceManager {
 
@@ -92,4 +95,18 @@ public class SharedPreferenceManager {
     public String getTrackQuality(){
         return sharedPreferences.getString("track_quality", "320kbps");
     }
+
+    public void setSavedLibrariesData(SavedLibraries savedLibraries){
+        sharedPreferences.edit().putString("saved_libraries", new Gson().toJson(savedLibraries)).apply();
+    }
+    public SavedLibraries getSavedLibrariesData(){
+        return new Gson().fromJson(sharedPreferences.getString("saved_libraries", ""), SavedLibraries.class);
+    }
+    public void addLibraryToSavedLibraries(SavedLibraries.Library library){
+        SavedLibraries savedLibraries = getSavedLibrariesData();
+        if(savedLibraries == null) savedLibraries = new SavedLibraries(new ArrayList<>());
+        savedLibraries.lists().add(library);
+        setSavedLibrariesData(savedLibraries);
+    }
+
 }
