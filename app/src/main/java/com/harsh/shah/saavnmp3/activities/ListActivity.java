@@ -10,6 +10,7 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.harsh.shah.saavnmp3.ApplicationClass;
@@ -62,10 +63,20 @@ public class ListActivity extends AppCompatActivity {
             if (albumItem == null) return;
 
             if(isAlbumInLibrary(albumItem, sharedPreferenceManager.getSavedLibrariesData())){
-                int index = getAlbumIndexInLibrary(albumItem, sharedPreferenceManager.getSavedLibrariesData());
-                if(index==-1) return;
-                sharedPreferenceManager.removeLibraryFromSavedLibraries(index);
-                Snackbar.make(binding.getRoot(), "Removed from Library", Snackbar.LENGTH_SHORT).show();
+
+                new MaterialAlertDialogBuilder(ListActivity.this)
+                        .setTitle("Are you sure?")
+                        .setMessage("Do you want to remove this album from your library?")
+                        .setPositiveButton("Yes", (dialogInterface, i) -> {
+                            int index = getAlbumIndexInLibrary(albumItem, sharedPreferenceManager.getSavedLibrariesData());
+                            if(index==-1) return;
+                            sharedPreferenceManager.removeLibraryFromSavedLibraries(index);
+                            Snackbar.make(binding.getRoot(), "Removed from Library", Snackbar.LENGTH_SHORT).show();
+                        })
+                        .setNegativeButton("No", (dialogInterface, i) -> {
+
+                        })
+                        .show();
             }else {
                 SavedLibraries.Library library = new SavedLibraries.Library(
                         albumItem.id(),
@@ -215,7 +226,7 @@ public class ListActivity extends AppCompatActivity {
 
     private void onUserCreatedFetch(){
 
-        binding.addToLibrary.setVisibility(View.INVISIBLE);
+        binding.shareIcon.setVisibility(View.INVISIBLE);
 
         final SharedPreferenceManager sharedPreferenceManager = SharedPreferenceManager.getInstance(this);
         SavedLibraries savedLibraries = sharedPreferenceManager.getSavedLibrariesData();
@@ -248,6 +259,14 @@ public class ListActivity extends AppCompatActivity {
             trackQueue.add(song.id());
 
         //((ApplicationClass)getApplicationContext()).setTrackQueue(trackQueue);
+        binding.shareIcon.setOnClickListener(view -> {
+            if(albumSearch.data().url().isBlank()) return;
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, albumSearch.data().url());
+            sendIntent.setType("text/plain");
+            startActivity(sendIntent);
+        });
     }
 
     private void onPlaylistFetched(PlaylistSearch playlistSearch){
@@ -259,6 +278,14 @@ public class ListActivity extends AppCompatActivity {
             trackQueue.add(song.id());
 
         //((ApplicationClass)getApplicationContext()).setTrackQueue(trackQueue);
+        binding.shareIcon.setOnClickListener(view -> {
+            if(playlistSearch.data().url().isBlank()) return;
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, playlistSearch.data().url());
+            sendIntent.setType("text/plain");
+            startActivity(sendIntent);
+        });
     }
 
     public void backPress(View view) {

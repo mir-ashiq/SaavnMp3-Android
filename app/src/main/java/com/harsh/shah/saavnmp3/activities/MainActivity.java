@@ -24,6 +24,7 @@ import com.harsh.shah.saavnmp3.adapters.ActivityMainAlbumItemAdapter;
 import com.harsh.shah.saavnmp3.adapters.ActivityMainArtistsItemAdapter;
 import com.harsh.shah.saavnmp3.adapters.ActivityMainPlaylistAdapter;
 import com.harsh.shah.saavnmp3.adapters.ActivityMainPopularSongs;
+import com.harsh.shah.saavnmp3.adapters.SavedLibrariesAdapter;
 import com.harsh.shah.saavnmp3.databinding.ActivityMainBinding;
 import com.harsh.shah.saavnmp3.model.AlbumItem;
 import com.harsh.shah.saavnmp3.network.ApiManager;
@@ -33,7 +34,9 @@ import com.harsh.shah.saavnmp3.records.AlbumsSearch;
 import com.harsh.shah.saavnmp3.records.ArtistsSearch;
 import com.harsh.shah.saavnmp3.records.PlaylistsSearch;
 import com.harsh.shah.saavnmp3.records.SongSearch;
+import com.harsh.shah.saavnmp3.records.sharedpref.SavedLibraries;
 import com.harsh.shah.saavnmp3.utils.NetworkUtil;
+import com.harsh.shah.saavnmp3.utils.SharedPreferenceManager;
 import com.squareup.picasso.Picasso;
 import com.yarolegovich.slidingrootnav.SlidingRootNav;
 import com.yarolegovich.slidingrootnav.SlidingRootNavBuilder;
@@ -106,10 +109,12 @@ public class MainActivity extends AppCompatActivity {
         binding.popularSongsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         binding.popularArtistsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         binding.popularAlbumsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        binding.savedRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
         OverScrollDecoratorHelper.setUpOverScroll(binding.popularSongsRecyclerView, OverScrollDecoratorHelper.ORIENTATION_HORIZONTAL);
         OverScrollDecoratorHelper.setUpOverScroll(binding.popularArtistsRecyclerView, OverScrollDecoratorHelper.ORIENTATION_HORIZONTAL);
         OverScrollDecoratorHelper.setUpOverScroll(binding.popularAlbumsRecyclerView, OverScrollDecoratorHelper.ORIENTATION_HORIZONTAL);
+        OverScrollDecoratorHelper.setUpOverScroll(binding.savedRecyclerView, OverScrollDecoratorHelper.ORIENTATION_HORIZONTAL);
 
 
 //        startActivity(new Intent(this, ArtistProfileActivity.class));
@@ -139,6 +144,14 @@ public class MainActivity extends AppCompatActivity {
         //showData();
         showPlayBarData();
 
+        showSavedLibrariesData();
+
+    }
+
+    private void showSavedLibrariesData() {
+        SavedLibraries savedLibraries = SharedPreferenceManager.getInstance(this).getSavedLibrariesData();
+        //binding.emptyListTv.setVisibility(savedLibraries == null ? View.VISIBLE : View.GONE);
+        if(savedLibraries != null) binding.savedRecyclerView.setAdapter(new SavedLibrariesAdapter(savedLibraries.lists()));
     }
 
     private void onDrawerItemsClicked() {
@@ -189,6 +202,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         NetworkChangeReceiver.registerReceiver(this, networkChangeReceiver);
+        showSavedLibrariesData();
     }
 
     @Override

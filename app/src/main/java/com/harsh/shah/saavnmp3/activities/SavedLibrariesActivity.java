@@ -21,6 +21,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
+
 public class SavedLibrariesActivity extends AppCompatActivity {
 
     ActivitySavedLibrariesBinding binding;
@@ -33,6 +35,7 @@ public class SavedLibrariesActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        OverScrollDecoratorHelper.setUpOverScroll(binding.recyclerView, OverScrollDecoratorHelper.ORIENTATION_VERTICAL);
 
         binding.addNewLibrary.setOnClickListener(view -> {
             AddNewLibraryBottomSheetBinding addNewLibraryBottomSheetBinding = AddNewLibraryBottomSheetBinding.inflate(getLayoutInflater());
