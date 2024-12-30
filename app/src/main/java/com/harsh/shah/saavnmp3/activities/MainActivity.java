@@ -54,8 +54,8 @@ import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
 public class MainActivity extends AppCompatActivity {
 
     private final String TAG = "MainActivity";
-    ActivityMainBinding binding;
-    ApplicationClass applicationClass;
+    private ActivityMainBinding binding;
+    private ApplicationClass applicationClass;
     final List<AlbumItem> songs = new ArrayList<>();
     final List<ArtistsSearch.Data.Results> artists = new ArrayList<>();
     final List<AlbumItem> albums = new ArrayList<>();
@@ -117,9 +117,6 @@ public class MainActivity extends AppCompatActivity {
         OverScrollDecoratorHelper.setUpOverScroll(binding.savedRecyclerView, OverScrollDecoratorHelper.ORIENTATION_HORIZONTAL);
 
 
-//        startActivity(new Intent(this, ArtistProfileActivity.class));
-//        finish();
-
         binding.refreshLayout.setOnRefreshListener(() -> {
             showShimmerData();
             showData();
@@ -136,6 +133,14 @@ public class MainActivity extends AppCompatActivity {
         binding.playBarBackground.setOnClickListener(view -> {
             if(!ApplicationClass.MUSIC_ID.isBlank())
                 startActivity(new Intent(this, MusicOverviewActivity.class).putExtra("id", ApplicationClass.MUSIC_ID));
+        });
+
+        binding.playBarPrevIcon.setOnClickListener(view -> {
+            applicationClass.prevTrack();
+        });
+
+        binding.playBarNextIcon.setOnClickListener(view -> {
+            applicationClass.nextTrack();
         });
 
         showShimmerData();
