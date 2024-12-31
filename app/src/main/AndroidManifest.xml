@@ -18,6 +18,9 @@
         android:theme="@style/Theme.SaavnMp3"
         tools:targetApi="31">
         <activity
+            android:name=".activities.AboutActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.SavedLibrariesActivity"
             android:exported="false" />
         <activity

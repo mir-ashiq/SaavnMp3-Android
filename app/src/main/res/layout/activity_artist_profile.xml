@@ -50,7 +50,6 @@
 
             </LinearLayout>
 
-
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/collapsing_toolbar"
                 android:layout_width="match_parent"

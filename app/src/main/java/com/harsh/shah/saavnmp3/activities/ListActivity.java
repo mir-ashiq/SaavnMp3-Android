@@ -10,6 +10,7 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
@@ -18,7 +19,9 @@ import com.harsh.shah.saavnmp3.R;
 import com.harsh.shah.saavnmp3.adapters.ActivityListSongsItemAdapter;
 import com.harsh.shah.saavnmp3.adapters.UserCreatedSongsListAdapter;
 import com.harsh.shah.saavnmp3.databinding.ActivityListBinding;
+import com.harsh.shah.saavnmp3.databinding.ActivityListMoreInfoBottomSheetBinding;
 import com.harsh.shah.saavnmp3.model.AlbumItem;
+import com.harsh.shah.saavnmp3.model.BasicDataRecord;
 import com.harsh.shah.saavnmp3.network.ApiManager;
 import com.harsh.shah.saavnmp3.network.utility.RequestNetwork;
 import com.harsh.shah.saavnmp3.records.AlbumSearch;
@@ -26,6 +29,7 @@ import com.harsh.shah.saavnmp3.records.PlaylistSearch;
 import com.harsh.shah.saavnmp3.records.SongResponse;
 import com.harsh.shah.saavnmp3.records.sharedpref.SavedLibraries;
 import com.harsh.shah.saavnmp3.utils.SharedPreferenceManager;
+import com.harsh.shah.saavnmp3.utils.customview.BottomSheetItemView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -94,7 +98,44 @@ public class ListActivity extends AppCompatActivity {
             updateAlbumInLibraryStatus();
         });
 
+        binding.moreIcon.setOnClickListener(view -> onMoreIconClicked());
+
         showData();
+    }
+
+    private void onMoreIconClicked() {
+        if(albumItem == null) return;
+
+        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(ListActivity.this, R.style.MyBottomSheetDialogTheme);
+        final ActivityListMoreInfoBottomSheetBinding _binding = ActivityListMoreInfoBottomSheetBinding.inflate(getLayoutInflater());
+
+        _binding.albumTitle.setText(binding.albumTitle.getText().toString());
+        _binding.albumSubTitle.setText(binding.albumSubTitle.getText().toString());
+        Picasso.get().load(Uri.parse(albumItem.albumCover())).into(_binding.coverImage);
+
+        for(ArtistData artist: artistData){
+            try {
+                final String imgUrl = artist.image().isEmpty() ? "" : artist.image();
+                BottomSheetItemView bottomSheetItemView = new BottomSheetItemView(ListActivity.this, artist.name(), imgUrl, artist.id());
+                bottomSheetItemView.setFocusable(true);
+                bottomSheetItemView.setClickable(true);
+                bottomSheetItemView.setOnClickListener(view1 -> {
+                    Log.i("ListActivity", "BottomSheetItemView: onCLicked!");
+                    startActivity(new Intent(ListActivity.this, ArtistProfileActivity.class)
+                            .putExtra("data", new Gson().toJson(
+                                    new BasicDataRecord(artist.id(), artist.name(), "", imgUrl)))
+                    );
+                });
+                _binding.main.addView(bottomSheetItemView);
+            } catch (Exception e) {
+                Log.e("ListActivity", "BottomSheetDialog: ", e);
+            }
+        }
+
+        bottomSheetDialog.setContentView(_binding.getRoot());
+        bottomSheetDialog.create();
+        bottomSheetDialog.show();
+
     }
 
     private void updateAlbumInLibraryStatus(){
@@ -227,6 +268,7 @@ public class ListActivity extends AppCompatActivity {
     private void onUserCreatedFetch(){
 
         binding.shareIcon.setVisibility(View.INVISIBLE);
+        binding.moreIcon.setVisibility(View.INVISIBLE);
 
         final SharedPreferenceManager sharedPreferenceManager = SharedPreferenceManager.getInstance(this);
         SavedLibraries savedLibraries = sharedPreferenceManager.getSavedLibrariesData();
@@ -267,6 +309,10 @@ public class ListActivity extends AppCompatActivity {
             sendIntent.setType("text/plain");
             startActivity(sendIntent);
         });
+
+        for (SongResponse.Artist artist : albumSearch.data().artist().all()){
+            artistData.add(new ArtistData(artist.name(), artist.id(), artist.image().get(artist.image().size() - 1).url()));
+        }
     }
 
     private void onPlaylistFetched(PlaylistSearch playlistSearch){
@@ -286,10 +332,23 @@ public class ListActivity extends AppCompatActivity {
             sendIntent.setType("text/plain");
             startActivity(sendIntent);
         });
+
+        for (PlaylistSearch.Data.Artist artist : playlistSearch.data().artists()){
+            artistData.add(new ArtistData(artist.name(), artist.id(), artist.image().get(artist.image().size() - 1).url()));
+        }
+
     }
+
+    private List<ArtistData> artistData = new ArrayList<>();
 
     public void backPress(View view) {
         finish();
     }
+
+    private record ArtistData(
+            String name,
+            String id,
+            String image
+    ){}
 
 }

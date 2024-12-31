@@ -24,7 +24,7 @@
     <color name="text_light">#FAF9F6</color>
     <color name="text_dark">#191414</color>
     <color name="text_secondary_light">#B3B3B3</color>
-    <color name="text_secondary_dark">#B3B3B3</color>
+    <color name="text_secondary_dark">#3D3D3D</color>
 
     <!-- Divider and accent colors -->
     <color name="divider_light">#E6E6E6</color>

@@ -171,6 +171,11 @@ public class MainActivity extends AppCompatActivity {
             startActivity(new Intent(MainActivity.this, SavedLibrariesActivity.class));
             slidingRootNavBuilder.closeMenu();
         });
+
+        slidingRootNavBuilder.getLayout().findViewById(R.id.about).setOnClickListener(view -> {
+            startActivity(new Intent(MainActivity.this, AboutActivity.class));
+            slidingRootNavBuilder.closeMenu();
+        });
     }
 
     Handler handler = new Handler();
@@ -196,6 +201,8 @@ public class MainActivity extends AppCompatActivity {
         binding.playBarMusicDesc.setTextColor(ApplicationClass.TEXT_ON_IMAGE_COLOR1);
 
         binding.playBarPlayPauseIcon.setImageTintList(ColorStateList.valueOf(ApplicationClass.TEXT_ON_IMAGE_COLOR));
+        binding.playBarPrevIcon.setImageTintList(ColorStateList.valueOf(ApplicationClass.TEXT_ON_IMAGE_COLOR));
+        binding.playBarNextIcon.setImageTintList(ColorStateList.valueOf(ApplicationClass.TEXT_ON_IMAGE_COLOR));
 
         OverScrollDecoratorHelper.setUpStaticOverScroll(binding.getRoot(), OverScrollDecoratorHelper.ORIENTATION_VERTICAL);
 
