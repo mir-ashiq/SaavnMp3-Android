@@ -15,8 +15,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:navigationIcon="@drawable/round_arrow_back_24"
         app:title="About Us"
+        app:navigationIcon="@drawable/round_arrow_back_24"
         app:titleTextColor="@color/textMain" />
 
     <ScrollView
@@ -26,7 +26,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:overScrollMode="never"
+        android:scrollbars="none">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -39,8 +41,9 @@
                 android:layout_height="wrap_content"
                 app:cardBackgroundColor="@android:color/transparent"
                 app:strokeColor="@color/textSec"
-                app:strokeWidth="0.5dp"
-                app:contentPadding="@dimen/_8sdp">
+                app:strokeWidth="0.4dp"
+                app:contentPaddingTop="@dimen/_12sdp"
+                app:contentPaddingBottom="@dimen/_12sdp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -50,7 +53,8 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="@dimen/_8sdp">
 
                         <com.google.android.material.card.MaterialCardView
                             android:layout_width="@dimen/_35sdp"
@@ -112,20 +116,27 @@
                         android:layout_height="wrap_content"
                         app:title="Rate us"
                         android:src="@android:drawable/btn_star"
-                        app:srcPadding="@dimen/_4sdp">
+                        app:srcPadding="@dimen/_4sdp"/>
+
+                    <com.harsh.shah.saavnmp3.utils.customview.BottomSheetItemView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:title="Source code"
+                        android:src="@drawable/github"
+                        app:srcPadding="@dimen/_4sdp"/>
 
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
-
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardBackgroundColor="@android:color/transparent"
                 app:strokeColor="@color/textSec"
-                app:strokeWidth="0.5dp"
-                app:contentPadding="@dimen/_8sdp"
+                app:strokeWidth="0.4dp"
+                app:contentPaddingTop="@dimen/_12sdp"
+                app:contentPaddingBottom="@dimen/_12sdp"
                 android:layout_marginVertical="@dimen/_12sdp">
 
                 <LinearLayout
@@ -139,7 +150,8 @@
                         android:text="Community"
                         android:textSize="@dimen/_12sdp"
                         android:textColor="@color/textMain"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold"
+                        android:layout_marginStart="@dimen/_8sdp"/>
 
                     <com.harsh.shah.saavnmp3.utils.customview.BottomSheetItemView
                         android:layout_width="match_parent"
@@ -153,15 +165,62 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:title="Telegram"
-                        android:src="@drawable/round_email_24"
+                        android:src="@drawable/telegram"
                         app:srcPadding="@dimen/_4sdp"/>
 
                     <com.harsh.shah.saavnmp3.utils.customview.BottomSheetItemView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:title="Discord"
-                        android:src="@android:drawable/btn_star"
+                        android:src="@drawable/discord"
                         app:srcPadding="@dimen/_4sdp"/>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="@android:color/transparent"
+                app:strokeColor="@color/textSec"
+                app:strokeWidth="0.4dp"
+                app:contentPadding="@dimen/_12sdp"
+                android:layout_marginBottom="@dimen/_12sdp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="@dimen/_35sdp"
+                        android:layout_height="@dimen/_35sdp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/round_menu_book_24"
+                        android:padding="@dimen/_6sdp"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_8sdp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/app_name"
+                            android:textSize="@dimen/_12sdp"
+                            android:textColor="@color/textMain"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/app_license"
+                            android:textColor="@color/textSec"/>
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
