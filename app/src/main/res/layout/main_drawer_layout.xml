@@ -18,7 +18,7 @@
         <androidx.cardview.widget.CardView
             android:layout_width="@dimen/_35sdp"
             android:layout_height="@dimen/_35sdp"
-            app:cardCornerRadius="999dp"
+            app:cardCornerRadius="@dimen/_8sdp"
             app:cardBackgroundColor="@color/background">
 
             <ImageView
@@ -26,7 +26,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:importantForAccessibility="no"
-                android:src="@drawable/ic_launcher_foreground"/>
+                android:src="@drawable/icon"/>
 
         </androidx.cardview.widget.CardView>
 

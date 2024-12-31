@@ -61,13 +61,13 @@
                             android:layout_height="@dimen/_35sdp"
                             app:cardBackgroundColor="@android:color/transparent"
                             app:strokeWidth="0.1dp"
-                            app:cardCornerRadius="@dimen/_12sdp">
+                            app:cardCornerRadius="@dimen/_8sdp">
 
                             <ImageView
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:importantForAccessibility="no"
-                                android:src="@drawable/ic_launcher_foreground" />
+                                android:src="@drawable/icon" />
 
                         </com.google.android.material.card.MaterialCardView>
 
@@ -80,7 +80,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Saavn Mp3"
+                                android:text="@string/app_name"
                                 android:textStyle="bold"
                                 android:textColor="@color/textMain"
                                 android:textSize="@dimen/_18ssp"/>
