@@ -45,7 +45,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -155,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void showSavedLibrariesData() {
         SavedLibraries savedLibraries = SharedPreferenceManager.getInstance(this).getSavedLibrariesData();
-        //binding.emptyListTv.setVisibility(savedLibraries == null ? View.VISIBLE : View.GONE);
+        binding.savedLibrariesSection.setVisibility(savedLibraries != null && !(savedLibraries.lists().isEmpty()) ? View.VISIBLE : View.GONE);
         if(savedLibraries != null) binding.savedRecyclerView.setAdapter(new SavedLibrariesAdapter(savedLibraries.lists()));
     }
 
@@ -327,7 +326,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        apiManager.searchPlaylists(String.valueOf(Calendar.getInstance().get(Calendar.YEAR)), 0, 15, new RequestNetwork.RequestListener() {
+        // String.valueOf(Calendar.getInstance().get(Calendar.YEAR))
+        apiManager.searchPlaylists("2024", 0, 15, new RequestNetwork.RequestListener() {
             @Override
             public void onResponse(String tag, String response, HashMap<String, Object> responseHeaders) {
                 PlaylistsSearch playlistsSearch = new Gson().fromJson(response, PlaylistsSearch.class);

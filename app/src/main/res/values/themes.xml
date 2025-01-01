@@ -28,6 +28,8 @@
         <!-- Divider -->
         <item name="android:divider">@color/divider_light</item>
 
+        <item name="android:icon">@drawable/icon</item>
+
     </style>
 
     <style name="Theme.SaavnMp3" parent="Base.Theme.SaavnMp3" />

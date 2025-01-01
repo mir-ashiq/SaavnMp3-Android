@@ -182,7 +182,7 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/__saved_libraries_section"
+                    android:id="@+id/saved_libraries_section"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_8sdp"
@@ -216,11 +216,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_8sdp"
+                    android:layout_marginBottom="@dimen/_50sdp"
+                    android:elevation="@dimen/_8sdp"
                     android:orientation="vertical"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/__saved_libraries_section"
-                    android:elevation="@dimen/_8sdp"
-                    android:layout_marginBottom="@dimen/_50sdp">
+                    app:layout_constraintTop_toBottomOf="@id/saved_libraries_section">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -236,14 +236,21 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_12sdp"
-                        android:scrollbars="none"
                         android:overScrollMode="never"
+                        android:scrollbars="none"
                         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                         app:spanCount="2"
                         tools:itemCount="10"
                         tools:listitem="@layout/activity_main_playlist_item" />
 
                 </LinearLayout>
+
+                <androidx.constraintlayout.widget.Barrier
+                    android:id="@+id/barrier"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:barrierDirection="bottom"
+                    app:constraint_referenced_ids="saved_libraries_section" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>

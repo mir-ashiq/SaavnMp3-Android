@@ -1,6 +1,7 @@
 package com.harsh.shah.saavnmp3.network.utility;
 
 import android.app.Activity;
+import android.util.Log;
 
 import java.util.HashMap;
 
@@ -42,6 +43,12 @@ public class RequestNetwork {
 	}
 	
 	public void startRequestNetwork(String method, String url, String tag, RequestListener requestListener) {
+		Log.i("RequestNetwork.java", "startRequestNetwork: " +
+				"\tmethod: " + method +
+				"\turl: " + url +
+				"\tHeaders: " + getHeaders() +
+				"\tParams: " + getParams()
+		);
 		RequestNetworkController.getInstance().execute(this, method, url, tag, requestListener);
 	}
 	

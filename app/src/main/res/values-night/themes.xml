@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
     <style name="Base.Theme.SaavnMp3" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
@@ -28,6 +28,7 @@
         <!-- Divider -->
         <item name="android:divider">@color/divider_dark</item>
 
+        <item name="android:icon">@drawable/icon</item>
     </style>
 
 </resources>

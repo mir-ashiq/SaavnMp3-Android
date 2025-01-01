@@ -29,6 +29,18 @@ public class SettingsActivity extends AppCompatActivity {
         binding.highQualityTrack.setChecked(settingsSharedPrefManager.getHighQualityTrack());
         binding.storeInCache.setChecked(settingsSharedPrefManager.getStoreInCache());
         binding.explicit.setChecked(settingsSharedPrefManager.getExplicit());
+
+        //TODO: Theme Switcher
+            // Switch to Dark Mode
+            //AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+
+
+        // folder night changing names
+
+
+            // Switch to Light Mode
+            //AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+
     }
 
     public void backPress(View view) {
