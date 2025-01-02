@@ -91,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
 
         applicationClass = (ApplicationClass) getApplicationContext();
         ApplicationClass.setCurrentActivity(this);
+        ApplicationClass.updateTheme();
 
         slidingRootNavBuilder = new SlidingRootNavBuilder(this)
                 .withMenuLayout(R.layout.main_drawer_layout)

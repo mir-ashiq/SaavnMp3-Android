@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.SaavnMp3" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
@@ -28,7 +28,8 @@
         <!-- Divider -->
         <item name="android:divider">@color/divider_dark</item>
 
-        <item name="android:icon">@drawable/icon</item>
+        <item name="android:icon">@mipmap/ic_launcher_night</item>
+        <item name="android:roundIcon" tools:ignore="NewApi">@mipmap/ic_launcher_night_round</item>
     </style>
 
 </resources>

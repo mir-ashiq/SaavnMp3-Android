@@ -17,6 +17,7 @@ import android.support.v4.media.session.MediaSessionCompat;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.media.app.NotificationCompat;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.Player;
@@ -28,6 +29,7 @@ import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.google.gson.Gson;
 import com.harsh.shah.saavnmp3.activities.MusicOverviewActivity;
+import com.harsh.shah.saavnmp3.activities.SettingsActivity;
 import com.harsh.shah.saavnmp3.network.ApiManager;
 import com.harsh.shah.saavnmp3.network.utility.RequestNetwork;
 import com.harsh.shah.saavnmp3.records.SongResponse;
@@ -88,6 +90,12 @@ public class ApplicationClass extends Application {
         sharedPreferenceManager = SharedPreferenceManager.getInstance(this);
         TRACK_QUALITY = sharedPreferenceManager.getTrackQuality();
 
+    }
+
+    public static void updateTheme(){
+        SettingsActivity.SettingsSharedPrefManager settingsSharedPrefManager = new SettingsActivity.SettingsSharedPrefManager(getCurrentActivity());
+        final String theme = settingsSharedPrefManager.getTheme();
+        AppCompatDelegate.setDefaultNightMode(theme.equals("dark")?AppCompatDelegate.MODE_NIGHT_YES:theme.equals("light")?AppCompatDelegate.MODE_NIGHT_NO:AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
     }
 
     private void createNotificationChannel() {

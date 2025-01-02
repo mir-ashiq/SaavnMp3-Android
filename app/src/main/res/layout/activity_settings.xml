@@ -140,6 +140,48 @@
                 app:textOn="Explicit content (labelled as 18+) is playable."
                 app:checked="true"/>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.2dp"
+                android:layout_marginVertical="@dimen/_8sdp"
+                android:background="@color/textSec"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Theme"
+                android:paddingHorizontal="@dimen/_12sdp"
+                android:paddingVertical="@dimen/_4sdp"
+                android:textColor="@color/textMain"
+                android:textStyle="bold"
+                android:textSize="@dimen/_14sdp"/>
+
+            <RadioGroup
+                android:id="@+id/theme_chip_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="@dimen/_12sdp">
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/dark"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Dark" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/light"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Light" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/system"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Follow System" />
+
+            </RadioGroup>
+
         </LinearLayout>
 
     </ScrollView>

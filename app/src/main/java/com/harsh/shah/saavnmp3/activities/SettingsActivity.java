@@ -7,6 +7,8 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.harsh.shah.saavnmp3.ApplicationClass;
+import com.harsh.shah.saavnmp3.R;
 import com.harsh.shah.saavnmp3.databinding.ActivitySettingsBinding;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -30,16 +32,12 @@ public class SettingsActivity extends AppCompatActivity {
         binding.storeInCache.setChecked(settingsSharedPrefManager.getStoreInCache());
         binding.explicit.setChecked(settingsSharedPrefManager.getExplicit());
 
-        //TODO: Theme Switcher
-            // Switch to Dark Mode
-            //AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        binding.themeChipGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            settingsSharedPrefManager.setTheme(checkedId == R.id.dark ? "dark" : checkedId == R.id.light ? "light" : "system");
+            ApplicationClass.updateTheme();
+        });
 
-
-        // folder night changing names
-
-
-            // Switch to Light Mode
-            //AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        binding.themeChipGroup.check(settingsSharedPrefManager.getTheme().equals("dark") ? R.id.dark : settingsSharedPrefManager.getTheme().equals("light") ? R.id.light : R.id.system);
 
     }
 
@@ -79,6 +77,13 @@ public class SettingsActivity extends AppCompatActivity {
         }
         public boolean getExplicit() {
             return sharedPreferences.getBoolean("explicit", true);
+        }
+
+        public void setTheme(String theme){
+            sharedPreferences.edit().putString("theme", theme).apply();
+        }
+        public String getTheme() {
+            return sharedPreferences.getString("theme", "system");
         }
     }
 }
