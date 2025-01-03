@@ -105,6 +105,7 @@
                         android:layout_marginTop="@dimen/_4sdp"/>
 
                     <com.harsh.shah.saavnmp3.utils.customview.BottomSheetItemView
+                        android:id="@+id/email"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:title="Email Us"
@@ -112,13 +113,15 @@
                         app:srcPadding="@dimen/_4sdp"/>
 
                     <com.harsh.shah.saavnmp3.utils.customview.BottomSheetItemView
+                        android:id="@+id/rate"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:title="Rate us"
-                        android:src="@android:drawable/btn_star"
-                        app:srcPadding="@dimen/_4sdp"/>
+                        android:src="@drawable/star_24px"
+                        app:srcPadding="@dimen/_2sdp"/>
 
                     <com.harsh.shah.saavnmp3.utils.customview.BottomSheetItemView
+                        android:id="@+id/source_code"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:title="Source code"
@@ -154,6 +157,7 @@
                         android:layout_marginStart="@dimen/_8sdp"/>
 
                     <com.harsh.shah.saavnmp3.utils.customview.BottomSheetItemView
+                        android:id="@+id/instagram"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:title="Instagram"
@@ -162,6 +166,7 @@
                         android:layout_marginTop="@dimen/_4sdp"/>
 
                     <com.harsh.shah.saavnmp3.utils.customview.BottomSheetItemView
+                        android:id="@+id/telegram"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:title="Telegram"
@@ -169,6 +174,7 @@
                         app:srcPadding="@dimen/_4sdp"/>
 
                     <com.harsh.shah.saavnmp3.utils.customview.BottomSheetItemView
+                        android:id="@+id/discord"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:title="Discord"
