@@ -173,7 +173,7 @@ public class ApplicationClass extends Application {
                                     });
 
                             Notification notification = new androidx.core.app.NotificationCompat.Builder(ApplicationClass.this, CHANNEL_ID_1)
-                                    .setSmallIcon(R.drawable.ic_launcher_foreground)
+                                    .setSmallIcon(R.drawable.headphone)
                                     .setLargeIcon(resource)
                                     .setContentTitle(MUSIC_TITLE)
                                     .setOngoing(playPauseButton != R.drawable.play_arrow_24px)
@@ -195,7 +195,6 @@ public class ApplicationClass extends Application {
                             NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                             notificationManager.notify(0, notification);
 
-
                         }
 
                         @Override
@@ -207,6 +206,11 @@ public class ApplicationClass extends Application {
         } catch (Exception e) {
             Log.e("ApplicationClass", "showNotification: ", e);
         }
+    }
+
+    public static void cancelNotification(){
+        NotificationManager notificationManager = (NotificationManager) getCurrentActivity().getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.cancel(0);
     }
 
     public void togglePlayPause() {
