@@ -1,4 +1,4 @@
-# SaavnMp3
+# SaavnMp3 / Melotune
 
 A simple music player inspired by spotify and developed using the unofficial JioSaavn API. Has a lot of features like Search for an Artist, Song, Playlist, Albums. Not just search this app also provides you functionality to play the songs and view the artist info and much more.
 
