@@ -311,7 +311,10 @@ public class ListActivity extends AppCompatActivity {
         });
 
         for (SongResponse.Artist artist : albumSearch.data().artist().all()){
-            artistData.add(new ArtistData(artist.name(), artist.id(), artist.image().get(artist.image().size() - 1).url()));
+            artistData.add(new ArtistData(artist.name(), artist.id(),
+                    (!artist.image().isEmpty())?artist.image().get(artist.image().size() - 1).url()
+                            :artist.image().get(0).url()
+            ));
         }
     }
 
@@ -334,7 +337,10 @@ public class ListActivity extends AppCompatActivity {
         });
 
         for (PlaylistSearch.Data.Artist artist : playlistSearch.data().artists()){
-            artistData.add(new ArtistData(artist.name(), artist.id(), artist.image().get(artist.image().size() - 1).url()));
+            artistData.add(new ArtistData(artist.name(), artist.id(),
+                    (!artist.image().isEmpty())?artist.image().get(artist.image().size() - 1).url()
+                            :artist.image().get(0).url()
+            ));
         }
 
     }
