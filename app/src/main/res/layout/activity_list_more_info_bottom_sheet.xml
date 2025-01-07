@@ -73,6 +73,14 @@
 
         </LinearLayout>
 
+        <com.harsh.shah.saavnmp3.utils.customview.BottomSheetItemView
+            android:id="@+id/add_to_library"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:title="Add to Library"
+            android:src="@drawable/round_add_24"
+            app:srcPadding="@dimen/_4sdp"/>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -137,7 +137,7 @@
 
                         <Button
                             android:id="@+id/playAllBtn"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:text="Play"
                             android:drawableStart="@android:drawable/ic_media_play"
@@ -150,7 +150,8 @@
                             android:layout_marginStart="@dimen/_8sdp"
                             app:cardCornerRadius="@dimen/_100sdp"
                             app:cardBackgroundColor="@android:color/transparent"
-                            app:strokeWidth="0dp">
+                            app:strokeWidth="0dp"
+                            android:visibility="gone">
 
                             <ImageView
                                 android:contentDescription="add_to_library"
@@ -169,13 +170,30 @@
 
             </LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Songs"
-                android:textSize="@dimen/_18ssp"
-                android:textColor="@color/green"
-                android:layout_marginTop="@dimen/_12sdp" />
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/_12sdp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Songs"
+                    android:layout_weight="1"
+                    android:textSize="@dimen/_18ssp"
+                    android:textColor="@color/green" />
+
+                <TextView
+                    android:id="@+id/add_more_songs"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="add songs"
+                    android:textSize="@dimen/_11ssp"
+                    android:textColor="@color/green" />
+
+            </LinearLayout>
+
 
             <!--            <LinearLayout-->
             <!--                android:layout_width="match_parent"-->
