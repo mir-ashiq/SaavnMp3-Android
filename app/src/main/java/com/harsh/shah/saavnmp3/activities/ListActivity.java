@@ -402,7 +402,7 @@ public class ListActivity extends AppCompatActivity {
 
     }
 
-    private List<ArtistData> artistData = new ArrayList<>();
+    private final List<ArtistData> artistData = new ArrayList<>();
 
     public void backPress(View view) {
         finish();
