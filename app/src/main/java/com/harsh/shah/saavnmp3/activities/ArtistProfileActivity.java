@@ -31,6 +31,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * The `ArtistProfileActivity` class displays the profile information of an artist,
+ * including their name, image, top songs, top albums, and singles.
+ * It fetches the artist's data from a remote API and handles network connectivity changes.
+ *
+ * <p>
+ * This activity uses a collapsing toolbar layout to provide a visually appealing
+ * header that expands and collapses as the user scrolls.
+ * It also utilizes Shimmer effect as placeholder while data is loading.
+ * </p>
+ */
 public class ArtistProfileActivity extends AppCompatActivity {
 
     private final String TAG = "ArtistProfileActivity";
