@@ -16,6 +16,7 @@ import android.widget.ListAdapter;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.media3.common.Player;
@@ -188,29 +189,7 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
                         userCreatedLibraries.add(library.name());
                 }
 
-                MaterialAlertDialogBuilder materialAlertDialogBuilder = new MaterialAlertDialogBuilder(MusicOverviewActivity.this);
-                ListAdapter listAdapter = new ArrayAdapter<>(MusicOverviewActivity.this, android.R.layout.simple_list_item_1, userCreatedLibraries);
-                SavedLibraries finalSavedLibraries = savedLibraries;
-                materialAlertDialogBuilder.setAdapter(listAdapter, (dialogInterface, i) -> {
-                    //index = i;
-                    Log.i(TAG, "pickedLibrary: " + i);
-
-                    final SongResponse.Song song = mSongResponse.data().get(0);
-
-                    SavedLibraries.Library.Songs songs = new SavedLibraries.Library.Songs(
-                            song.id(),
-                            song.name(),
-                            binding.description.getText().toString(),
-                            IMAGE_URL
-                    );
-
-                    finalSavedLibraries.lists().get(i).songs().add(songs);
-                    sharedPreferenceManager.setSavedLibrariesData(finalSavedLibraries);
-                    Toast.makeText(MusicOverviewActivity.this, "Added to " + finalSavedLibraries.lists().get(i).name(), Toast.LENGTH_SHORT).show();
-                });
-
-
-                materialAlertDialogBuilder.setTitle("Select Library");
+                MaterialAlertDialogBuilder materialAlertDialogBuilder = getMaterialAlertDialogBuilder(userCreatedLibraries, savedLibraries, sharedPreferenceManager);
                 materialAlertDialogBuilder.show();
 
             });
@@ -263,6 +242,34 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
         showData();
 
         updateTrackInfo();
+    }
+
+    @NonNull
+    private MaterialAlertDialogBuilder getMaterialAlertDialogBuilder(List<String> userCreatedLibraries, SavedLibraries savedLibraries, SharedPreferenceManager sharedPreferenceManager) {
+        MaterialAlertDialogBuilder materialAlertDialogBuilder = new MaterialAlertDialogBuilder(MusicOverviewActivity.this);
+        ListAdapter listAdapter = new ArrayAdapter<>(MusicOverviewActivity.this, android.R.layout.simple_list_item_1, userCreatedLibraries);
+        final SavedLibraries finalSavedLibraries = savedLibraries;
+        materialAlertDialogBuilder.setAdapter(listAdapter, (dialogInterface, i) -> {
+            //index = i;
+            Log.i(TAG, "pickedLibrary: " + i);
+
+            final SongResponse.Song song = mSongResponse.data().get(0);
+
+            SavedLibraries.Library.Songs songs = new SavedLibraries.Library.Songs(
+                    song.id(),
+                    song.name(),
+                    binding.description.getText().toString(),
+                    IMAGE_URL
+            );
+
+            finalSavedLibraries.lists().get(i).songs().add(songs);
+            sharedPreferenceManager.setSavedLibrariesData(finalSavedLibraries);
+            Toast.makeText(MusicOverviewActivity.this, "Added to " + finalSavedLibraries.lists().get(i).name(), Toast.LENGTH_SHORT).show();
+        });
+
+
+        materialAlertDialogBuilder.setTitle("Select Library");
+        return materialAlertDialogBuilder;
     }
 
 

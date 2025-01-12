@@ -78,7 +78,7 @@ public class ActivityListSongsItemAdapter extends RecyclerView.Adapter<ActivityL
         else return 0;
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
         }

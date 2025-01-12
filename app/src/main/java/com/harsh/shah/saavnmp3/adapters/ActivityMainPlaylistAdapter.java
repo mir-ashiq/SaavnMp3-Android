@@ -65,7 +65,7 @@ public class ActivityMainPlaylistAdapter extends RecyclerView.Adapter<ActivityMa
         return 0;
     }
 
-    static class PlaylistAdapterViewHolder extends RecyclerView.ViewHolder {
+    public static class PlaylistAdapterViewHolder extends RecyclerView.ViewHolder {
         public PlaylistAdapterViewHolder(@NonNull View itemView) {
             super(itemView);
         }
