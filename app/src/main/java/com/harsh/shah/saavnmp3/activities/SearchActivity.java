@@ -2,6 +2,8 @@ package com.harsh.shah.saavnmp3.activities;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -57,6 +59,30 @@ public class SearchActivity extends AppCompatActivity {
             binding.edittext.clearFocus();
             hideKeyboard(binding.edittext);
             return true;
+        });
+
+        // Show/hide clear icon based on text input
+        binding.edittext.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.toString().isEmpty()) {
+                    binding.clearIcon.setVisibility(View.GONE);
+                } else {
+                    binding.clearIcon.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+        });
+
+        // Clear input when clear icon is clicked
+        binding.clearIcon.setOnClickListener(v -> {
+            binding.edittext.setText("");
         });
 
         //showData("");

@@ -28,7 +28,8 @@
 
         <EditText
             android:id="@+id/edittext"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:importantForAutofill="no"
             android:background="@android:color/transparent"
@@ -38,6 +39,15 @@
             android:paddingHorizontal="@dimen/_12sdp"
             android:singleLine="true"
             android:imeOptions="actionSearch"/>
+
+        <ImageView
+            android:id="@+id/clear_icon"
+            android:layout_width="@dimen/_25sdp"
+            android:layout_height="@dimen/_25sdp"
+            android:src="@drawable/baseline_clear_24"
+            android:contentDescription="clear"
+            android:visibility="gone"
+            android:padding="4dp" />
 
     </LinearLayout>
 
