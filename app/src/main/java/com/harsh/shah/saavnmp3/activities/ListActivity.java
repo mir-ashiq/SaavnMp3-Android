@@ -395,8 +395,9 @@ public class ListActivity extends AppCompatActivity {
 
         for (PlaylistSearch.Data.Artist artist : playlistSearch.data().artists()) {
             artistData.add(new ArtistData(artist.name(), artist.id(),
-                    (!artist.image().isEmpty()) ? artist.image().get(artist.image().size() - 1).url()
-                            : artist.image().get(0).url()
+                    (!artist.image().isEmpty()) ?
+                              artist.image().get(artist.image().size() - 1).url()
+                            : "https://i.pinimg.com/564x/1d/04/a8/1d04a87b8e6cf2c3829c7af2eccf6813.jpg"
             ));
         }
 

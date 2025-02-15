@@ -1,0 +1,16 @@
+{
+  "projectName": "SaavnMp3-Android",
+  "projectOwner": "Harshshah6",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "contributors": [
+  ],
+  "repoType": "github",
+  "contributorsPerLine": 7,
+  "repoHost": "https://github.com",
+  "commitConvention": "angular",
+  "skipCi": true,
+  "commitType": "docs"
+}
