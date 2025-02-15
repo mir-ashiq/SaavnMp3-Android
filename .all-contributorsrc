@@ -6,6 +6,15 @@
   ],
   "imageSize": 100,
   "contributors": [
+    {
+      "login": "Hassan-Nisar-Ch",
+      "name": "Hassan Nisar Ch",
+      "avatar_url": "https://avatars.githubusercontent.com/u/187088978?v=4",
+      "profile": "https://github.com/Hassan-Nisar-Ch",
+      "contributions": [
+        "code"
+      ]
+    }
   ],
   "repoType": "github",
   "contributorsPerLine": 7,
