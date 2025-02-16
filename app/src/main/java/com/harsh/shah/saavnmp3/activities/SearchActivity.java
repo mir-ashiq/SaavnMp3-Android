@@ -30,7 +30,6 @@ public class SearchActivity extends AppCompatActivity {
 
     ActivitySearchBinding binding;
     private final String TAG = "SearchActivity";
-
     GlobalSearch globalSearch;
 
     @Override
@@ -45,9 +44,9 @@ public class SearchActivity extends AppCompatActivity {
         binding.edittext.requestFocus();
 
         binding.chipGroup.setOnCheckedStateChangeListener((group, checkedIds) -> {
-            Log.i("SearchActivity","checkedIds: " + checkedIds);
-            if(globalSearch!=null){
-                if(globalSearch.success()){
+            Log.i("SearchActivity", "checkedIds: " + checkedIds);
+            if (globalSearch != null) {
+                if (globalSearch.success()) {
                     refreshData();
                 }
             }
@@ -73,10 +72,12 @@ public class SearchActivity extends AppCompatActivity {
             }
 
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
 
         });
 
@@ -104,7 +105,7 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onResponse(String tag, String response, HashMap<String, Object> responseHeaders) {
                 globalSearch = new Gson().fromJson(response, GlobalSearch.class);
-                if (globalSearch.success()){
+                if (globalSearch.success()) {
                     refreshData();
                 }
                 Log.i(TAG, "onResponse: " + response);
@@ -142,7 +143,7 @@ public class SearchActivity extends AppCompatActivity {
         } else if (checkedChipId == R.id.chip_song) {
             addSongsData(data);
         } else if (checkedChipId == R.id.chip_albums) {
-           addAlbumsData(data);
+            addAlbumsData(data);
         } else if (checkedChipId == R.id.chip_playlists) {
             addPlaylistsData(data);
         } else if (checkedChipId == R.id.chip_artists) {
@@ -150,10 +151,11 @@ public class SearchActivity extends AppCompatActivity {
         } else {
             throw new IllegalStateException("Unexpected value: " + binding.chipGroup.getCheckedChipId());
         }
-        if(!data.isEmpty())binding.recyclerView.setAdapter(new ActivitySearchListItemAdapter(data));
+        if (!data.isEmpty())
+            binding.recyclerView.setAdapter(new ActivitySearchListItemAdapter(data));
     }
 
-    private void addSongsData(List<SearchListItem> data){
+    private void addSongsData(List<SearchListItem> data) {
         globalSearch.data().songs().results().forEach(item -> {
             data.add(
                     new SearchListItem(
@@ -167,7 +169,7 @@ public class SearchActivity extends AppCompatActivity {
         });
     }
 
-    private void addAlbumsData(List<SearchListItem> data){
+    private void addAlbumsData(List<SearchListItem> data) {
         globalSearch.data().albums().results().forEach(item -> {
             data.add(
                     new SearchListItem(
@@ -181,7 +183,7 @@ public class SearchActivity extends AppCompatActivity {
         });
     }
 
-    private void addPlaylistsData(List<SearchListItem> data){
+    private void addPlaylistsData(List<SearchListItem> data) {
         globalSearch.data().playlists().results().forEach(item -> {
             data.add(
                     new SearchListItem(
@@ -195,7 +197,7 @@ public class SearchActivity extends AppCompatActivity {
         });
     }
 
-    private void addArtistsData(List<SearchListItem> data){
+    private void addArtistsData(List<SearchListItem> data) {
         globalSearch.data().artists().results().forEach(item -> {
             data.add(
                     new SearchListItem(
