@@ -1,12 +1,18 @@
 package com.harsh.shah.saavnmp3.activities;
 
+import android.Manifest;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
+import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -14,7 +20,11 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -54,6 +64,10 @@ import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int MANAGE_ALL_FILES_REQ_CODE = 9;
+    private static final int STORAGE_PERMISSION_REQUEST_CODE = 22;
+    private ActivityResultLauncher<Intent> requestManageAllFiles;
+    private ActivityResultLauncher<String[]> requestStoragePermission;
     private final String TAG = "MainActivity";
     private ActivityMainBinding binding;
     private ApplicationClass applicationClass;
@@ -133,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         binding.playBarBackground.setOnClickListener(view -> {
-            if(!ApplicationClass.MUSIC_ID.isBlank())
+            if (!ApplicationClass.MUSIC_ID.isBlank())
                 startActivity(new Intent(this, MusicOverviewActivity.class).putExtra("id", ApplicationClass.MUSIC_ID));
         });
 
@@ -153,16 +167,72 @@ public class MainActivity extends AppCompatActivity {
 
         showSavedLibrariesData();
 
+        requestManageAllFiles = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == RESULT_OK) {
+                // Permission granted
+                Toast.makeText(this, "Manage All Files Permission Granted", Toast.LENGTH_SHORT).show();
+            } else {
+                // Permission denied
+                Toast.makeText(this, "Manage All Files Permission Denied", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        requestStoragePermission = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
+            if (result.containsValue(false)) {
+                Toast.makeText(this, "Storage Permission Denied", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Storage Permission Granted", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        getStoragePermission();
+    }
+
+    private void getStoragePermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (!Environment.isExternalStorageManager()) {
+                requestAllFilesAccessPermission();
+            } else {
+            }
+        } else {
+            requestStoragePermission();
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.R)
+    private void requestAllFilesAccessPermission() {
+        if (!Environment.isExternalStorageManager()) {
+            Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+            Uri uri = Uri.fromParts("package", getPackageName(), null);
+            intent.setData(uri);
+            startActivity(intent);
+        }
+    }
+
+    private void requestStoragePermission() {
+        if (!checkIfStorageAccessAvailable()) {
+            requestStoragePermission.launch(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE});
+        }
+    }
+
+    private boolean checkIfStorageAccessAvailable() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            return Environment.isExternalStorageManager();
+        } else {
+            return (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+                    && (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
+        }
     }
 
     private void showSavedLibrariesData() {
         SavedLibraries savedLibraries = SharedPreferenceManager.getInstance(this).getSavedLibrariesData();
         binding.savedLibrariesSection.setVisibility(savedLibraries != null && !(savedLibraries.lists().isEmpty()) ? View.VISIBLE : View.GONE);
-        if(savedLibraries != null) binding.savedRecyclerView.setAdapter(new SavedLibrariesAdapter(savedLibraries.lists()));
+        if (savedLibraries != null)
+            binding.savedRecyclerView.setAdapter(new SavedLibrariesAdapter(savedLibraries.lists()));
     }
 
     private void onDrawerItemsClicked() {
-        slidingRootNavBuilder.getLayout().findViewById(R.id.settings).setOnClickListener(v->{
+        slidingRootNavBuilder.getLayout().findViewById(R.id.settings).setOnClickListener(v -> {
             startActivity(new Intent(this, SettingsActivity.class));
             slidingRootNavBuilder.closeMenu();
         });
@@ -183,13 +253,13 @@ public class MainActivity extends AppCompatActivity {
     Handler handler = new Handler();
     Runnable runnable = this::showPlayBarData;
 
-    void showPlayBarData(){
+    void showPlayBarData() {
         binding.playBarMusicTitle.setText(ApplicationClass.MUSIC_TITLE);
         binding.playBarMusicDesc.setText(ApplicationClass.MUSIC_DESCRIPTION);
         Picasso.get().load(Uri.parse(ApplicationClass.IMAGE_URL)).into(binding.playBarCoverImage);
-        if(ApplicationClass.player.isPlaying()){
+        if (ApplicationClass.player.isPlaying()) {
             binding.playBarPlayPauseIcon.setImageResource(R.drawable.baseline_pause_24);
-        }else{
+        } else {
             binding.playBarPlayPauseIcon.setImageResource(R.drawable.play_arrow_24px);
         }
 
@@ -400,8 +470,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void showOfflineData(){
-        if(ApplicationClass.sharedPreferenceManager.getHomeSongsRecommended()!=null){
+    private void showOfflineData() {
+        if (ApplicationClass.sharedPreferenceManager.getHomeSongsRecommended() != null) {
             SongSearch songSearch = ApplicationClass.sharedPreferenceManager.getHomeSongsRecommended();
             songSearch.data().results().forEach(results -> {
                 songs.add(new AlbumItem(results.name(), results.language() + " " + results.year(), results.image().get(results.image().size() - 1).url(), results.id()));
@@ -411,7 +481,7 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
-        if(ApplicationClass.sharedPreferenceManager.getHomeArtistsRecommended()!=null){
+        if (ApplicationClass.sharedPreferenceManager.getHomeArtistsRecommended() != null) {
             ArtistsSearch artistsSearch = ApplicationClass.sharedPreferenceManager.getHomeArtistsRecommended();
             artistsSearch.data().results().forEach(results -> {
                 artists.add(results);
@@ -421,7 +491,7 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
-        if(ApplicationClass.sharedPreferenceManager.getHomeAlbumsRecommended()!=null){
+        if (ApplicationClass.sharedPreferenceManager.getHomeAlbumsRecommended() != null) {
             AlbumsSearch albumsSearch = ApplicationClass.sharedPreferenceManager.getHomeAlbumsRecommended();
             albumsSearch.data().results().forEach(results -> {
                 albums.add(new AlbumItem(results.name(), results.language() + " " + results.year(), results.image().get(results.image().size() - 1).url(), results.id()));
@@ -431,7 +501,7 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
-        if(ApplicationClass.sharedPreferenceManager.getHomePlaylistRecommended()!=null){
+        if (ApplicationClass.sharedPreferenceManager.getHomePlaylistRecommended() != null) {
             PlaylistsSearch playlistsSearch = ApplicationClass.sharedPreferenceManager.getHomePlaylistRecommended();
             playlistsSearch.data().results().forEach(results -> {
                 playlists.add(new AlbumItem(results.name(), "", results.image().get(results.image().size() - 1).url(), results.id()));
@@ -442,12 +512,12 @@ public class MainActivity extends AppCompatActivity {
                 adapter.notifyDataSetChanged();
             });
         }
-        
+
         //showData(); //TODO: showData if new data is available
 
     }
 
-    private void playBarPopUpAnimation(){
+    private void playBarPopUpAnimation() {
         showPopup();
     }
 

@@ -7,7 +7,14 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.gson.Gson;
 import com.harsh.shah.saavnmp3.databinding.ActivityAboutBinding;
+import com.harsh.shah.saavnmp3.model.aboutus.Contributors;
+import com.harsh.shah.saavnmp3.network.utility.RequestNetwork;
+import com.harsh.shah.saavnmp3.network.utility.RequestNetworkController;
+import com.harsh.shah.saavnmp3.utils.customview.BottomSheetItemView;
+
+import java.util.HashMap;
 
 public class AboutActivity extends AppCompatActivity {
 
@@ -28,9 +35,29 @@ public class AboutActivity extends AppCompatActivity {
         binding.instagram.setOnClickListener(view -> openUrl("https://www.instagram.com/harsh_.s._shah/"));
         binding.telegram.setOnClickListener(view -> openUrl("https://t.me/legendary_streamer_official"));
 
+        new RequestNetwork(this).startRequestNetwork(RequestNetworkController.GET, "https://raw.githubusercontent.com/Harshshah6/SaavnMp3-Android/refs/heads/master/.all-contributorsrc", "", new RequestNetwork.RequestListener() {
+            @Override
+            public void onResponse(String tag, String response, HashMap<String, Object> responseHeaders) {
+                final BottomSheetItemView bottomSheetItemView = new BottomSheetItemView(AboutActivity.this, "Harsh Shah", "https://avatars.githubusercontent.com/u/69447184?v=4", "");
+                bottomSheetItemView.setOnClickListener(view -> openUrl("https://github.com/harshshah6"));
+                binding.layoutContributors.addView(bottomSheetItemView);
+                final Contributors contributors = new Gson().fromJson(response, Contributors.class);
+                for (Contributors.Contributor contributor : contributors.contributors()) {
+                    final BottomSheetItemView item = new BottomSheetItemView(AboutActivity.this, contributor.name(), contributor.avatar_url(), "");
+                    item.setOnClickListener(view -> openUrl(contributor.profile()));
+                    binding.layoutContributors.addView(item);
+                }
+            }
+
+            @Override
+            public void onErrorResponse(String tag, String message) {
+
+            }
+        });
+
     }
 
-    private void openUrl(final String url){
+    private void openUrl(final String url) {
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_VIEW);
         sendIntent.setData(Uri.parse(url));

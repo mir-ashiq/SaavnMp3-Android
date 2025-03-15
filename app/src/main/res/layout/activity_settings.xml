@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.SettingsActivity"
+    android:fitsSystemWindows="true"
     android:background="@color/background">
 
     <LinearLayout
@@ -32,7 +33,7 @@
             android:text="Settings"
             android:textColor="@color/textMain"
             android:textSize="@dimen/_18sdp"
-            android:paddingHorizontal="@dimen/_12sdp"/>
+            android:paddingHorizontal="@dimen/_12sdp" />
 
     </LinearLayout>
 
@@ -43,7 +44,7 @@
         android:background="@color/textSec"
         app:layout_constraintTop_toBottomOf="@id/toolbar"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -70,7 +71,7 @@
                 android:paddingVertical="@dimen/_4sdp"
                 android:textColor="@color/textMain"
                 android:textStyle="bold"
-                android:textSize="@dimen/_14sdp"/>
+                android:textSize="@dimen/_14sdp" />
 
             <com.harsh.shah.saavnmp3.utils.customview.MaterialCustomSwitch
                 android:id="@+id/download_over_cellular"
@@ -79,7 +80,7 @@
                 app:textHead="Downloads over cellular"
                 app:textOff="Download starts or continue only when you're connected to Wi-Fi."
                 app:textOn="Download starts or continue when you're connected to Wi-Fi or cellular."
-                app:checked="true"/>
+                app:checked="true" />
 
             <com.harsh.shah.saavnmp3.utils.customview.MaterialCustomSwitch
                 android:id="@+id/high_quality_track"
@@ -88,13 +89,13 @@
                 app:textHead="Stream tracks in high quality"
                 app:textOff="Stream tracks in low/medium quality when you're not connected to Wi-Fi."
                 app:textOn="Stream tracks in high quality when you're connected to Wi-Fi or cellular."
-                app:checked="true"/>
+                app:checked="true" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.2dp"
                 android:layout_marginVertical="@dimen/_8sdp"
-                android:background="@color/textSec"/>
+                android:background="@color/textSec" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -104,7 +105,7 @@
                 android:paddingVertical="@dimen/_4sdp"
                 android:textColor="@color/textMain"
                 android:textStyle="bold"
-                android:textSize="@dimen/_14sdp"/>
+                android:textSize="@dimen/_14sdp" />
 
             <com.harsh.shah.saavnmp3.utils.customview.MaterialCustomSwitch
                 android:id="@+id/store_in_cache"
@@ -113,13 +114,13 @@
                 app:textHead="Store Track &amp; Album Data"
                 app:textOff="Will not store any details to cache. More Data Consumption."
                 app:textOn="Will store data to cache. Less Data Consumption. Helps when API Server is down."
-                app:checked="true"/>
+                app:checked="true" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.2dp"
                 android:layout_marginVertical="@dimen/_8sdp"
-                android:background="@color/textSec"/>
+                android:background="@color/textSec" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -129,7 +130,7 @@
                 android:paddingVertical="@dimen/_4sdp"
                 android:textColor="@color/textMain"
                 android:textStyle="bold"
-                android:textSize="@dimen/_14sdp"/>
+                android:textSize="@dimen/_14sdp" />
 
             <com.harsh.shah.saavnmp3.utils.customview.MaterialCustomSwitch
                 android:id="@+id/explicit"
@@ -138,13 +139,13 @@
                 app:textHead="Allow explicit content"
                 app:textOff="No explicit content will be listed or played."
                 app:textOn="Explicit content (labelled as 18+) is playable."
-                app:checked="true"/>
+                app:checked="true" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.2dp"
                 android:layout_marginVertical="@dimen/_8sdp"
-                android:background="@color/textSec"/>
+                android:background="@color/textSec" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -154,7 +155,7 @@
                 android:paddingVertical="@dimen/_4sdp"
                 android:textColor="@color/textMain"
                 android:textStyle="bold"
-                android:textSize="@dimen/_14sdp"/>
+                android:textSize="@dimen/_14sdp" />
 
             <RadioGroup
                 android:id="@+id/theme_chip_group"
