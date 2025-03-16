@@ -38,6 +38,7 @@ import com.harsh.shah.saavnmp3.records.sharedpref.SavedLibraries;
 import com.harsh.shah.saavnmp3.services.ActionPlaying;
 import com.harsh.shah.saavnmp3.services.MusicService;
 import com.harsh.shah.saavnmp3.utils.SharedPreferenceManager;
+import com.harsh.shah.saavnmp3.utils.TrackCacheHelper;
 import com.harsh.shah.saavnmp3.utils.customview.BottomSheetItemView;
 import com.squareup.picasso.Picasso;
 
@@ -174,12 +175,12 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
                 );
             });
 
-            _binding.addToLibrary.setOnClickListener(v->{
+            _binding.addToLibrary.setOnClickListener(v -> {
                 int index = -1;
                 final SharedPreferenceManager sharedPreferenceManager = SharedPreferenceManager.getInstance(MusicOverviewActivity.this);
                 SavedLibraries savedLibraries = sharedPreferenceManager.getSavedLibrariesData();
                 if (savedLibraries == null) savedLibraries = new SavedLibraries(new ArrayList<>());
-                if(savedLibraries.lists().isEmpty()){
+                if (savedLibraries.lists().isEmpty()) {
                     Snackbar.make(_binding.getRoot(), "No Libraries Found", Snackbar.LENGTH_SHORT).show();
                     return;
                 }
@@ -194,9 +195,13 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
 
             });
 
-            _binding.download.setOnClickListener(v->{
-                // TODO: develop this
-                Toast.makeText(MusicOverviewActivity.this, "Under Development", Toast.LENGTH_SHORT).show();
+            _binding.download.setOnClickListener(v -> {
+                final TrackCacheHelper trackCacheHelper = new TrackCacheHelper(MusicOverviewActivity.this);
+                var song = mSongResponse.data().get(0);
+                if (trackCacheHelper.isTrackInCache(song.id())) {
+                    trackCacheHelper.copyFileToMusicDir(trackCacheHelper.getTrackFromCache(song.id()), song.name());
+                    Toast.makeText(MusicOverviewActivity.this, "Downloaded to /Music/Melotune/ ", Toast.LENGTH_SHORT).show();
+                }
             });
 
             for (SongResponse.Artist artist : artsitsList) {
@@ -348,9 +353,10 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
 
     private SongResponse mSongResponse;
 
-    private void onSongFetched(SongResponse songResponse){
+    private void onSongFetched(SongResponse songResponse) {
         onSongFetched(songResponse, false);
     }
+
     private void onSongFetched(SongResponse songResponse, boolean forced) {
         mSongResponse = songResponse;
         binding.title.setText(songResponse.data().get(0).name());
@@ -453,6 +459,9 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
             binding.description.setText(ApplicationClass.MUSIC_DESCRIPTION);
         Picasso.get().load(Uri.parse(ApplicationClass.IMAGE_URL)).into(binding.coverImage);
         binding.seekbar.setProgress((int) (((float) ApplicationClass.player.getCurrentPosition() / ApplicationClass.player.getDuration()) * 100));
+
+        binding.seekbar.setSecondaryProgress((int) (((float) ApplicationClass.player.getBufferedPosition() / ApplicationClass.player.getDuration()) * 100));
+
         long currentDuration = ApplicationClass.player.getCurrentPosition();
         binding.elapsedDuration.setText(convertDuration(currentDuration));
 

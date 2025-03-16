@@ -12,16 +12,31 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.OptIn;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.media.app.NotificationCompat;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.Player;
+import androidx.media3.common.util.UnstableApi;
+import androidx.media3.common.util.Util;
+import androidx.media3.database.DatabaseProvider;
+import androidx.media3.database.ExoDatabaseProvider;
+import androidx.media3.datasource.DataSource;
+import androidx.media3.datasource.DefaultHttpDataSource;
+import androidx.media3.datasource.FileDataSource;
+import androidx.media3.datasource.cache.CacheDataSource;
+import androidx.media3.datasource.cache.CacheEvictor;
+import androidx.media3.datasource.cache.LeastRecentlyUsedCacheEvictor;
+import androidx.media3.datasource.cache.SimpleCache;
 import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory;
+import androidx.media3.exoplayer.source.ProgressiveMediaSource;
 import androidx.palette.graphics.Palette;
 
 import com.bumptech.glide.Glide;
@@ -31,12 +46,15 @@ import com.google.gson.Gson;
 import com.harsh.shah.saavnmp3.activities.MusicOverviewActivity;
 import com.harsh.shah.saavnmp3.activities.SettingsActivity;
 import com.harsh.shah.saavnmp3.network.ApiManager;
+import com.harsh.shah.saavnmp3.network.TrackManager;
 import com.harsh.shah.saavnmp3.network.utility.RequestNetwork;
 import com.harsh.shah.saavnmp3.records.SongResponse;
 import com.harsh.shah.saavnmp3.services.NotificationReceiver;
 import com.harsh.shah.saavnmp3.utils.MediaPlayerUtil;
 import com.harsh.shah.saavnmp3.utils.SharedPreferenceManager;
+import com.harsh.shah.saavnmp3.utils.TrackCacheHelper;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -62,7 +80,7 @@ public class ApplicationClass extends Application {
     public static int track_position = -1;
     public static SharedPreferenceManager sharedPreferenceManager;
     private final String TAG = "ApplicationClass";
-    public static int IMAGE_BG_COLOR = Color.argb(255,25,20,20);
+    public static int IMAGE_BG_COLOR = Color.argb(255, 25, 20, 20);
     public static int TEXT_ON_IMAGE_COLOR = IMAGE_BG_COLOR ^ 0x00FFFFFF;
     public static int TEXT_ON_IMAGE_COLOR1 = IMAGE_BG_COLOR ^ 0x00FFFFFF;
     private static Activity currentActivity = null;
@@ -71,7 +89,7 @@ public class ApplicationClass extends Application {
         return currentActivity;
     }
 
-    public static void setCurrentActivity(Activity activity){
+    public static void setCurrentActivity(Activity activity) {
         currentActivity = activity;
     }
 
@@ -80,10 +98,30 @@ public class ApplicationClass extends Application {
         sharedPreferenceManager.setTrackQuality(string);
     }
 
+    @OptIn(markerClass = UnstableApi.class)
     @Override
     public void onCreate() {
         super.onCreate();
-        player = new ExoPlayer.Builder(this).build();
+
+        File cacheDir = new File(getCacheDir(), "audio_cache");
+
+        // Step 2: Set up SimpleCache
+        DatabaseProvider databaseProvider = new ExoDatabaseProvider(this);
+        long cacheSize = 100 * 1024 * 1024; // 100 MB
+        CacheEvictor cacheEvictor = new LeastRecentlyUsedCacheEvictor(cacheSize);
+        final SimpleCache simpleCache = new SimpleCache(cacheDir, cacheEvictor, databaseProvider);
+
+        // Step 3: Create CacheDataSourceFactory
+        DataSource.Factory httpDataSourceFactory = new DefaultHttpDataSource.Factory()
+                .setUserAgent(Util.getUserAgent(this, "AudioCachingApp"));
+        CacheDataSource.Factory cacheDataSourceFactory = new CacheDataSource.Factory()
+                .setCache(simpleCache)
+                .setUpstreamDataSourceFactory(httpDataSourceFactory)
+                .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR);
+
+        player = new ExoPlayer.Builder(this)
+                .setMediaSourceFactory(new DefaultMediaSourceFactory(cacheDataSourceFactory))
+                .build();
         mediaSession = new MediaSessionCompat(this, "ApplicationClass");
         mediaSession.setActive(true);
         createNotificationChannel();
@@ -92,10 +130,10 @@ public class ApplicationClass extends Application {
 
     }
 
-    public static void updateTheme(){
+    public static void updateTheme() {
         SettingsActivity.SettingsSharedPrefManager settingsSharedPrefManager = new SettingsActivity.SettingsSharedPrefManager(getCurrentActivity());
         final String theme = settingsSharedPrefManager.getTheme();
-        AppCompatDelegate.setDefaultNightMode(theme.equals("dark")?AppCompatDelegate.MODE_NIGHT_YES:theme.equals("light")?AppCompatDelegate.MODE_NIGHT_NO:AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+        AppCompatDelegate.setDefaultNightMode(theme.equals("dark") ? AppCompatDelegate.MODE_NIGHT_YES : theme.equals("light") ? AppCompatDelegate.MODE_NIGHT_NO : AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
     }
 
     private void createNotificationChannel() {
@@ -109,23 +147,23 @@ public class ApplicationClass extends Application {
     }
 
     public void setMusicDetails(String image, String title, String description, String id) {
-        if(image!=null) IMAGE_URL = image;
-        if(title!=null) MUSIC_TITLE = title;
-        if(description!=null) MUSIC_DESCRIPTION = description;
+        if (image != null) IMAGE_URL = image;
+        if (title != null) MUSIC_TITLE = title;
+        if (description != null) MUSIC_DESCRIPTION = description;
         MUSIC_ID = id;
         Log.i(TAG, "setMusicDetails: " + MUSIC_TITLE + "\t" + MUSIC_ID);
     }
 
-    public void setSongUrl(String songUrl){
+    public void setSongUrl(String songUrl) {
         SONG_URL = songUrl;
     }
 
-    public void setTrackQueue(List<String> que){
+    public void setTrackQueue(List<String> que) {
         track_position = -1;
         trackQueue = que;
     }
 
-    public List<String> getTrackQueue(){
+    public List<String> getTrackQueue() {
         return trackQueue;
     }
 
@@ -208,7 +246,7 @@ public class ApplicationClass extends Application {
         }
     }
 
-    public static void cancelNotification(){
+    public static void cancelNotification() {
         NotificationManager notificationManager = (NotificationManager) getCurrentActivity().getSystemService(NOTIFICATION_SERVICE);
         notificationManager.cancel(0);
     }
@@ -219,7 +257,7 @@ public class ApplicationClass extends Application {
 //        } else {
 //            mediaPlayerUtil.start();
 //        }
-        if(player.isPlaying())
+        if (player.isPlaying())
             player.pause();
         else
             player.play();
@@ -227,10 +265,10 @@ public class ApplicationClass extends Application {
         showNotification();
     }
 
-    public void nextTrack(){
-        if(!trackQueue.isEmpty() && track_position < trackQueue.size()-1){
-            if(player.getShuffleModeEnabled())
-                track_position = (int)(Math.random() * trackQueue.size());
+    public void nextTrack() {
+        if (!trackQueue.isEmpty() && track_position < trackQueue.size() - 1) {
+            if (player.getShuffleModeEnabled())
+                track_position = (int) (Math.random() * trackQueue.size());
             else
                 track_position++;
             MUSIC_ID = trackQueue.get(track_position);
@@ -240,10 +278,10 @@ public class ApplicationClass extends Application {
         showNotification();
     }
 
-    public void prevTrack(){
-        if(track_position>0){
-            if(player.getShuffleModeEnabled())
-                track_position = (int)(Math.random() * trackQueue.size());
+    public void prevTrack() {
+        if (track_position > 0) {
+            if (player.getShuffleModeEnabled())
+                track_position = (int) (Math.random() * trackQueue.size());
             else
                 track_position--;
             MUSIC_ID = trackQueue.get(track_position);
@@ -253,11 +291,33 @@ public class ApplicationClass extends Application {
         showNotification();
     }
 
+    @UnstableApi
     public void prepareMediaPlayer() {
         try {
-
             MediaItem mediaItem = MediaItem.fromUri(SONG_URL);
-            player.setMediaItem(mediaItem);
+            final TrackCacheHelper trackCacheHelper = new TrackCacheHelper(currentActivity);
+            if (trackCacheHelper.isTrackInCache(MUSIC_ID)) {
+                mediaItem = MediaItem.fromUri(Uri.parse("file://" + trackCacheHelper.getTrackFromCache(MUSIC_ID)));
+
+                ProgressiveMediaSource.Factory mediaSourceFactory = new ProgressiveMediaSource.Factory(FileDataSource::new);
+                ProgressiveMediaSource mediaSource = mediaSourceFactory.createMediaSource(mediaItem);
+
+                // Prepare and play the media
+                player.setMediaSource(mediaSource);
+            }
+
+            if (!trackCacheHelper.isTrackInCache(MUSIC_ID)) {
+                new TrackManager(
+                        currentActivity,
+                        SONG_URL,
+                        MUSIC_TITLE,
+                        MUSIC_ID,
+                        IMAGE_URL,
+                        true
+                ).execute();
+                player.setMediaItem(mediaItem);
+            }
+
             player.prepare();
             player.play();
             player.addListener(new Player.Listener() {
@@ -270,7 +330,7 @@ public class ApplicationClass extends Application {
                 @Override
                 public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
                     Player.Listener.super.onPlayerStateChanged(playWhenReady, playbackState);
-                    if(playbackState == Player.STATE_ENDED)
+                    if (playbackState == Player.STATE_ENDED)
                         nextTrack();
                 }
             });
@@ -288,7 +348,7 @@ public class ApplicationClass extends Application {
     }
 
 
-    private void playTrack(){
+    private void playTrack() {
         ApiManager apiManager = new ApiManager(currentActivity);
         apiManager.retrieveSongById(MUSIC_ID, null, new RequestNetwork.RequestListener() {
             @Override
@@ -321,8 +381,8 @@ public class ApplicationClass extends Application {
         });
     }
 
-    public static String getDownloadUrl(List<SongResponse.DownloadUrl> downloadUrlList){
-        if(downloadUrlList.isEmpty()) return "";
+    public static String getDownloadUrl(List<SongResponse.DownloadUrl> downloadUrlList) {
+        if (downloadUrlList.isEmpty()) return "";
         for (SongResponse.DownloadUrl downloadUrl : downloadUrlList) {
             if (downloadUrl.quality().equals(TRACK_QUALITY))
                 return downloadUrl.url();
@@ -331,13 +391,15 @@ public class ApplicationClass extends Application {
         return downloadUrlList.get(downloadUrlList.size() - 1).url();
     }
 
-    public void showNotification(){
+    public void showNotification() {
         //showNotification(mediaPlayerUtil.isPlaying() ? R.drawable.baseline_pause_24 : R.drawable.play_arrow_24px);
         showNotification(player.isPlaying() ? R.drawable.baseline_pause_24 : R.drawable.play_arrow_24px);
     }
+
     private int invertColor(int color) {
         return (color ^ 0x00FFFFFF);
     }
+
     int calculateDominantColor(Bitmap bitmap) {
         int[] pixels = new int[bitmap.getWidth() * bitmap.getHeight()];
         bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
