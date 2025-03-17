@@ -1,5 +1,6 @@
 package com.harsh.shah.saavnmp3.activities;
 
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -46,6 +47,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MusicOverviewActivity extends AppCompatActivity implements ActionPlaying, ServiceConnection {
 
@@ -197,10 +200,27 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
 
             _binding.download.setOnClickListener(v -> {
                 final TrackCacheHelper trackCacheHelper = new TrackCacheHelper(MusicOverviewActivity.this);
-                var song = mSongResponse.data().get(0);
+                final SongResponse.Song song = mSongResponse.data().get(0);
                 if (trackCacheHelper.isTrackInCache(song.id())) {
                     trackCacheHelper.copyFileToMusicDir(trackCacheHelper.getTrackFromCache(song.id()), song.name());
                     Toast.makeText(MusicOverviewActivity.this, "Downloaded to /Music/Melotune/ ", Toast.LENGTH_SHORT).show();
+                } else {
+                    ProgressDialog progressDialog = new ProgressDialog(MusicOverviewActivity.this);
+                    progressDialog.setMessage("Downloading...");
+                    progressDialog.setCancelable(false);
+                    progressDialog.setCanceledOnTouchOutside(false);
+                    progressDialog.show();
+                    new Timer().schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            if (ApplicationClass.isTrackDownloaded) {
+                                progressDialog.dismiss();
+                                trackCacheHelper.copyFileToMusicDir(trackCacheHelper.getTrackFromCache(song.id()), song.name());
+                                Toast.makeText(MusicOverviewActivity.this, "Downloaded to /Music/Melotune/ ", Toast.LENGTH_SHORT).show();
+                                this.cancel();
+                            }
+                        }
+                    }, 1, 1000);
                 }
             });
 

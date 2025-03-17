@@ -70,6 +70,7 @@ public class ApplicationClass extends Application {
 
     public static ExoPlayer player;
     public static String TRACK_QUALITY = "320kbps";
+    public static boolean isTrackDownloaded = false;
     private MediaSessionCompat mediaSession;
     public static List<String> trackQueue = new ArrayList<>();
     public static String MUSIC_TITLE = "";
@@ -295,8 +296,10 @@ public class ApplicationClass extends Application {
     public void prepareMediaPlayer() {
         try {
             MediaItem mediaItem = MediaItem.fromUri(SONG_URL);
+            isTrackDownloaded = false;
             final TrackCacheHelper trackCacheHelper = new TrackCacheHelper(currentActivity);
             if (trackCacheHelper.isTrackInCache(MUSIC_ID)) {
+                isTrackDownloaded = true;
                 mediaItem = MediaItem.fromUri(Uri.parse("file://" + trackCacheHelper.getTrackFromCache(MUSIC_ID)));
 
                 ProgressiveMediaSource.Factory mediaSourceFactory = new ProgressiveMediaSource.Factory(FileDataSource::new);

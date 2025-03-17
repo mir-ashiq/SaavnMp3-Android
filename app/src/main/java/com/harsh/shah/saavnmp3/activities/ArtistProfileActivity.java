@@ -25,6 +25,7 @@ import com.harsh.shah.saavnmp3.network.utility.RequestNetwork;
 import com.harsh.shah.saavnmp3.records.AlbumsSearch;
 import com.harsh.shah.saavnmp3.records.ArtistSearch;
 import com.harsh.shah.saavnmp3.records.SongResponse;
+import com.harsh.shah.saavnmp3.utils.SharedPreferenceManager;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -121,6 +122,7 @@ public class ArtistProfileActivity extends AppCompatActivity {
     }
 
     private String artistId = "9999";
+    private ArtistSearch artistSearch;
 
     void showData() {
         if (getIntent().getExtras() == null) return;
@@ -135,23 +137,24 @@ public class ArtistProfileActivity extends AppCompatActivity {
 
         final ApiManager apiManager = new ApiManager(this);
         apiManager.retrieveArtistById(artistId, new RequestNetwork.RequestListener() {
+            final SharedPreferenceManager sharedPreferenceManager = SharedPreferenceManager.getInstance(ArtistProfileActivity.this);
+
             @Override
             public void onResponse(String tag, String response, HashMap<String, Object> responseHeaders) {
-                ArtistSearch artistSearch = new Gson().fromJson(response, ArtistSearch.class);
+                artistSearch = new Gson().fromJson(response, ArtistSearch.class);
                 Log.i(TAG, "onResponse: " + response);
-                if (artistSearch.success()) {
-                    Picasso.get().load(Uri.parse(artistSearch.data().image().get(artistSearch.data().image().size() - 1).url())).into(binding.artistImg);
-                    binding.artistName.setText(artistSearch.data().name());
-                    binding.collapsingToolbarLayout.setTitle(artistSearch.data().name());
-                    binding.topSongsRecyclerview.setAdapter(new ActivityArtistProfileTopSongsAdapter(artistSearch.data().topSongs()));
-                    binding.topAlbumsRecyclerview.setAdapter(new ActivityArtistProfileTopAlbumsAdapter(artistSearch.data().topAlbums()));
-                    binding.topSinglesRecyclerview.setAdapter(new ActivityArtistProfileTopAlbumsAdapter(artistSearch.data().singles()));
-                }
+                sharedPreferenceManager.setArtistData(artistId, artistSearch);
+                display();
             }
 
             @Override
             public void onErrorResponse(String tag, String message) {
                 Log.i(TAG, "onErrorResponse: " + message);
+                ArtistSearch offlineData = sharedPreferenceManager.getArtistData(artistId);
+                if (offlineData != null) {
+                    artistSearch = offlineData;
+                    display();
+                }
 //                if (!NetworkUtil.isNetworkAvailable(ArtistProfileActivity.this)) {
 //                    try {
 //                        Thread.sleep(2000);
@@ -160,6 +163,17 @@ public class ArtistProfileActivity extends AppCompatActivity {
 //                        Log.e(TAG, "onErrorResponse: ", e);
 //                    }
 //                }
+            }
+
+            private void display() {
+                if (artistSearch.success()) {
+                    Picasso.get().load(Uri.parse(artistSearch.data().image().get(artistSearch.data().image().size() - 1).url())).into(binding.artistImg);
+                    binding.artistName.setText(artistSearch.data().name());
+                    binding.collapsingToolbarLayout.setTitle(artistSearch.data().name());
+                    binding.topSongsRecyclerview.setAdapter(new ActivityArtistProfileTopSongsAdapter(artistSearch.data().topSongs()));
+                    binding.topAlbumsRecyclerview.setAdapter(new ActivityArtistProfileTopAlbumsAdapter(artistSearch.data().topAlbums()));
+                    binding.topSinglesRecyclerview.setAdapter(new ActivityArtistProfileTopAlbumsAdapter(artistSearch.data().singles()));
+                }
             }
         });
     }
@@ -212,7 +226,6 @@ public class ArtistProfileActivity extends AppCompatActivity {
                     null
             ));
         }
-
 
         binding.topSongsRecyclerview.setAdapter(new ActivityArtistProfileTopSongsAdapter(shimmerData));
         binding.topAlbumsRecyclerview.setAdapter(new ActivityArtistProfileTopAlbumsAdapter(shimmerDataAlbum));

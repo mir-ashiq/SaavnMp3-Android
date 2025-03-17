@@ -6,7 +6,9 @@ import android.content.SharedPreferences;
 import com.google.gson.Gson;
 import com.harsh.shah.saavnmp3.records.AlbumSearch;
 import com.harsh.shah.saavnmp3.records.AlbumsSearch;
+import com.harsh.shah.saavnmp3.records.ArtistSearch;
 import com.harsh.shah.saavnmp3.records.ArtistsSearch;
+import com.harsh.shah.saavnmp3.records.GlobalSearch;
 import com.harsh.shah.saavnmp3.records.PlaylistSearch;
 import com.harsh.shah.saavnmp3.records.PlaylistsSearch;
 import com.harsh.shah.saavnmp3.records.SongResponse;
@@ -26,7 +28,8 @@ public class SharedPreferenceManager {
     private static SharedPreferenceManager instance;
 
     public static SharedPreferenceManager getInstance(Context context) {
-        return instance == null ? new SharedPreferenceManager(context) : instance;
+        if (instance == null) instance = new SharedPreferenceManager(context);
+        return instance;
     }
 
     private SharedPreferenceManager(Context context) {
@@ -129,5 +132,21 @@ public class SharedPreferenceManager {
 
     public SavedLibraries.Library getSavedLibraryDataById(String id) {
         return sharedPreferences.contains(id) ? new Gson().fromJson(sharedPreferences.getString(id, ""), SavedLibraries.Library.class) : null;
+    }
+
+    public void setSearchResultCache(String query, GlobalSearch searchResult) {
+        sharedPreferences.edit().putString("search://" + query, new Gson().toJson(searchResult)).apply();
+    }
+
+    public GlobalSearch getSearchResult(String query) {
+        return sharedPreferences.contains("search://" + query) ? new Gson().fromJson(sharedPreferences.getString("search://" + query, ""), GlobalSearch.class) : null;
+    }
+
+    public void setArtistData(String artistID, ArtistSearch artistSearch) {
+        sharedPreferences.edit().putString("artistData://" + artistID, new Gson().toJson(artistSearch)).apply();
+    }
+
+    public ArtistSearch getArtistData(String artistId) {
+        return sharedPreferences.contains("artistData://" + artistId) ? new Gson().fromJson(sharedPreferences.getString("artistData://" + artistId, ""), ArtistSearch.class) : null;
     }
 }

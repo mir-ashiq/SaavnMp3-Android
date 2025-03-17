@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
 
+import com.harsh.shah.saavnmp3.ApplicationClass;
 import com.harsh.shah.saavnmp3.utils.TrackCacheHelper;
 
 import java.io.BufferedInputStream;
@@ -78,6 +79,6 @@ public class TrackManager extends AsyncTask<String, String, String> {
         Log.i(TAG, "onPostExecute: " + s);
         if (s.equals("FAILED")) return;
         new TrackCacheHelper(context).setTrackToCache(trackId, s);
-
+        ApplicationClass.isTrackDownloaded = true;
     }
 }
