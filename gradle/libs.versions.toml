@@ -25,6 +25,7 @@ shimmer = "0.5.0"
 slidingrootnav = "v1.1.1"
 sspAndroid = "1.1.1"
 swiperefreshlayout = "1.2.0-alpha01"
+ffmpegandroid = "0.3.2"
 
 [libraries]
 compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "compiler" }
@@ -55,6 +56,7 @@ shimmer = { module = "com.facebook.shimmer:shimmer", version.ref = "shimmer" }
 slidingrootnav = { module = "com.github.yarolegovich:SlidingRootNav", version.ref = "slidingrootnav" }
 ssp-android = { module = "com.intuit.ssp:ssp-android", version.ref = "sspAndroid" }
 swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
+ffmpegandroid = { group = "com.writingminds", name = "FFmpegAndroid", version.ref = "ffmpegandroid" }
 
 # Media3 Exoplayer related dependencies
 [bundles]

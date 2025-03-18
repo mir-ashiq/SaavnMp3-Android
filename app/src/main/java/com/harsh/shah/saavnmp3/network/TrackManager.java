@@ -4,9 +4,10 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
+import android.widget.ImageView;
 
 import com.harsh.shah.saavnmp3.ApplicationClass;
-import com.harsh.shah.saavnmp3.utils.TrackCacheHelper;
+import com.harsh.shah.saavnmp3.utils.MP4toMP3Converter;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -41,11 +42,11 @@ public class TrackManager extends AsyncTask<String, String, String> {
             connection.connect();
             InputStream input = new BufferedInputStream(url.openStream(), 8192);
             File file;
-            if (!toCache)
-                file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC), trackName + ".mp3");
-            else
-                file = new File(context.getCacheDir(), trackId + ".mp3");
-
+//            if (!toCache)
+//                file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC), trackName + ".mp3");
+//            else
+//                file = new File(context.getCacheDir(), trackId + ".mp3");
+            file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC), trackName + ".mp3");
             OutputStream output = new FileOutputStream(file);
 
             byte[] data = new byte[1024];
@@ -78,7 +79,16 @@ public class TrackManager extends AsyncTask<String, String, String> {
         super.onPostExecute(s);
         Log.i(TAG, "onPostExecute: " + s);
         if (s.equals("FAILED")) return;
-        new TrackCacheHelper(context).setTrackToCache(trackId, s);
+        final ImageView imageView = new ImageView(context);
+        var song = ApplicationClass.CURRENT_TRACK.data().get(0);
+        MP4toMP3Converter.convertToMP3WithMetadata(
+                context,
+                s,
+                song.name(),
+                song.artists().primary().get(0).name(),
+                song.album().name()
+        );
+        //new TrackCacheHelper(context).setTrackToCache(trackId, s);
         ApplicationClass.isTrackDownloaded = true;
     }
 }

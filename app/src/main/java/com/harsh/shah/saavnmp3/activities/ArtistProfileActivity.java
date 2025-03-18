@@ -57,6 +57,7 @@ public class ArtistProfileActivity extends AppCompatActivity {
         @Override
         public void onNetworkDisconnected() {
             Snackbar.make(binding.getRoot(), "No Internet Connection", Snackbar.LENGTH_LONG).show();
+            //showData();
         }
     });
 
@@ -126,6 +127,7 @@ public class ArtistProfileActivity extends AppCompatActivity {
 
     void showData() {
         if (getIntent().getExtras() == null) return;
+        Log.i(TAG, "showData: " + getIntent().getExtras());
         final String artist = getIntent().getExtras().getString("data", "null");
         final BasicDataRecord artistItem = new Gson().fromJson(artist, BasicDataRecord.class);
         if (artistItem == null) return;
@@ -166,6 +168,7 @@ public class ArtistProfileActivity extends AppCompatActivity {
             }
 
             private void display() {
+                Log.i(TAG, "display: " + artistSearch);
                 if (artistSearch.success()) {
                     Picasso.get().load(Uri.parse(artistSearch.data().image().get(artistSearch.data().image().size() - 1).url())).into(binding.artistImg);
                     binding.artistName.setText(artistSearch.data().name());

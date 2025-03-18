@@ -5,12 +5,6 @@ import android.content.SharedPreferences;
 import android.os.Environment;
 import android.util.Log;
 
-import org.jaudiotagger.audio.AudioFile;
-import org.jaudiotagger.audio.AudioFileIO;
-import org.jaudiotagger.tag.Tag;
-import org.jaudiotagger.tag.datatype.Artwork;
-import org.jaudiotagger.tag.id3.ID3v24Tag;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -69,35 +63,6 @@ public class TrackCacheHelper {
             Log.d("FileCopy", "File copied successfully to: " + destFile.getAbsolutePath());
         } catch (IOException e) {
             Log.e(TAG, "copyFileToMusicDir: ", e);
-        }
-    }
-
-    public void addAlbumArt(String mp3FilePath, String imageUrl) {
-        try {
-            // Load the MP3 file
-            File mp3File = new File(mp3FilePath);
-            AudioFile audioFile = AudioFileIO.read(mp3File);
-
-            // Get or create ID3 tag
-            Tag tag = audioFile.getTag();
-            if (tag == null) {
-                tag = new ID3v24Tag();
-                audioFile.setTag(tag);
-            }
-
-            Artwork artwork = new Artwork();
-            artwork.setImageUrl(imageUrl);
-
-            // Set album art
-            tag.deleteArtworkField(); // Remove existing artwork if any
-            tag.setField(artwork);
-
-            // Save changes
-            audioFile.commit();
-
-            Log.d("AlbumArt", "Album art added successfully!");
-        } catch (Exception e) {
-            Log.e(TAG, "addAlbumArt: ", e);
         }
     }
 }

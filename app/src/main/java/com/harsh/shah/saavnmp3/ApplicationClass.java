@@ -67,6 +67,7 @@ public class ApplicationClass extends Application {
     public static final String ACTION_PREV = "prev";
     public static final String ACTION_PLAY = "play";
     public static final MediaPlayerUtil mediaPlayerUtil = MediaPlayerUtil.getInstance();
+    public static SongResponse CURRENT_TRACK = null;
 
     public static ExoPlayer player;
     public static String TRACK_QUALITY = "320kbps";

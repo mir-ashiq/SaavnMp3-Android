@@ -83,6 +83,7 @@ dependencies {
     // PAGING LIBRARY FOR RECYCLERVIEW
     implementation libs.paginate
 
-    //AudioFile Editor
-    implementation libs.jaudiotagger
+    //AudioFile Utility
+    implementation libs.ffmpegandroid
+
 }

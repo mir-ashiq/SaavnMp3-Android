@@ -379,6 +379,7 @@ public class MusicOverviewActivity extends AppCompatActivity implements ActionPl
 
     private void onSongFetched(SongResponse songResponse, boolean forced) {
         mSongResponse = songResponse;
+        ApplicationClass.CURRENT_TRACK = mSongResponse;
         binding.title.setText(songResponse.data().get(0).name());
         binding.description.setText(
                 String.format("%s plays | %s | %s",

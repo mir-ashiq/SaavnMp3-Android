@@ -79,6 +79,7 @@ public class ListActivity extends AppCompatActivity {
                             sharedPreferenceManager.removeLibraryFromSavedLibraries(index);
                             Snackbar.make(binding.getRoot(), "Removed from Library", Snackbar.LENGTH_SHORT).show();
                             updateAlbumInLibraryStatus();
+                            finish();
                         })
                         .setNegativeButton("No", (dialogInterface, i) -> {
 
@@ -110,6 +111,14 @@ public class ListActivity extends AppCompatActivity {
         showData();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (getIntent().getExtras() != null && getIntent().getExtras().getBoolean("createdByUser", false)) {
+            onUserCreatedFetch();
+        }
+    }
+
     private void onMoreIconClicked() {
         if (albumItem == null) return;
 
@@ -127,14 +136,14 @@ public class ListActivity extends AppCompatActivity {
 
         final SharedPreferenceManager sharedPreferenceManager = SharedPreferenceManager.getInstance(ListActivity.this);
         final SavedLibraries savedLibraries = sharedPreferenceManager.getSavedLibrariesData();
-        if (savedLibraries == null || savedLibraries.lists() == null){
+        if (savedLibraries == null || savedLibraries.lists() == null) {
             _binding.addToLibrary.getTitleTextView().setText("Add to library");
             _binding.addToLibrary.getIconImageView().setImageResource(R.drawable.round_add_24);
-        }else{
-            if(isAlbumInLibrary(albumItem, savedLibraries)){
+        } else {
+            if (isAlbumInLibrary(albumItem, savedLibraries)) {
                 _binding.addToLibrary.getTitleTextView().setText("Remove from library");
                 _binding.addToLibrary.getIconImageView().setImageResource(R.drawable.round_close_24);
-            }else{
+            } else {
                 _binding.addToLibrary.getTitleTextView().setText("Add to library");
                 _binding.addToLibrary.getIconImageView().setImageResource(R.drawable.round_add_24);
             }
@@ -396,7 +405,7 @@ public class ListActivity extends AppCompatActivity {
         for (PlaylistSearch.Data.Artist artist : playlistSearch.data().artists()) {
             artistData.add(new ArtistData(artist.name(), artist.id(),
                     (!artist.image().isEmpty()) ?
-                              artist.image().get(artist.image().size() - 1).url()
+                            artist.image().get(artist.image().size() - 1).url()
                             : "https://i.pinimg.com/564x/1d/04/a8/1d04a87b8e6cf2c3829c7af2eccf6813.jpg"
             ));
         }
