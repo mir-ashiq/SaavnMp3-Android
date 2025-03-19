@@ -64,9 +64,6 @@ import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final int MANAGE_ALL_FILES_REQ_CODE = 9;
-    private static final int STORAGE_PERMISSION_REQUEST_CODE = 22;
-    private ActivityResultLauncher<Intent> requestManageAllFiles;
     private ActivityResultLauncher<String[]> requestStoragePermission;
     private final String TAG = "MainActivity";
     private ActivityMainBinding binding;
@@ -151,13 +148,9 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(this, MusicOverviewActivity.class).putExtra("id", ApplicationClass.MUSIC_ID));
         });
 
-        binding.playBarPrevIcon.setOnClickListener(view -> {
-            applicationClass.prevTrack();
-        });
+        binding.playBarPrevIcon.setOnClickListener(view -> applicationClass.prevTrack());
 
-        binding.playBarNextIcon.setOnClickListener(view -> {
-            applicationClass.nextTrack();
-        });
+        binding.playBarNextIcon.setOnClickListener(view -> applicationClass.nextTrack());
 
         showShimmerData();
         showOfflineData();
@@ -167,7 +160,9 @@ public class MainActivity extends AppCompatActivity {
 
         showSavedLibrariesData();
 
-        requestManageAllFiles = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        // Permission granted
+        // Permission denied
+        ActivityResultLauncher<Intent> requestManageAllFiles = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
             if (result.getResultCode() == RESULT_OK) {
                 // Permission granted
                 Toast.makeText(this, "Manage All Files Permission Granted", Toast.LENGTH_SHORT).show();

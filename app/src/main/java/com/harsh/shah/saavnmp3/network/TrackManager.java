@@ -4,10 +4,9 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
-import android.widget.ImageView;
 
 import com.harsh.shah.saavnmp3.ApplicationClass;
-import com.harsh.shah.saavnmp3.utils.MP4toMP3Converter;
+import com.harsh.shah.saavnmp3.utils.TrackCacheHelper;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -79,16 +78,7 @@ public class TrackManager extends AsyncTask<String, String, String> {
         super.onPostExecute(s);
         Log.i(TAG, "onPostExecute: " + s);
         if (s.equals("FAILED")) return;
-        final ImageView imageView = new ImageView(context);
-        var song = ApplicationClass.CURRENT_TRACK.data().get(0);
-        MP4toMP3Converter.convertToMP3WithMetadata(
-                context,
-                s,
-                song.name(),
-                song.artists().primary().get(0).name(),
-                song.album().name()
-        );
-        //new TrackCacheHelper(context).setTrackToCache(trackId, s);
+        new TrackCacheHelper(context).setTrackToCache(trackId, s);
         ApplicationClass.isTrackDownloaded = true;
     }
 }

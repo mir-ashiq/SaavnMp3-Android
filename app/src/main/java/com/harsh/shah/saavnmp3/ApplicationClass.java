@@ -311,14 +311,16 @@ public class ApplicationClass extends Application {
             }
 
             if (!trackCacheHelper.isTrackInCache(MUSIC_ID)) {
-                new TrackManager(
-                        currentActivity,
-                        SONG_URL,
-                        MUSIC_TITLE,
-                        MUSIC_ID,
-                        IMAGE_URL,
-                        true
-                ).execute();
+                if (new SettingsActivity.SettingsSharedPrefManager(currentActivity).getStoreInCache()) {
+                    new TrackManager(
+                            currentActivity,
+                            SONG_URL,
+                            MUSIC_TITLE,
+                            MUSIC_ID,
+                            IMAGE_URL,
+                            true
+                    ).execute();
+                }
                 player.setMediaItem(mediaItem);
             }
 

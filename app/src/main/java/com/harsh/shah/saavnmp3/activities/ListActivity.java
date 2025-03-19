@@ -340,12 +340,13 @@ public class ListActivity extends AppCompatActivity {
         SavedLibraries savedLibraries = sharedPreferenceManager.getSavedLibrariesData();
         if (savedLibraries == null || savedLibraries.lists().isEmpty()) finish();
         SavedLibraries.Library library = null;
-        for (SavedLibraries.Library l : savedLibraries.lists()) {
-            if (l.id().equals(albumItem.id())) {
-                library = l;
-                break;
+        if (savedLibraries != null)
+            for (SavedLibraries.Library l : savedLibraries.lists()) {
+                if (l.id().equals(albumItem.id())) {
+                    library = l;
+                    break;
+                }
             }
-        }
         if (library == null) finish();
         if (library != null) {
             binding.albumTitle.setText(library.name());
@@ -379,7 +380,7 @@ public class ListActivity extends AppCompatActivity {
         for (SongResponse.Artist artist : albumSearch.data().artist().all()) {
             artistData.add(new ArtistData(artist.name(), artist.id(),
                     (!artist.image().isEmpty()) ? artist.image().get(artist.image().size() - 1).url()
-                            : artist.image().get(0).url()
+                            : ""
             ));
         }
     }
