@@ -146,6 +146,7 @@ public class ArtistProfileActivity extends AppCompatActivity {
                 artistSearch = new Gson().fromJson(response, ArtistSearch.class);
                 Log.i(TAG, "onResponse: " + response);
                 sharedPreferenceManager.setArtistData(artistId, artistSearch);
+                Log.i(TAG, "onResponse: " + sharedPreferenceManager.getArtistData(artistId));
                 display();
             }
 
@@ -167,18 +168,20 @@ public class ArtistProfileActivity extends AppCompatActivity {
 //                }
             }
 
-            private void display() {
-                Log.i(TAG, "display: " + artistSearch);
-                if (artistSearch.success()) {
-                    Picasso.get().load(Uri.parse(artistSearch.data().image().get(artistSearch.data().image().size() - 1).url())).into(binding.artistImg);
-                    binding.artistName.setText(artistSearch.data().name());
-                    binding.collapsingToolbarLayout.setTitle(artistSearch.data().name());
-                    binding.topSongsRecyclerview.setAdapter(new ActivityArtistProfileTopSongsAdapter(artistSearch.data().topSongs()));
-                    binding.topAlbumsRecyclerview.setAdapter(new ActivityArtistProfileTopAlbumsAdapter(artistSearch.data().topAlbums()));
-                    binding.topSinglesRecyclerview.setAdapter(new ActivityArtistProfileTopAlbumsAdapter(artistSearch.data().singles()));
-                }
-            }
+
         });
+    }
+
+    private void display() {
+        Log.i(TAG, "display: " + artistSearch);
+        if (artistSearch.success()) {
+            Picasso.get().load(Uri.parse(artistSearch.data().image().get(artistSearch.data().image().size() - 1).url())).into(binding.artistImg);
+            binding.artistName.setText(artistSearch.data().name());
+            binding.collapsingToolbarLayout.setTitle(artistSearch.data().name());
+            binding.topSongsRecyclerview.setAdapter(new ActivityArtistProfileTopSongsAdapter(artistSearch.data().topSongs()));
+            binding.topAlbumsRecyclerview.setAdapter(new ActivityArtistProfileTopAlbumsAdapter(artistSearch.data().topAlbums()));
+            binding.topSinglesRecyclerview.setAdapter(new ActivityArtistProfileTopAlbumsAdapter(artistSearch.data().singles()));
+        }
     }
 
     @NonNull
@@ -233,6 +236,12 @@ public class ArtistProfileActivity extends AppCompatActivity {
         binding.topSongsRecyclerview.setAdapter(new ActivityArtistProfileTopSongsAdapter(shimmerData));
         binding.topAlbumsRecyclerview.setAdapter(new ActivityArtistProfileTopAlbumsAdapter(shimmerDataAlbum));
         binding.topSinglesRecyclerview.setAdapter(new ActivityArtistProfileTopAlbumsAdapter(shimmerDataAlbum));
+
+        ArtistSearch offlineData = SharedPreferenceManager.getInstance(this).getArtistData(artistId);
+        if (offlineData != null) {
+            artistSearch = offlineData;
+            display();
+        }
     }
 
     @Override
