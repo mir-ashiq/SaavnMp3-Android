@@ -118,8 +118,6 @@ SOFTWARE.
 
 Thanks go to these wonderful people:
 
-</br>
-
 <a href="https://github.com/Harshshah6/SaavnMp3-Android/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=Harshshah6/SaavnMp3-Android" />
 </a>
