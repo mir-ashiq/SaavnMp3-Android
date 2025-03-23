@@ -118,20 +118,10 @@ SOFTWARE.
 
 Thanks go to these wonderful people:
 
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-<table>
-  <tbody>
-    <tr>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Hassan-Nisar-Ch"><img src="https://avatars.githubusercontent.com/u/187088978?v=4?s=100" width="100px;" alt="Hassan Nisar Ch"/><br /><sub><b>Hassan Nisar Ch</b></sub></a><br /><a href="https://github.com/Harshshah6/SaavnMp3-Android/commits?author=Hassan-Nisar-Ch" title="Code">💻</a></td>
-    </tr>
-  </tbody>
-</table>
+</br>
 
-<!-- markdownlint-restore -->
-<!-- prettier-ignore-end -->
-
-<!-- ALL-CONTRIBUTORS-LIST:END -->
+<a href="https://github.com/Harshshah6/SaavnMp3-Android/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=Harshshah6/SaavnMp3-Android" />
+</a>
 
 Contributions of any kind are welcome!
