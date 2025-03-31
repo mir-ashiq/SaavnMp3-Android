@@ -5,8 +5,9 @@ A simple music player inspired by spotify and developed using the unofficial Jio
 ![GitHub repo size](https://img.shields.io/github/repo-size/Harshshah6/SaavnMp3-Android)
 ![GitHub watchers](https://img.shields.io/github/watchers/Harshshah6/SaavnMp3-Android)
 ![GitHub Repo stars](https://img.shields.io/github/stars/Harshshah6/SaavnMp3-Android)
+<br/>
 [![Download APK](https://img.shields.io/badge/Download_APK-2ea44f?style=for-the-badge&logo=android&logoColor=white)](https://github.com/Harshshah6/SaavnMp3-Android/raw/refs/heads/master/app/release/app-release.apk)
-[![DONATE VIA UPI](https://img.shields.io/badge/DONATE_VIA_UPI-2ea44f)](upi://pay?pa=harshshah06@ybl&pn=Harsh%20Shah)
+[![PayPal](https://img.shields.io/badge/PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://www.paypal.me/HarshShah06)
 
 ## Features
 
